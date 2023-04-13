@@ -4,10 +4,6 @@ Djangoの開発環境の起動方法
 
 2,DjangoProjectまで移動する
 
-3,「docker volume create poll_db_data」を実行し、ローカルにpoll_db_dataとい　うボリュームを作成する
+3,docker build -t myproject .
 
-4,「docker-compose up -d」を実行する。
-
-5,「docker-machine ip default」を実行し、自分の仮想マシンのIPアドレスを取得　する。
-
-6,http://[自分の仮想マシンのIPアドレス]:8000のURLをブラウザに入力するとDjangoが開ける。
+4,docker run -p 8000:8000 myproject
