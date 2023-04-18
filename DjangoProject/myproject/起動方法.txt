@@ -1,9 +1,0 @@
-Djangoの開発環境の起動方法
-
-1,DjangoProjectを任意の場所にダウンロードする
-
-2,DjangoProjectまで移動する
-
-3,docker build -t myproject .
-
-4,docker run -p 8000:8000 myproject

@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  python-django:
+    build: .
+    container_name: 'python-django'
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./code:/code
+    ports:
+      - "8000:8000"
+    # command: python3 manage.py runserver 0.0.0.0:8000
