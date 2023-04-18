@@ -1,0 +1,8 @@
+・githubからcloneしてくる
+・pythonDjangoDevelopEnvに移動する
+・docker-compose up -dを実行し、コンテナを作成、起動する
+・docker exec -it python-django bashを実行し、コンテナに接続する。
+・django-admin startproject mysiteを実行する。
+・mysiteに移動する
+・python3 manage.py runserver 0.0.0.0:8000を実行する。
+・localhost:8000にアクセスする。
