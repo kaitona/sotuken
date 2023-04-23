@@ -1,17 +1,8 @@
 from django.db import models
 
 # Create your models here.
-image = models.ImageField(
-    upload_to='files/',
-    verbose_name='添付画像',
-    height_field='url_height',
-    width_field='url_width',
-)
+class UploadImage(models.Model):
+    title = models.CharField(max_length=200)
 
-url_height = models.IntegerField(
-    editable=False,
-)
-
-url_width = models.IntegerField(
-    editable=False,
-)
+    description = models.TextField()
+    image = models.ImageField(upload_to="images")
