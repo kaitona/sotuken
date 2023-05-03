@@ -1,9 +1,13 @@
 from django.shortcuts import render, get_object_or_404
+from django.views.generic.list import ListView
 from .forms import UploadForm
 from .models import UploadImage
 
-def index(request):
-    return render(request, 'imagedb/index.html')
+class index(ListView):
+    model = UploadImage
+    context_object_name = "items"
+    #これを指定することで、htmlのfor文で使うobject_listを変更できる。今回はitems
+    template_name = "imagedb/index.html"
 
 def upload(request):
     params = {
