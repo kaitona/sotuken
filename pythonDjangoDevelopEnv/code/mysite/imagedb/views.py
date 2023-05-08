@@ -2,12 +2,14 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic.list import ListView
 from .forms import UploadForm
 from .models import UploadImage
+from django.urls import reverse_lazy
+from django.views.generic.edit import DeleteView
 
 class index(ListView):
     model = UploadImage
-    context_object_name = "items"
+    context_object_name = 'items'
     #これを指定することで、htmlのfor文で使うobject_listを変更できる。今回はitems
-    template_name = "imagedb/index.html"
+    template_name = 'imagedb/index.html'
 
 def upload(request):
     params = {
@@ -36,3 +38,10 @@ def image(request, image_id=0):
     }
 
     return render(request, 'imagedb/image.html', params)
+
+class delete(DeleteView):
+  model = UploadImage
+
+  success_url = reverse_lazy('imagedb:index')
+
+  template_name = 'imagedb/delete.html'

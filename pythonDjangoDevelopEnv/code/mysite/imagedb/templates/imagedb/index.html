@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>トップページ</title>
 </head>
+
 <body>
     {% for item in items %}
     <p>name: {{ item.title }}</p>
-    <img src="{{ item.image.url}}" alt="">
+    <a href="image/{{item.id}}">
+        <img src="{{ item.image.url}}" alt="">
+    </a>
+    <a href="delete/{{item.id}}">削除</a>
     {% endfor %}
 </body>

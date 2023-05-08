@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<p>name: {{ object.title }}</p>
+<img src="{{object.image.url}}" alt="">
+<form method="post">
+    {% csrf_token %}
+    <p>上記の画像を本当に削除しますか?</p>
+    <input type="submit" value="確定">
+</form>
