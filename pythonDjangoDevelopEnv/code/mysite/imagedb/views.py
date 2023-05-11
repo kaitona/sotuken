@@ -1,3 +1,5 @@
+import hashlib
+
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.list import ListView
 from .forms import UploadForm
@@ -22,8 +24,11 @@ def upload(request):
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
             upload_image = form.save()
+            image_url = "." + upload_image.image.url
+            with open(image_url, "rb") as f:
+                sha256 = hashlib.sha256(f.read()).hexdigest()
 
-            params['id'] = upload_image.id
+            params['id'] = sha256
 
     return render(request, 'imagedb/upload.html', params)
 
