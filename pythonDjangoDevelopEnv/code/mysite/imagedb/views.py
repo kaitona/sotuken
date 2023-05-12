@@ -24,6 +24,7 @@ def upload(request):
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
             upload_image = form.save()
+            upload_image.id = sha256
             image_url = "." + upload_image.image.url
             with open(image_url, "rb") as f:
                 sha256 = hashlib.sha256(f.read()).hexdigest()
