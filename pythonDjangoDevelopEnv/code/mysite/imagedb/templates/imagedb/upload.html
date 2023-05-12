@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>{{title}}</title>
+</head>
+
+<body>
+    <h1>{{title}}</h1>
+    <div>
+        {% if id is not None %}
+        <h2>画像が登録されました</h2>
+        <p>画像のIDは {{id}} です</p>
+        {% endif %}
+    </div>
+    <div>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p>{{ upload_form.as_p }}</p>
+            <p><input type="submit" value="アップロード"></p>
+        </form>
+    </div>
+    <a href="../index">トップページに戻る</a>
+</body>
+
+</html>
