@@ -6,3 +6,4 @@ class UploadImage(models.Model):
 
     description = models.TextField()
     image = models.ImageField(upload_to="images")
+    image_hash = models.CharField(max_length=64, default="default")
