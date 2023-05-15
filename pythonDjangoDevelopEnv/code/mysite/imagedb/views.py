@@ -11,10 +11,12 @@ from .models import UploadImage
 from .serializers import PostSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = UploadImage.objects.all()
     serializer_class = PostSerializer
+    permission_class = (IsAuthenticatedOrReadOnly,)
 
     @action(methods=['get'], detail=True)
     def get_image_hash(self, request, pk=None):
