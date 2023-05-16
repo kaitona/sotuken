@@ -2,3 +2,5 @@ Django==3.2.5
 numpy
 DateTime
 requests
+djangorestframework
+Pillow

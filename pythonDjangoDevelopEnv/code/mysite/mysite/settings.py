@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-d09%feo9^i@as&dvzz3hkzz4&tqg+!_4$$1*-(y8psxan6fz#z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -54,9 +54,7 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ),
+  
 }
 
 ROOT_URLCONF = 'mysite.urls'
