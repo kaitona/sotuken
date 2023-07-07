@@ -102,21 +102,23 @@ function Answer_quiz(props) {
     const get_quiz = async () => {
         setQuiz(await Contract.get_quiz(id));
         setSimple_quiz(await Contract.get_quiz_simple(id));
+        
     }
 
     const create_answer = async () => {
-        Contract.event_create_answer(id);
         const res = Contract.create_answer(id, answer, setShow, setContent);
     }
 
     useEffect(() => {
         get_quiz();
-        
+        Contract.event_create_answer(id);
 
         //コンポーネントのアンマウント時にイベントリスナーを削除
         return () => {
             Contract.stop_event_create_answer(id);
         }   
+
+            
     }, [])
 
 

@@ -46,7 +46,7 @@ function List_quiz_top(props) {
             now_numRef.current = now;
 
         });
-
+            
     }, []);
 
     const targetRef = useRef(null); // ターゲット要素のrefを作成
@@ -62,12 +62,13 @@ function List_quiz_top(props) {
 
                 {/* */}
                 {quiz_list.map((quiz, index) => {
-
-                    return (
-                        <>
-                            {quiz_list[index]}
-                        </>
-                    );
+                    if (index !== quiz_list.length - add_num) {
+                        return (
+                            <>
+                                {quiz_list[index]}
+                            </>
+                        );
+                    }
                 }
                 )}
                 <div ref={targetRef}>

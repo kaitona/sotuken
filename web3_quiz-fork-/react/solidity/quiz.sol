@@ -4,8 +4,11 @@ pragma solidity ^0.8.2;
 import "./class_room.sol";
 
 contract Quiz_Dapp is class_room {
-    address Token_address=0xE5ffF15fE09612862BBDcCbd744435419FEaed22;
+    address Token_address=0x3872813914A06BB13D44f5a8b610F64735DdA048;
     TokenInterface token =  TokenInterface(Token_address);
+    constructor() {
+        
+    }
 
     struct User{
         string user_id;
@@ -14,12 +17,6 @@ contract Quiz_Dapp is class_room {
     }
 
     mapping (address=>User) private users;
-    constructor() {
-        
-            
-        
-    }
-
 
 
     struct Quiz{
@@ -109,21 +106,16 @@ contract Quiz_Dapp is class_room {
     event Post_answer(address indexed _sender,uint indexed quiz_id,uint indexed answer_id);
     function post_answer(uint _quiz_id,string memory _answer)public returns(uint answer_id,uint reward){
         require(quizs[_quiz_id].respondent_count<quizs[_quiz_id].respondent_limit,"You have reached the maximum number of responses");
-        //require(quizs[_quiz_id].respondents_map[msg.sender]==0,"already answered");
+        require(quizs[_quiz_id].respondents_map[msg.sender]==0,"already answered");
         require(quizs[_quiz_id].time_limit_epoch>=block.timestamp,"end quiz");
         bytes32 answer_hash=keccak256(abi.encodePacked(_answer));
         bool result;
         if(answer_hash==quizs[_quiz_id].answer_hash){
-            
-            
-            if(check_teacher(quizs[_quiz_id].owner)==true && quizs[_quiz_id].respondents_map[msg.sender]==0){ //教員から出された問題であれば結果に反映　&& 初回の回答であれば
-                reward =quizs[_quiz_id].reward;
-                quizs[_quiz_id].respondent_count+=1;
+            reward =quizs[_quiz_id].reward;
+            quizs[_quiz_id].respondent_count+=1;
+            token.transfer_explanation(msg.sender, reward*10**token.decimals(),"correct answer");
+            if(check_teacher(quizs[_quiz_id].owner)==true){//教員から出された問題であれば結果に反映
                 users[msg.sender].result+=reward*10**token.decimals();
-                token.transfer_explanation(msg.sender, reward*10**token.decimals(),"correct answer");
-            }
-            else if (check_teacher(quizs[_quiz_id].owner)==true && quizs[_quiz_id].respondents_map[msg.sender]==1){ //教員から出された問題であれば結果に反映　&& 間違った回答をした後であれば
-                token.transfer_explanation(msg.sender, 0,"correct answer");
             }
             result=true;
             quizs[_quiz_id].respondents_map[msg.sender]=2;
@@ -146,14 +138,6 @@ contract Quiz_Dapp is class_room {
 
         emit Post_answer(msg.sender,_quiz_id,answer_id);
     }
-    function post_answer_view(uint _quiz_id,string memory _answer)public view returns(bool result){
-        bytes32 answer_hash=keccak256(abi.encodePacked(_answer));
-        result=false;
-        if(answer_hash==quizs[_quiz_id].answer_hash){
-            result=true;
-        }
-    }
-
 
     function get_quiz_respondent(uint _quiz_id,uint answer_id)public view returns(address respondent,uint answer_time,uint reward,bool result){
         respondent=quizs[_quiz_id].answers[answer_id].respondent;

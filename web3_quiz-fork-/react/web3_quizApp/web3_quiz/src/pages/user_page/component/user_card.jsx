@@ -56,10 +56,12 @@ function User_card(props) {
             <>
 
                 <div className="user_card">
+                    {/* q:左上に表示 */}
+
                     {/* <Button variant="primary" onClick={() => Setstate(false)} style={{ position: 'absolute', top: 0, left: 0 }}>
                         更新
-                    </Button>
-                    <img
+                    </Button> */}
+                    {/* <img
                         src={props.icons}
                         alt=""
                         style={{
@@ -82,7 +84,7 @@ function User_card(props) {
                                 保有トークン
                             </div>
                             <div>
-                                {props.token}点
+                                {props.token}wake
                             </div>
                         </div>
                         <div className="col token-result d-flex flex-column">

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.2;
 import "@openzeppelin/contracts@4.4.1/token/ERC20/ERC20.sol";
 
-contract token is ERC20{
+contract Wake_token is ERC20{
     struct Transaction{
         address _owner;
         address _sender;
@@ -21,6 +21,7 @@ contract token is ERC20{
         uint index=transactions.length;
         transactions.push(Transaction(_owner,_sender,_recipient,block.timestamp,_value,_explanation));
 
+        
         //1回目は確定で重複しないため
         user_transactions[_owner].push(index);
 
@@ -35,17 +36,15 @@ contract token is ERC20{
 
     }
 
-    constructor () ERC20(unicode"Web3　概論", unicode"点") {
+    constructor () ERC20("Wake Token", "Wake") {
         _mint(address(this), 10000000*10**decimals());
         _mint(msg.sender,10000000*10**decimals());
     }
-
     function transfer(address _to, uint256 _value) public override   returns (bool success){
         _transfer(msg.sender, _to, _value);
         add_history(msg.sender, msg.sender,_to,_value,"transfer");
         return true;
     }
-
     function transfer_explanation(address _to, uint256 _value,string memory _explanation) public returns (bool success){
         _transfer(msg.sender, _to, _value);
         add_history(msg.sender, msg.sender,_to,_value,_explanation);
@@ -57,14 +56,12 @@ contract token is ERC20{
 
         uint256 currentAllowance = allowance(sender,recipient);
         require(currentAllowance >= amount, "ERC20: transfer amount exceeds allowance");
-        
         unchecked {
             _approve(sender, _msgSender(), currentAllowance - amount);
         }
         add_history(sender, msg.sender,recipient,amount,"transfer_from");
         return true;
     }
-
     function transferFrom_explanation(address sender,address recipient,uint256 amount,string memory _explanation) public returns (bool) {
         _transfer(sender, recipient, amount);
 

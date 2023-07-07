@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  react-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./web3_quizApp:/usr/src/app # ローカルをコンテナ内にマウント
+    command: sh -c "cd web3_quiz && npm start"
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    

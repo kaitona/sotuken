@@ -1,0 +1,19 @@
+docker-compose build
+docker-compose run --rm react-app sh -c "cd wake && npm install -g npm@9.1.1"
+docker-compose run --rm react-app sh -c "npm install -g create-react-app && create-react-app web3_quiz"
+docker-compose run --rm react-app sh -c "cd web3_quiz && npm i ethers@5.7.2 && npm install react-router-dom && npm install react-responsive && npm install react-bootstrap bootstrap && npm install react-icons --save && npm install react-bootstrap-range-slider && npm install react-select && npm install react-bootstrap-counter --save && npm install discord.js && nom install url && npm install sqlite3&& npm install"
+docker-compose run --rm react-app sh -c "cd web3_quiz && npm install axios && npm install @uiw/react-md-editor "
+docker-compose run --rm react-app sh -c "cd web3_quiz && npm i html-react-parser && npm i marked && npm i react-markdown && npm i --save web3modal &&npm i @blocto/blocto-connector && npm i react-datetime moment react-moment react-datepicker redux react-redux @reduxjs/toolkit"
+docker-compose up
+
+@blocto/blocto-connector
+
+
+npm install web3
+npm install @uiw/react-md-editor
+
+marked react-markdownhttps://qiita.com/oggata/items/54afdd25b3f077ad4ca4 //web3modal
+docker-compose run --rm react-app sh -c "cd wake && npm run build"
+
+docker-compose run --rm react-app sh -c "cd wake && npm i react-responsive"
+

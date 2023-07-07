@@ -1,6 +1,6 @@
 import token_contract from "./token_abi.json";
 import quiz_contract from "./quiz_abi.json";
-import { chainId, rpc, bloctoSDK, quiz_address, token_address } from "./config"
+import { chainId, rpc,  quiz_address, token_address } from "./config"
 import { BigNumber, ethers } from "ethers";
 import { parseUnits, shallowCopy } from 'ethers/lib/utils';
 import Login from "./login";
@@ -36,30 +36,20 @@ class Contracts_MetaMask {
                 type: 'ERC20',
                 options: {
                     address: token_address,
-                    symbol: "点",
+                    symbol: "Wake",
                     decimals: 18,
                 },
             },
         })
 
     }
-    async isMetaMaskConnected() {
-        const {ethereum} = window;
-        const accounts = await ethereum.request({method: 'eth_accounts'});
-        return accounts && accounts.length > 0;
-    }
-
-    async connectWallet () {
-		await window.ethereum.request({ method: "eth_requestAccounts" });
-        window.location.reload();
-	}
 
     async change_network() {
         const networkParam = {
-            chainId: '0x13881',
-            chainName: 'Mumbai Testnet',
-            nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
-            rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+            chainId: '0x13466',
+            chainName: 'fujihalab chain',
+            nativeCurrency: { name: 'Fuji', symbol: 'FUJI', decimals: 18 },
+            rpcUrls: ['https://ik1-206-76848.vs.sakura.ne.jp'],
             blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
         };
         await window.ethereum.request({
@@ -218,7 +208,7 @@ class Contracts_MetaMask {
         Quiz_Contract.on(filters(account), (_sender, id) => {
             console.log("from: ", _sender);
             console.log("message: ", id);
-            document.location.href = process.env.PUBLIC_URL+"/answer_quiz/" + id;
+            document.location.href = "/answer_quiz/" + id;
         })
 
         return Quiz_Contract;
@@ -235,7 +225,7 @@ class Contracts_MetaMask {
 
         provider.once(answer_filters(account,id), (from, to, tokenId, event) => {
             console.log("hit")
-            document.location.href = process.env.PUBLIC_URL+"/user_page/" + account;
+            document.location.href = "/user_page/" + account;
         });
 
     }
