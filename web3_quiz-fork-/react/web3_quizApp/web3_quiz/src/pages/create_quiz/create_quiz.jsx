@@ -20,6 +20,7 @@ function Create_quiz() {
     const [answer_type, setAnswer_type] = useState(0);
     const [answer_data, setAnswer_data] = useState([]);
     const [correct, setCorrect] = useState("");
+    const [reply_line, setReply_startline] = useState(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }).replace(/[/]/g, "-").replace(/\s(\d):/, " 0$1:"));
     const [reply_deadline, setReply_deadline] = useState(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }).replace(/[/]/g, "-").replace(/\s(\d):/, " 0$1:"));
     const [reward, setReward] = useState(1);
     const [correct_limit, setCorrect_limit] = useState(1);
@@ -114,12 +115,24 @@ function Create_quiz() {
 
 
 
-                    {/* <Form.Group className="mb-3" style={{ textAlign: "left" }}>
+                    {/*<Form.Group className="mb-3" style={{ textAlign: "left" }}>
                         <Form.Label>選択肢(正解の回答にチェックを入れてください)</Form.Label><br />
                         <Answer_area1 name={"回答の追加"} variable={answer_data} variable1={correct} set={setAnswer_data} set1={setCorrect}/>
                     </Form.Group> */}
                     <Answer_select name={"回答の追加"} variable={answer_data} variable1={correct} set={setAnswer_data} set1={setCorrect} setAnswer_type={setAnswer_type} answer_type={answer_type} />
 
+                    <Form.Group className="mb-3" style={{ textAlign: "left" }}>
+                        <Form.Label>回答開始日時</Form.Label>
+                        <Form.Control
+                            type="datetime-local"
+                            defaultValue={now}
+
+                            //value={reply_deadline}
+                            min={now}
+                            onChange={(event) => setReply_startline(new Date(event.target.value))}
+                        />
+
+                    </Form.Group>
 
                     <Form.Group className="mb-3" style={{ textAlign: "left" }}>
                         <Form.Label>回答締切日時</Form.Label>
