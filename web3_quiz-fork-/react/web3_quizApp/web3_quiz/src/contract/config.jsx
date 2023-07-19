@@ -3,7 +3,7 @@ const rpc = "https://rpc-mumbai.maticvigil.com/"; // (required for Ethereum) JSO
 
 
 
-const quiz_address = "0x9A108973978Fe5A8ae16f58cbCc92CA2305BdE0E";
-const token_address = "0xA63551e91e360274BE55391dD2A4A93D308Adb01";
+const quiz_address = "0x7cE1E68cE2411c11175341F29b8247C97178eE10";
+const token_address = "0x60e4999c31f497c02b784E9B138dC000d30d2068";
 
 export { chainId, rpc, quiz_address, token_address };
