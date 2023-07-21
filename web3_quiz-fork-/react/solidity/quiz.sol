@@ -28,6 +28,7 @@ contract Quiz_Dapp is class_room {
         string answer_data;
         bytes32 answer_hash; //回答をハッシュ化したものを格納
         uint256 create_time_epoch;
+        uint256 start_time_epoch;
         uint256 time_limit_epoch;
         uint256 reward;
         uint256 respondent_count;
@@ -55,6 +56,7 @@ contract Quiz_Dapp is class_room {
         uint256 _answer_type,
         string memory _answer_data,
         string memory _answer,
+        uint256 _startline_after_epoch,
         uint256 _timelimit_after_epoch,
         uint256 _reward,
         uint256 _respondent_limit
@@ -83,6 +85,7 @@ contract Quiz_Dapp is class_room {
         quizs[id].answer_data = _answer_data;
         quizs[id].answer_hash = answer_hash;
         quizs[id].create_time_epoch = block.timestamp;
+        quizs[id].start_time_epoch = _startline_after_epoch;
         quizs[id].time_limit_epoch = _timelimit_after_epoch;
         quizs[id].reward = _reward;
         quizs[id].respondent_count = 0;
@@ -103,6 +106,7 @@ contract Quiz_Dapp is class_room {
             string memory content,
             string memory answer_data,
             uint256 create_time_epoch,
+            uint256 start_time_epoch,
             uint256 time_limit_epoch,
             uint256 reward,
             uint256 respondent_count,
@@ -118,6 +122,7 @@ contract Quiz_Dapp is class_room {
         answer_data = quizs[_quiz_id].answer_data;
         time_limit_epoch = quizs[_quiz_id].time_limit_epoch;
         create_time_epoch = quizs[_quiz_id].create_time_epoch;
+        start_time_epoch = quizs[_quiz_id].start_time_epoch;
         reward = quizs[_quiz_id].reward;
         respondent_count = quizs[_quiz_id].respondent_count;
         respondent_limit = quizs[_quiz_id].respondent_limit;

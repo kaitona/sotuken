@@ -10,7 +10,7 @@ function Add_teacher(props) {
     }
     useEffect(() => {
         props.cont.get_teachers().then((result) => {
-            console.log(result);
+            //console.log(result);
             setTeachers(result);
         });
     }, []);

@@ -126,6 +126,11 @@
 				},
 				{
 					"internalType": "uint256",
+					"name": "_startline_after_epoch",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
 					"name": "_timelimit_after_epoch",
 					"type": "uint256"
 				},
@@ -199,6 +204,11 @@
 				{
 					"internalType": "uint256",
 					"name": "create_time_epoch",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "start_time_epoch",
 					"type": "uint256"
 				},
 				{
