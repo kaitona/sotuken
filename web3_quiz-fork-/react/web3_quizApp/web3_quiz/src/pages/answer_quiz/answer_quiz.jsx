@@ -83,10 +83,12 @@ function Answer_type2(props) {
     );
 }
 
+
 function Answer_quiz(props) {
 
 
     const [answer, setAnswer] = useState();
+    const [now, setnow] = useState(null);
     const [show, setShow] = useState(false);
     const [content, setContent] = useState("");
     let clean_up;
@@ -106,11 +108,18 @@ function Answer_quiz(props) {
     }
 
     const create_answer = async () => {
-        const res = Contract.create_answer(id, answer, setShow, setContent);
+        if (parseInt(quiz[8]).toString() <= now){
+            const res = Contract.create_answer(id, answer, setShow, setContent);
+        }
+        else{
+            alert("まだ回答開始時間になっていません");
+        }
+        
     }
 
     useEffect(() => {
         get_quiz();
+        setnow(Math.floor(new Date().getTime() / 1000)); 
         Contract.event_create_answer(id);
 
         //コンポーネントのアンマウント時にイベントリスナーを削除

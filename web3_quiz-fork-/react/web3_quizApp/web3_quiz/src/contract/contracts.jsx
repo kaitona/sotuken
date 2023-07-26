@@ -245,7 +245,7 @@ class Contracts_MetaMask {
 
 
 
-    async create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_deadline, reward, correct_limit, setShow) {
+    async create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow) {
         function timeout(delay) {
             return new Promise(res => setTimeout(res, delay));
         }
@@ -260,14 +260,16 @@ class Contracts_MetaMask {
                 if (approval.toString() >= parseUnits((reward * correct_limit).toString(), 18).toString()) {
 
                     // 日時を Date オブジェクトに変換する
-                    const dateObj = new Date(reply_deadline);
+                    const dateStartObj = new Date(reply_startline);
+                    const dateEndObj = new Date(reply_deadline);
 
                     // Date オブジェクトをエポック秒に変換する
-                    const epochSeconds = Math.floor(dateObj.getTime() / 1000);
+                    const epochStartSeconds = Math.floor(dateStartObj.getTime() / 1000);
+                    const epochEndSeconds = Math.floor(dateEndObj.getTime() / 1000);
                     console.log(reply_deadline);
-                    console.log(epochSeconds);
-                    console.log(title.toString(), explanation.toString(), thumbnail_url.toString(), content.toString(), answer_type.toString(), answer_data.toString(), correct.toString(), reply_deadline.toString(), reward.toString(), correct_limit.toString());
-                    const res = await Quiz_Contract.create_quiz(title.toString(), explanation.toString(), thumbnail_url.toString(), content.toString(), answer_type.toString(), answer_data.toString(), correct.toString(), epochSeconds.toString(), reward.toString(), correct_limit.toString());
+                    console.log(epochEndSeconds);
+                    console.log(title.toString(), explanation.toString(), thumbnail_url.toString(), content.toString(), answer_type.toString(), answer_data.toString(), correct.toString(), reply_startline.toString(), reply_deadline.toString(), reward.toString(), correct_limit.toString());
+                    const res = await Quiz_Contract.create_quiz(title.toString(), explanation.toString(), thumbnail_url.toString(), content.toString(), answer_type.toString(), answer_data.toString(), correct.toString(), epochStartSeconds.toString(), epochEndSeconds.toString(), reward.toString(), correct_limit.toString());
 
                 }
                 else {

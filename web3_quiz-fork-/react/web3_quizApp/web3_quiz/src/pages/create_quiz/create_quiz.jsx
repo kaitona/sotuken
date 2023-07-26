@@ -20,7 +20,7 @@ function Create_quiz() {
     const [answer_type, setAnswer_type] = useState(0);
     const [answer_data, setAnswer_data] = useState([]);
     const [correct, setCorrect] = useState("");
-    const [reply_line, setReply_startline] = useState(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }).replace(/[/]/g, "-").replace(/\s(\d):/, " 0$1:"));
+    const [reply_startline, setReply_startline] = useState(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }).replace(/[/]/g, "-").replace(/\s(\d):/, " 0$1:"));
     const [reply_deadline, setReply_deadline] = useState(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }).replace(/[/]/g, "-").replace(/\s(\d):/, " 0$1:"));
     const [reward, setReward] = useState(1);
     const [correct_limit, setCorrect_limit] = useState(1);
@@ -33,17 +33,22 @@ function Create_quiz() {
 
 
     const create_quiz = async () => {
-        console.log(title, explanation, thumbnail_url, content, answer_data, correct, reply_deadline, reward, correct_limit);
+        console.log(title, explanation, thumbnail_url, content, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
 
         if (correct !== "") {
-            Contract.event_create_quiz();
-            setShow(true);
-            const res = Contract.approve(reward, correct_limit, setShow);
+            if (reply_startline < reply_deadline){
+                Contract.event_create_quiz();
+                setShow(true);
+                const res = Contract.approve(reward, correct_limit, setShow);
 
-            console.log(res);
-            res.then((value) => {
-                Contract.create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_deadline, reward, correct_limit, setShow);
-            });
+                console.log(res);
+                res.then((value) => {
+                    Contract.create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow);
+                });
+            }
+            else{
+                alert("回答開始日時を回答締切日時より前に設定してください");
+            }
         }
         else {
             alert("正解を入力してください");

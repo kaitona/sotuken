@@ -6,15 +6,19 @@ import { Link } from 'react-router-dom';
 import "./quiz_simple.css";
 
 function Time_diff(props) {
-    function convertSecondsToHours(seconds) {
+    function convertSecondsToHours(secondsLimit, secondsStart) {
+
+        let isBeforeStartline = false;
 
         const date1 = new Date(); // 1つ目のDateオブジェクト
-        const date2 = new Date(seconds * 1000); // 2つ目のDateオブジェクト
+        const date2 = new Date(secondsLimit * 1000); // 2つ目のDateオブジェクト
+        const date3 = new Date(secondsStart * 1000);
 
 
 
         const epochTime1 = Math.floor(date1.getTime() / 1000); // 現在時刻を秒単位のエポック時間に変換
         const epochTime2 = Math.floor(date2.getTime() / 1000); // タイムリミットを秒単位のエポック時間に変換
+        const epochTime3 = Math.floor(date3.getTime() / 1000); // タイムリミットを秒単位のエポック時間に変換
         // console.log("/////");
         // console.log(date2,seconds);
         // console.log( epochTime1 , epochTime2,epochTime1 - epochTime2); // タイムリミットと現在時刻の差を表示
@@ -23,19 +27,17 @@ function Time_diff(props) {
         // console.log("////")
 
         let elapsedTime = 0
-        if (epochTime2 - epochTime1 > 0) {
-            elapsedTime = Math.floor((epochTime2 - epochTime1)); // 二つのエポック時間の差をミリ秒単位で求める
 
-
+        if (epochTime1 < epochTime3){
+            elapsedTime = Math.floor(Math.abs(epochTime3-epochTime1));// 二つのエポック時間の差をミリ秒単位で求める
             elapsedTime = new Date(elapsedTime * 1000);
-
-
+            isBeforeStartline = true;
         }
-        else {
-            elapsedTime = Math.floor((epochTime1 - epochTime2)); // 二つのエポック時間の差をミリ秒単位で求める
-
+        else{
+            elapsedTime = Math.floor(Math.abs(epochTime2-epochTime1));// 二つのエポック時間の差をミリ秒単位で求める
             elapsedTime = new Date(elapsedTime * 1000);
         }
+        
 
         //console.log(elapsedTime);
 
@@ -62,13 +64,18 @@ function Time_diff(props) {
         for (i; i < date.length; i++) {
             res += date[i].toString() + labels[i]
         }
-
-        if (epochTime2 - epochTime1 > 0) {
-            return "締め切りまで " + res;
+        if (isBeforeStartline){
+            return "回答開始時間まで" + res;
         }
-        else {
-            return "締切終了";
+        else{
+            if (epochTime2 - epochTime1 > 0) {
+                return "締め切りまで " + res;
+            }
+            else {
+                return "締切終了";
+            }
         }
+        
 
 
 
@@ -76,12 +83,11 @@ function Time_diff(props) {
     }
 
     //console.log(parseInt(props.limit["_hex"]));
-
     return (
         <div>
             {/* {now}<br/>
             {targetDate}<br/> */}
-            {convertSecondsToHours(parseInt(props.limit["_hex"]))}
+            {convertSecondsToHours(parseInt(props.limit["_hex"]), parseInt(props.start["_hex"]))}
         </div>
     );
 }
@@ -116,27 +122,27 @@ function Simple_quiz(props) {
                                 <div className="col-sm-12 col-md-12 col-lg-12 ">{props.quiz[3]}</div>
                             </div>
                             <div className="row h-20" style={{ "fontSize": "14px" }}>
-                                <Time_diff limit={props.quiz[5]} />
+                                <Time_diff start={props.quiz[5]} limit={props.quiz[6]} />
                             </div>
                             <div className="d-flex" style={{ "fontSize": "14px", "lineHeight": "1" }}>
                                 {/* <div className="col-4 ">{Date(props.item[4].toNumber() * 1000)}</div> */}
 
                                 <div className="col-3">
                                     <div className="col">報酬</div>
-                                    <div className="col" style={{ "textAlign": "center" }}>{props.quiz[6].toNumber()}Wake</div>
+                                    <div className="col" style={{ "textAlign": "center" }}>{props.quiz[7].toNumber()}Wake</div>
                                 </div>
                                 <div className="col-3">
                                     <div className="col">正解数</div>
-                                    <div className="col" style={{ "textAlign": "center" }}>{props.quiz[7].toNumber()}</div>
+                                    <div className="col" style={{ "textAlign": "center" }}>{props.quiz[8].toNumber()}</div>
                                 </div>
                                 <div className="col-3">
                                     <div className="col">上限</div>
-                                    <div className="col" style={{ "textAlign": "center" }}>{props.quiz[8].toNumber()}</div>
+                                    <div className="col" style={{ "textAlign": "center" }}>{props.quiz[9].toNumber()}</div>
                                 </div>
                                 <div className="col-3">
                                     <div className="col">状態</div>
                                     <div className="col" style={{ "textAlign": "center" }}>
-                                        {props.quiz[9].toNumber()==0?("未回答"):props.quiz[9].toNumber()==1?("不正解"):props.quiz[9].toNumber()==2?("正解"):""}
+                                        {props.quiz[10].toNumber()==0?("未回答"):props.quiz[10].toNumber()==1?("不正解"):props.quiz[10].toNumber()==2?("正解"):""}
                                         </div>
                                 </div>
                                 {/* <div className="col-3 ">正解数:{props.quiz[7].toNumber()}</div>
