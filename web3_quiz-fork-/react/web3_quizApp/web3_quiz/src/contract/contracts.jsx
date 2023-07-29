@@ -6,6 +6,10 @@ import { parseUnits, shallowCopy } from 'ethers/lib/utils';
 import Login from "./login";
 import { useEffect } from 'react';
 
+import { createPublicClient, http } from 'viem';
+import { mainnet } from 'viem/chains';
+
+
 const { ethereum } = window;
 
 
