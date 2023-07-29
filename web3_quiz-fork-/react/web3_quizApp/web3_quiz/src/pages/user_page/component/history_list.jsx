@@ -42,8 +42,8 @@ function History_list(props) {
 
         //add_quiz_listをmapで展開して、now_quiz_listに追加
         
+        console.log(add_history_list);
         add_history_list.map((history) => {
-            //console.log(history);
             now_history_list.push(<Simple_history history={history} />);//DOMとして追加
         });
         Set_history_list(history_list => [...history_list, ...now_history_list]);

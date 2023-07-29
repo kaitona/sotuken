@@ -37,14 +37,14 @@ function User_page() {
     console.log(user_name, image, state);
     Setuser_name(user_name);
     SetIcons(image);
-    SetResult(parseInt(result["_hex"], 16) / 10 ** 18);
+    SetResult(result / 10 ** 18);
     Set_state(state);
 
     cont.get_user_history_len(address).then(data => {
       // Promise オブジェクトが解決された後の処理を記述
-      let now = parseInt(data["_hex"]);
-      Set_history_sum(now);
-      now_numRef.current = now;
+      console.log(Number(data));
+      Set_history_sum(Number(data));
+      now_numRef.current = Number(data);
     });
   }
 
