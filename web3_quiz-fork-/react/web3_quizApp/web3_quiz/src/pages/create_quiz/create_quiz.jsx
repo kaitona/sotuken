@@ -21,7 +21,7 @@ function Create_quiz() {
     const [answer_data, setAnswer_data] = useState([]);
     const [correct, setCorrect] = useState("");
     const [reply_startline, setReply_startline] = useState(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }).replace(/[/]/g, "-").replace(/\s(\d):/, " 0$1:"));
-    const [reply_deadline, setReply_deadline] = useState(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }).replace(/[/]/g, "-").replace(/\s(\d):/, " 0$1:"));
+    const [reply_deadline, setReply_deadline] = useState(getLocalizedDateTimeString(addDays(new Date(), 1)));
     const [reward, setReward] = useState(1);
     const [correct_limit, setCorrect_limit] = useState(1);
     const [state, setState] = useState("Null");
@@ -50,8 +50,7 @@ function Create_quiz() {
 
 
     }
-    function getLocalizedDateTimeString() {
-        const now = new Date();
+    function getLocalizedDateTimeString(now = new Date()) {
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
@@ -75,13 +74,24 @@ function Create_quiz() {
 
         return localizedDateTimeString;
     }
+    function addDays(date, days) {
+        date.setDate(date.getDate() + days);
+        return date;
+    }
+
 
     //初回のみ実行
     useEffect(() => {
 
+        // let now = new Date();
+        // const diff_time = new Date(now + 100);
+        // setReply_deadline(addDays(now, 5));
+
         setnow(getLocalizedDateTimeString());
-        console.log(now);
-        console.log(new Date().toISOString().slice(0, 16));
+        // console.log(now);
+        // console.log(new Date().toISOString().slice(0, 16));
+        console.log(reply_deadline);
+        console.log(reply_startline);
 
     }, []);
     return (
@@ -137,7 +147,7 @@ function Create_quiz() {
                         <Form.Label>回答締切日時</Form.Label>
                         <Form.Control
                             type="datetime-local"
-                            defaultValue={now}
+                            defaultValue={reply_deadline}
 
                             //value={reply_deadline}
                             min={now}
