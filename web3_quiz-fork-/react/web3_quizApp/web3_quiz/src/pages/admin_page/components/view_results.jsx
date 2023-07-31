@@ -28,11 +28,10 @@ function View_result(props) {
                 <tbody>
                     {results.map((item, index) => {
                         return (
-
                             <tr>
                                 <td>{index + 1}</td>
-                                <td>{item[0]}</td>
-                                <td>{item[1].toString() / 10 ** 18}点</td>
+                                <td>{item.student}</td>
+                                <td>{Number(item.result) / 10 ** 18}点</td>
                             </tr>
                         );
                     })

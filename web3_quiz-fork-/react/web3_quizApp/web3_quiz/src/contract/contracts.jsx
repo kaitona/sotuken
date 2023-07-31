@@ -1,37 +1,53 @@
+import { createPublicClient, createWalletClient, http, getContract, parseAbiItem, custom, UnauthorizedProviderError } from 'viem'
 import token_contract from "./token_abi.json";
 import quiz_contract from "./quiz_abi.json";
 import { chainId, rpc,  quiz_address, token_address } from "./config"
-import { BigNumber, ethers } from "ethers";
-import { parseUnits, shallowCopy } from 'ethers/lib/utils';
-import Login from "./login";
-import { useEffect } from 'react';
-
-import { createPublicClient, http } from 'viem';
-import { mainnet } from 'viem/chains';
-
+import { fujihalab } from './network'
 
 const { ethereum } = window;
 
+const walletClient = createWalletClient({
+    chain: fujihalab,
+    transport: custom(window.ethereum)
+})
 
+const publicClient = createPublicClient({
+    chain: fujihalab,
+    transport: http()
+})
 
 const token_abi = token_contract.abi;
 const quiz_abi = quiz_contract.abi;
 
-// function Contracts_MetaMask(){
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
-const Token_Contract = new ethers.Contract(token_address, token_abi, signer);
-const Quiz_Contract = new ethers.Contract(quiz_address, quiz_abi, signer);
+const token = getContract({
+    address:token_address,
+    abi:token_abi,
+    walletClient,
+    publicClient,
+})
 
-const answer_filters = Quiz_Contract.filters["Post_answer"];
+const quiz= getContract({
+    address:quiz_address,
+    abi:quiz_abi,
+    walletClient,
+    publicClient,
+})
+
+if (window.ethereum) {
+    window.ethereum.on("chainChanged", () => {
+        window.location.reload();
+    });
+    window.ethereum.on("accountsChanged", () => {
+        window.location.reload();
+    });
+}
+
+
+
 class Contracts_MetaMask {
     
     async get_chain_id() {
-
-        const chainId = await provider.getNetwork();
-
-        return chainId["chainId"];
-
+        return await walletClient.getChainId();
     }
     async add_token_wallet() {
         await window.ethereum.request({
@@ -49,48 +65,38 @@ class Contracts_MetaMask {
     }
 
     async change_network() {
-        const networkParam = {
-            chainId: '0x13466',
-            chainName: 'fujihalab chain',
-            nativeCurrency: { name: 'Fuji', symbol: 'FUJI', decimals: 18 },
-            rpcUrls: ['https://ik1-206-76848.vs.sakura.ne.jp'],
-            blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
-        };
-        await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [networkParam],
-        });
-        window.location.reload();
+        try {
+            await walletClient.switchChain({ id: fujihalab.id })
+        } catch (e) {
+            //userがrejectした場合
+            if (e.code === 4001) {
+                console.log(e);
+            }
+            else {
+                this.add_network();
+            }
+        }
 
     }
-
-
-    async get_balanceHandler() {
+    async add_network() {
         try {
-
-            if (ethereum) {
-                console.log(token_address)
-                const decimals = await Token_Contract.decimals();
-                console.log(decimals)
-                return decimals;
-
-
-            } else {
-                console.log("Ethereum object does not exist");
-            }
-        } catch (err) {
-            console.log(err);
+            await walletClient.addChain({ chain: fujihalab });
+        }
+        catch (e) {
+            console.log(e);
         }
     }
+
     async get_token_balance(address) {
         try {
 
             if (ethereum) {
                 console.log(token_address)
-                const balance = await Token_Contract.balanceOf(address);
-                console.log(parseInt(balance["_hex"], 16) / 10 ** 18);
+                const balance = await token.read.balanceOf({ args: [address]});
+                console.log(balance)
+                console.log(Number(balance)/ 10 ** 18);
                 //16進数を10進数に変換 
-                return parseInt(balance["_hex"], 16) / 10 ** 18;
+                return Number(balance)/ 10 ** 18;
 
             } else {
                 console.log("Ethereum object does not exist");
@@ -99,12 +105,14 @@ class Contracts_MetaMask {
             console.log(err);
         }
     }
+
+
     async get_address() {
         try {
 
             if (ethereum) {
-                const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                return accounts[0];
+                return (await walletClient.requestAddresses())[0];
+                
             } else {
                 console.log("Ethereum object does not exist");
             }
@@ -114,6 +122,8 @@ class Contracts_MetaMask {
     }
 
     async get_token_history(address, start, end) {
+        console.log(address, start, end)
+        let account = await this.get_address();
         try {
             if (ethereum) {
                 console.log(token_address);
@@ -122,20 +132,14 @@ class Contracts_MetaMask {
 
                 console.log(start, end);
                 if (start <= end) {
-                    //console.log("22");
-
                     for (let i = start; i < end; i++) {
-                        console.log(i);
-                        res.push(await Token_Contract.get_user_history(address, i));
-                        console.log(res);
+                        res.push(await token.read.get_user_history({account,args:[address, i]}));
                     }
                 }
                 else {
                     //console.log("33");
                     for (let i = start - 1; i >= end; i--) {
-                        //console.log(i);
-                        res.push(await Token_Contract.get_user_history(address, i));
-                        //console.log(res);
+                        res.push(await token.read.get_user_history({account,args:[address, i]}));
                     }
                 }
 
@@ -150,9 +154,9 @@ class Contracts_MetaMask {
 
     async get_user_history_len(address) {
         console.log(token_address);
-        const res = await Token_Contract.get_user_history_len(address);
-        console.log(res)
-        return res;
+        let account = await this.get_address();
+        const res = await token.read.get_user_history_len({account,args:[address]});
+        return Number(res);
     }
 
     //ユーザーのデータを取得する
@@ -160,9 +164,8 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 console.log(token_address);
-                const res = await Quiz_Contract.get_user(address);
-                console.log(res);
-                return res;
+                const res = await quiz.read.get_user({args:[address]});
+                return [res[0],res[1],Number(res[2]),res[3]];
             } else {
                 console.log("Ethereum object does not exist");
             }
@@ -170,13 +173,23 @@ class Contracts_MetaMask {
             console.log(err);
         }
     }
-    //ユーザーのデータを更新する
-    async update_user_data(name, image_url) {
+ 
+    async approve(account,amount) {
         try {
             if (ethereum) {
-                const signer = provider.getSigner();
-                await Quiz_Contract.set_user_name(name);
-                await Quiz_Contract.set_user_img(image_url);
+                console.log(amount);
+                try {
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: token_address,
+                        abi: token_abi,
+                        functionName: 'approve',
+                        args: [quiz_address, amount],
+                    });
+                    return (await walletClient.writeContract(request));
+                } catch (e) {
+                    console.log(e);
+                }
 
             } else {
                 console.log("Ethereum object does not exist");
@@ -185,101 +198,39 @@ class Contracts_MetaMask {
             console.log(err);
         }
     }
-
-    async approve(reward, correct_limit, setShow) {
-        try {
-            if (ethereum) {
-                const pay = parseUnits((reward * correct_limit).toString(), 18);
-                const res = await Token_Contract.approve(quiz_address, pay);
-
-                return res;
-            } else {
-                setShow(false);
-                console.log("Ethereum object does not exist");
-            }
-        } catch (err) {
-            setShow(false);
-            console.log(err);
-        }
-    }
-
-    async event_create_quiz() {
-        //emitを受け取る準備
-        console.log("event_create_quiz");
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
-        const account = accounts[0];
-        const filters = Quiz_Contract.filters["Create_quiz"]
-        Quiz_Contract.on(filters(account), (_sender, id) => {
-            console.log("from: ", _sender);
-            console.log("message: ", id);
-            document.location.href = "/answer_quiz/" + id;
-        })
-
-        return Quiz_Contract;
-
-    }
-
-    async event_create_answer(id) {
-        //emitを受け取る準備
-        console.log("event_create_quiz");
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
-        const account = accounts[0];
-        console.log(provider.off(answer_filters(account,id)));
-        console.log(provider.listeners(answer_filters(account,id)));
-
-        provider.once(answer_filters(account,id), (from, to, tokenId, event) => {
-            console.log("hit")
-            document.location.href = "/user_page/" + account;
-        });
-
-    }
-    async stop_event_create_answer(id) {
-        //emitを受け取る準備
-        console.log("event_create_quiz");
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
-        const account = accounts[0];
-
-        console.log(provider.off(answer_filters(account,id)));
-        console.log(provider.listeners(answer_filters(account,id)));
-
-
-    }
-
-
-
-
 
     async create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow) {
-        function timeout(delay) {
-            return new Promise(res => setTimeout(res, delay));
-        }
+        setShow(true);
         try {
             if (ethereum) {
 
-                const signer = provider.getSigner();
-                const account = await ethereum.request({ method: 'eth_requestAccounts' });
+                let account = await this.get_address();
 
-                let approval = await Token_Contract.allowance(account[0], quiz_address);
+                let approval = await token.read.allowance({account,args:[account, quiz_address]});
+                console.log(reward, correct_limit);
 
-                if (approval.toString() >= parseUnits((reward * correct_limit).toString(), 18).toString()) {
+                if (Number(approval) >= Number(reward*correct_limit*10**18)) {
 
-                    // 日時を Date オブジェクトに変換する
-                    const dateStartObj = new Date(reply_startline);
-                    const dateEndObj = new Date(reply_deadline);
-
-                    // Date オブジェクトをエポック秒に変換する
-                    const epochStartSeconds = Math.floor(dateStartObj.getTime() / 1000);
-                    const epochEndSeconds = Math.floor(dateEndObj.getTime() / 1000);
-                    console.log(reply_deadline);
-                    console.log(epochEndSeconds);
-                    console.log(title.toString(), explanation.toString(), thumbnail_url.toString(), content.toString(), answer_type.toString(), answer_data.toString(), correct.toString(), reply_startline.toString(), reply_deadline.toString(), reward.toString(), correct_limit.toString());
-                    const res = await Quiz_Contract.create_quiz(title.toString(), explanation.toString(), thumbnail_url.toString(), content.toString(), answer_type.toString(), answer_data.toString(), correct.toString(), epochStartSeconds.toString(), epochEndSeconds.toString(), reward.toString(), correct_limit.toString());
-
+                    let hash=this._create_quiz(account,title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
+                
+                    if (hash) {
+                        let res = await publicClient.waitForTransactionReceipt({ hash });
+                        console.log(res);
+                        
+                    }
                 }
                 else {
-                    console.log("retry");
-                    await timeout(1000);
-                    this.create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_deadline, reward, correct_limit, setShow)
+                    
+                    let hash = await this.approve(account,reward*correct_limit*10**18);
+                    if (hash) {
+                        let res = await publicClient.waitForTransactionReceipt({ hash });
+                        hash=this._create_quiz(account,title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
+                        if (hash) {
+                            res = await publicClient.waitForTransactionReceipt({ hash });
+                            console.log(res);
+                            
+                        }
+                    }
                 }
                 console.log("create_quiz_cont");
             } else {
@@ -290,102 +241,157 @@ class Contracts_MetaMask {
             setShow(false)
             console.log(err);
         }
+    }
+
+    async _create_quiz(account,title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit){
+        const dateStartObj = new Date(reply_startline);
+        const dateEndObj = new Date(reply_deadline);
+
+        // Date オブジェクトをエポック秒に変換する
+        const epochStartSeconds = Math.floor(dateStartObj.getTime() / 1000);
+        const epochEndSeconds = Math.floor(dateEndObj.getTime() / 1000);
+        try {
+            if (ethereum) {
+                //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
+                console.log(answer_type);
+                try {
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName: 'create_quiz',
+                        args: [title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit],
+                        //args: ["a", "a", "a", "a", 1, "a", "a", epochStartSeconds, epochEndSeconds, 2, 2],
+                    });
+                    return (await walletClient.writeContract(request));
+                } catch (e) {
+                    console.log(e);
+                }
+
+            } else {
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    
     }
 
 
     async create_answer(id, answer, setShow, setContent) {
+        console.log(id, answer);
         try {
 
             if (ethereum) {
-                const account = await ethereum.request({ method: 'eth_requestAccounts' });
-                const res = await Quiz_Contract.post_answer(id, answer.toString());
+                let account = await this.get_address();
+
+
                 setShow(true)
                 setContent("書き込み中...")
-
-                const res1 = await Quiz_Contract.post_answer_view(id, answer.toString());
-                console.log("///////////");
-                console.log(res1);
-                if (res1 == true) {
-                    setContent("正解です！待機すると、マイページに遷移します");
+                let hash = await this._post_answer(account,id,answer);
+                
+                if (hash) {
+                    // const res1 = await quiz.read.post_answer_view({account,args:[id, answer.toString()]})
+                    // console.log(res1);
+                    // if (res1 == true) {
+                    //     setContent("正解です！待機すると、マイページに遷移します");
+                    // }
+                    // else {
+                    //     setContent("不正解です。待機すると、マイページに遷移します");
+                    // }
+                    let res = await publicClient.waitForTransactionReceipt({ hash });
+                    console.log(res);
+                    document.location.href = "/user_page/" + account;
                 }
-                else {
-                    setContent("不正解です。待機すると、マイページに遷移します");
-                }
-
-                console.log("///////////");
-                console.log("create_quiz_cont");
-                return res1;
+                console.log("create_answer_cont");
 
             } else {
-                setShow(false)
+
                 console.log("Ethereum object does not exist");
             }
         } catch (err) {
-            setShow(false)
             console.log(err);
+        }
+        setShow(false);
+    }
+
+    async _post_answer(account,id, answer) {
+        try {
+            const { request } = await publicClient.simulateContract({
+                account,
+                address: quiz_address,
+                abi: quiz_abi,
+                functionName: 'post_answer',
+                args: [id, answer.toString()],
+            });
+            console.log("正常そう");
+            return (await walletClient.writeContract(request));
+        } catch (e) {
+            console.log(e);
         }
     }
 
     async get_quiz(id) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const answer_typr = await Quiz_Contract.get_quiz_answer_type(id);
-        const res = await Quiz_Contract.get_quiz(id);
+        const answer_typr = await quiz.read.get_quiz_answer_type({args:[id]});
+        const res = await quiz.read.get_quiz({args:[id]});
         return [...res, answer_typr];
     }
 
 
 
     async get_quiz_simple(id) {
-
-        const signer = provider.getSigner();
-
-        const res = await Quiz_Contract.get_quiz_simple(id);
-        return res;
+        return await quiz.read.get_quiz_simple({args:[id]});
     }
 
     //startからendまでのクイズを取得
 
     async get_quiz_list(start, end) {
-
-        const signer = provider.getSigner();
-
         //取得したクイズを格納する配列
         let res = [];
+        let account = await this.get_address();
 
         console.log(start, end);
         if (start <= end) {
-            //console.log("22");
-
             for (let i = start; i < end; i++) {
                 console.log(i);
-                res.push(await Quiz_Contract.get_quiz_simple(i));
+                res.push(await quiz.read.get_quiz_simple({account,args:[i]}));
                 console.log(res);
             }
         }
         else {
-            //console.log("33");
             for (let i = start - 1; i >= end; i--) {
-                //console.log(i);
-                res.push(await Quiz_Contract.get_quiz_simple(i));
-                //console.log(res);
+                console.log(i);
+                res.push(await quiz.read.get_quiz_simple({account,args:[i]}));
+                console.log(res);
             }
         }
-
         return res;
     }
 
     async get_quiz_lenght() {
-        const res = await Quiz_Contract.get_quiz_length();
-        return res;
+        return await quiz.read.get_quiz_length();
     }
 
 
     async add_student(address) {
         try {
             if (ethereum) {
-                const res = await Quiz_Contract.add_student(address);
-                console.log(res);
+
+                try {
+
+                    let account = await this.get_address();
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName: 'add_student',
+                        args: [address],
+                    });
+                    return (await walletClient.writeContract(request));
+                } catch (e) {
+                    console.log(e);
+                }
+
             } else {
                 console.log("Ethereum object does not exist");
             }
@@ -397,8 +403,20 @@ class Contracts_MetaMask {
     async add_teacher(address) {
         try {
             if (ethereum) {
-                const res = await Quiz_Contract.add_teacher(address);
-                console.log(res);
+                try {
+
+                    let account = await this.get_address();
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName: 'add_teacher',
+                        args: [address],
+                    });
+                    return (await walletClient.writeContract(request));
+                } catch (e) {
+                    console.log(e);
+                }
 
             } else {
                 console.log("Ethereum object does not exist");
@@ -411,10 +429,8 @@ class Contracts_MetaMask {
     async get_teachers() {
         try {
             if (ethereum) {
-                const res = await Quiz_Contract.get_teacher_all();
-                console.log(res);
-                return res;
-
+                let account = await this.get_address();
+                return await quiz.read.get_teacher_all({account,args:[]});
             } else {
                 console.log("Ethereum object does not exist");
             }
@@ -427,7 +443,9 @@ class Contracts_MetaMask {
     async get_results() {
         try {
             if (ethereum) {
-                const res = await Quiz_Contract.get_student_results();
+                let account = await this.get_address();
+                console.log(res);
+                let res=await quiz.read.get_student_results({account,args:[]});
                 console.log(res);
                 return res;
 

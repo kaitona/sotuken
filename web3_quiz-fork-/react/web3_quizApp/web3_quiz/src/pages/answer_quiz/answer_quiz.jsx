@@ -119,24 +119,17 @@ function Answer_quiz(props) {
 
     useEffect(() => {
         get_quiz();
-        setnow(Math.floor(new Date().getTime() / 1000)); 
-        Contract.event_create_answer(id);
-
-        //コンポーネントのアンマウント時にイベントリスナーを削除
-        return () => {
-            Contract.stop_event_create_answer(id);
-        }   
-
-            
+        setnow(Math.floor(new Date().getTime() / 1000));          
     }, [])
 
 
     if (quiz && simple_quiz) {
-        console.log(quiz)
+        // console.log(quiz)
+        // console.log(simple_quiz)
         return (
             <>
                 <h3 style={{margin:"50px"}}>
-                    {simple_quiz["state"] == 0 ? "初回の回答です。正解するとトークンがもらえます" : simple_quiz["state"] == 1 ? "初回の回答で間違えています。正解してもトークンはもらえません" : simple_quiz["state"] == 2 ? "正解しています" : ""}
+                    {Number(simple_quiz["state"]) == 0 ? "初回の回答です。正解するとトークンがもらえます" : Number(simple_quiz["state"]) == 1 ? "初回の回答で間違えています。正解してもトークンはもらえません" : Number(simple_quiz["state"]) == 2 ? "正解しています" : ""}
 
                 </h3>
                 <div className="container" style={{ "text-align": "left", "margin-bottom": "50px" }}>
@@ -149,12 +142,12 @@ function Answer_quiz(props) {
                     </div>
 
                     {(() => {
-                        if (quiz[12].toString() == 0) {
+                        if (Number(quiz[13]) == 0) {
                             return <Answer_type1 quiz={quiz} answer={answer} setAnswer={setAnswer} />;
                         }
                     })()}
                     {(() => {
-                        if (quiz[12].toString() == 1) {
+                        if (Number(quiz[13]) == 1) {
                             return <Answer_type2 quiz={quiz} answer={answer} setAnswer={setAnswer} />;
                         }
                     })()}
@@ -162,7 +155,7 @@ function Answer_quiz(props) {
                     <div class="d-flex justify-content-end">
                         <Button variant="primary" onClick={create_answer}>回答</Button>
                     </div>
-                    {quiz[12].toString()}
+                    {Number(quiz[13])}
                 </div>
                 <Wait_Modal showFlag={show} content={content} />
 

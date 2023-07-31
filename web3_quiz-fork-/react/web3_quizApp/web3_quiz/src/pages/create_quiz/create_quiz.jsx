@@ -36,17 +36,11 @@ function Create_quiz() {
         console.log(title, explanation, thumbnail_url, content, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
 
         if (correct !== "") {
-            if (reply_startline < reply_deadline){
-                Contract.event_create_quiz();
-                setShow(true);
-                const res = Contract.approve(reward, correct_limit, setShow);
-
-                console.log(res);
-                res.then((value) => {
-                    Contract.create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow);
-                });
+            console.log(new Date(reply_startline).getTime(), new Date(reply_deadline).getTime());
+            if (new Date(reply_startline).getTime() < new Date(reply_deadline).getTime()) {
+                Contract.create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow);
             }
-            else{
+            else {
                 alert("回答開始日時を回答締切日時より前に設定してください");
             }
         }

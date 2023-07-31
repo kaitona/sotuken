@@ -100,6 +100,7 @@ function Simple_quiz(props) {
     }, [show]);
 
     const search = useLocation().search;
+    console.log(props.quiz)
     return (
 
         <>
@@ -107,7 +108,7 @@ function Simple_quiz(props) {
             <div onClick={() => setShow(true)}>
             
                 <div className="quiz_card" >
-                <Link to={{ pathname: "/answer_quiz/"+props.quiz[0].toNumber(), state: { back_page: 0 }}} style={{ "color": "black", "textDecoration": "none" }}>
+                <Link to={{ pathname: "/answer_quiz/"+Number(props.quiz[0]), state: { back_page: 0 }}} style={{ "color": "black", "textDecoration": "none" }}>
             
 
                     <div className="row quiz_card_1">
@@ -122,27 +123,27 @@ function Simple_quiz(props) {
                                 <div className="col-sm-12 col-md-12 col-lg-12 ">{props.quiz[3]}</div>
                             </div>
                             <div className="row h-20" style={{ "fontSize": "14px" }}>
-                                <Time_diff start={props.quiz[5]} limit={props.quiz[6]} />
+                                <Time_diff start={Number(props.quiz[5])} limit={Number(props.quiz[6])} />
                             </div>
                             <div className="d-flex" style={{ "fontSize": "14px", "lineHeight": "1" }}>
                                 {/* <div className="col-4 ">{Date(props.item[4].toNumber() * 1000)}</div> */}
 
                                 <div className="col-3">
                                     <div className="col">報酬</div>
-                                    <div className="col" style={{ "textAlign": "center" }}>{props.quiz[7].toNumber()}Wake</div>
+                                    <div className="col" style={{ "textAlign": "center" }}>{Number(props.quiz[7])}Wake</div>
                                 </div>
                                 <div className="col-3">
                                     <div className="col">正解数</div>
-                                    <div className="col" style={{ "textAlign": "center" }}>{props.quiz[8].toNumber()}</div>
+                                    <div className="col" style={{ "textAlign": "center" }}>{Number(props.quiz[8])}</div>
                                 </div>
                                 <div className="col-3">
                                     <div className="col">上限</div>
-                                    <div className="col" style={{ "textAlign": "center" }}>{props.quiz[9].toNumber()}</div>
+                                    <div className="col" style={{ "textAlign": "center" }}>{Number(props.quiz[9])}</div>
                                 </div>
                                 <div className="col-3">
                                     <div className="col">状態</div>
                                     <div className="col" style={{ "textAlign": "center" }}>
-                                        {props.quiz[10].toNumber()==0?("未回答"):props.quiz[10].toNumber()==1?("不正解"):props.quiz[10].toNumber()==2?("正解"):""}
+                                        {Number(props.quiz[10])==0?("未回答"):Number(props.quiz[10])==1?("不正解"):Number(props.quiz[10])==2?("正解"):""}
                                         </div>
                                 </div>
                                 {/* <div className="col-3 ">正解数:{props.quiz[7].toNumber()}</div>

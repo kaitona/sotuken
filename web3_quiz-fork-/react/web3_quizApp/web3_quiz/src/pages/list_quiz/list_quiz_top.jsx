@@ -40,8 +40,8 @@ function List_quiz_top(props) {
     useEffect(() => {
         cont.get_quiz_lenght().then(data => {
             // Promise オブジェクトが解決された後の処理を記述
-            console.log(parseInt(data["_hex"]));
-            let now = parseInt(data["_hex"]);
+            console.log(Number(data));
+            let now = parseInt(Number(data));
             Set_quiz_sum(now);
             now_numRef.current = now;
 

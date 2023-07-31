@@ -3,6 +3,7 @@ import { useState } from "react";
 import {AiOutlineArrowRight} from "react-icons/ai";
 function Convert_time(props) {
     function convertSeconds2ToHours(seconds) {
+        console.log(seconds);
 
         const date = new Date(seconds*1000); // 1つ目のDateオブジェクト
        
@@ -12,13 +13,13 @@ function Convert_time(props) {
     }
     return (
             <>
-            {convertSeconds2ToHours(parseInt(props.seconds["_hex"]))}
+            {convertSeconds2ToHours(props.seconds)}
             </>
     );
 }
 
 function Simple_history(props) {
-
+    console.log(props.history);
     return (
         // <Link to={"/answer_quiz/"+props.quiz[0].toNumber()} style={{ color: '#000' ,textDecoration: 'none'}}>
 
@@ -34,13 +35,13 @@ function Simple_history(props) {
                             from
                         </div>
                         <div>
-                            {props.history[0].slice(0, 12)}
+                            {props.history._owner.slice(0, 12)}
                         </div>
                         <div>
                             recipient
                         </div>
                         <div>
-                            {props.history[2].slice(0, 12)}
+                            {props.history._sender.slice(0, 12)}
                         </div>
                     </div>
                     
@@ -52,10 +53,10 @@ function Simple_history(props) {
                             to
                         </div>
                         <div>
-                            {props.history[1].slice(0, 12)}
+                            {props.history._recipient.slice(0, 12)}
                         </div>
                         <div>
-                            {props.history[4] / 10 ** 18}Wake
+                            {Number(props.history._value) / 10 ** 18}Wake
                         </div>
                     </div>
 
@@ -64,10 +65,11 @@ function Simple_history(props) {
 
 
                 <div className="transfer_time" style={{ padding: "0","padding-top":"10px",margin:"0", textAlign: "left"}}>
-                    <Convert_time seconds={ props.history[3]}/>
+                    <Convert_time seconds= { Number( props.history.epoch_time)}/>
+                  
                 </div>
                 <div className="reason" style={{ padding: "0","padding-top":"10px",margin:"0", textAlign: "left"}}>
-                {props.history[5]}<br />
+                {props.history._explanation}<br />
                 </div>
             </div>
         </div>
