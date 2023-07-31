@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http, getContract, parseAbiItem, custom, UnauthorizedProviderError } from 'viem'
+import { createPublicClient, createWalletClient, http, getContract, parseAbiItem, custom, UnauthorizedProviderError,decodeFunctionResult  } from 'viem'
 import token_contract from "./token_abi.json";
 import quiz_contract from "./quiz_abi.json";
 import { chainId, rpc, quiz_address, token_address } from "./config"
@@ -202,36 +202,28 @@ class Contracts_MetaMask {
     async create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow) {
         setShow(true);
         console.log([title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit]);
+        let res=null;
+        let hash=null;
         try {
             if (ethereum) {
-
                 let account = await this.get_address();
-
                 let approval = await token.read.allowance({ account, args: [account, quiz_address] });
-                console.log(reward, correct_limit);
 
                 if (Number(approval) >= Number(reward * correct_limit * 10 ** 18)) {
-
-                    let hash = await this._create_quiz(account, title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
-
+                    hash = await this._create_quiz(account, title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
                     if (hash) {
-                        let res = await publicClient.waitForTransactionReceipt({ hash });
-                        console.log(res);
-
+                        res = await publicClient.waitForTransactionReceipt({ hash });
                     }
                 }
                 else {
 
-                    let hash = await this.approve(account, reward * correct_limit * 10 ** 18);
+                    hash = await this.approve(account, reward * correct_limit * 10 ** 18);
                     if (hash) {
-                        let res = await publicClient.waitForTransactionReceipt({ hash });
+                        res = await publicClient.waitForTransactionReceipt({ hash });
                         hash = await this._create_quiz(account, title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
                         console.log(hash);
                         if (hash) {
                             res = await publicClient.waitForTransactionReceipt({ hash });
-                            console.log(res);
-                            console.log(hash);
-
                         }
                     }
                 }
@@ -244,7 +236,7 @@ class Contracts_MetaMask {
             setShow(false)
             console.log(err);
         }
-        //document.location.href = "/answer_quiz/" +
+        document.location.href = "/answer_quiz/" +res.logs[2].topics[2];
 
     }
 
@@ -268,6 +260,7 @@ class Contracts_MetaMask {
                         args: [title, explanation, thumbnail_url, content, answer_type, answer_data.toString(), correct, epochStartSeconds, epochEndSeconds, reward, correct_limit],
                         //args: ["a", "a", "a", "a", 1, "a", "a", epochStartSeconds, epochEndSeconds, 2, 2],
                     });
+                    
                     return (await walletClient.writeContract(request));
                 } catch (e) {
                     console.log(e);
