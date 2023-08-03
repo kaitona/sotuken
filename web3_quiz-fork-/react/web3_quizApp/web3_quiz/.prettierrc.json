@@ -1,0 +1,27 @@
+{
+    "overrides": [
+      {
+        "files": "*.jsx",
+        "options": {
+          "printWidth": 360,
+          "tabWidth": 4,
+          "useTabs": false,
+          "singleQuote": false,
+          "bracketSpacing": false,
+          "explicitTypes": "preserve"
+        }
+      },
+      {
+        "files": "*.js",
+        "options": {
+          "printWidth": 360,
+          "tabWidth": 4,
+          "useTabs": false,
+          "singleQuote": false,
+          "bracketSpacing": false,
+          "explicitTypes": "preserve"
+        }
+      }
+    ]
+  }
+  
