@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http, getContract, parseAbiItem, custom, UnauthorizedProviderError,decodeFunctionResult  } from 'viem'
+import { createPublicClient, createWalletClient, http, getContract, parseAbiItem, custom, UnauthorizedProviderError, decodeFunctionResult } from 'viem'
 import token_contract from "./token_abi.json";
 import quiz_contract from "./quiz_abi.json";
 import { chainId, rpc, quiz_address, token_address } from "./config"
@@ -202,8 +202,8 @@ class Contracts_MetaMask {
     async create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow) {
         setShow(true);
         console.log([title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit]);
-        let res=null;
-        let hash=null;
+        let res = null;
+        let hash = null;
         try {
             if (ethereum) {
                 let account = await this.get_address();
@@ -236,7 +236,7 @@ class Contracts_MetaMask {
             setShow(false)
             console.log(err);
         }
-        document.location.href = "/answer_quiz/" +res.logs[2].topics[2];
+        document.location.href = "/answer_quiz/" + res.logs[2].topics[2];
 
     }
 
@@ -260,7 +260,7 @@ class Contracts_MetaMask {
                         args: [title, explanation, thumbnail_url, content, answer_type, answer_data.toString(), correct, epochStartSeconds, epochEndSeconds, reward, correct_limit],
                         //args: ["a", "a", "a", "a", 1, "a", "a", epochStartSeconds, epochEndSeconds, 2, 2],
                     });
-                    
+
                     return (await walletClient.writeContract(request));
                 } catch (e) {
                     console.log(e);
@@ -370,6 +370,10 @@ class Contracts_MetaMask {
         return await quiz.read.get_quiz_length();
     }
 
+    async get_num_of_students() {
+        return Number(await quiz.read.get_num_of_students());
+    }
+
 
     async add_student(address) {
         try {
@@ -453,6 +457,11 @@ class Contracts_MetaMask {
         } catch (err) {
             console.log(err);
         }
+    }
+
+
+    async isTeacher() {
+        return await quiz.read._isTeacher();
     }
 
 

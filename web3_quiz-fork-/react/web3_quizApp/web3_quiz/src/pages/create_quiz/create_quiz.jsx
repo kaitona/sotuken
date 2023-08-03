@@ -22,14 +22,15 @@ function Create_quiz() {
     const [correct, setCorrect] = useState("");
     const [reply_startline, setReply_startline] = useState(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }).replace(/[/]/g, "-").replace(/\s(\d):/, " 0$1:"));
     const [reply_deadline, setReply_deadline] = useState(getLocalizedDateTimeString(addDays(new Date(), 1)));
-    const [reward, setReward] = useState(1);
-    const [correct_limit, setCorrect_limit] = useState(1);
+    const [reward, setReward] = useState(0);
+
+    let Contract = new Contracts_MetaMask;
+
+    const [correct_limit, setCorrect_limit] = useState(null);
     const [state, setState] = useState("Null");
     const [now, setnow] = useState(null);
     const [show, setShow] = useState(false);
 
-
-    let Contract = new Contracts_MetaMask;
 
 
     const create_quiz = async () => {
@@ -86,14 +87,19 @@ function Create_quiz() {
         // let now = new Date();
         // const diff_time = new Date(now + 100);
         // setReply_deadline(addDays(now, 5));
-
+        async function get_contrant() {
+            setCorrect_limit(await Contract.get_num_of_students());
+        }
+        get_contrant();
         setnow(getLocalizedDateTimeString());
         // console.log(now);
         // console.log(new Date().toISOString().slice(0, 16));
-        console.log(reply_deadline);
-        console.log(reply_startline);
+
 
     }, []);
+    console.log(reply_deadline);
+    console.log(reply_startline);
+    console.log(correct_limit);
     return (
         <div>
             <div className="row">
@@ -155,7 +161,7 @@ function Create_quiz() {
                         />
 
                     </Form.Group>
-
+                    {/*
                     <div className="row">
 
                         <Form.Group className="mb-3 col-4" style={{ textAlign: "left" }}>
@@ -169,6 +175,7 @@ function Create_quiz() {
                             <Form.Control type="number" min={1} step={1} value={correct_limit} onChange={(event) => setCorrect_limit(parseInt(event.target.value))} />
                         </Form.Group>
                     </div>
+                    */}
 
                     <div style={{ textAlign: "right" }}>
                         <Button variant="primary" onClick={() => create_quiz()} style={{ marginTop: '20px' }}>

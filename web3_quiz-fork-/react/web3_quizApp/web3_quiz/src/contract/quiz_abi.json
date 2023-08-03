@@ -50,6 +50,19 @@
 			"type": "event"
 		},
 		{
+			"inputs": [],
+			"name": "_isTeacher",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "isteacher",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
 			"inputs": [
 				{
 					"internalType": "address[]",
@@ -154,6 +167,19 @@
 				}
 			],
 			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "get_num_of_students",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "num_of_students",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
 			"type": "function"
 		},
 		{
@@ -340,11 +366,6 @@
 					"internalType": "string",
 					"name": "thumbnail_url",
 					"type": "string"
-				},
-				{
-					"internalType": "uint256",
-					"name": "start_time_epoch",
-					"type": "uint256"
 				},
 				{
 					"internalType": "uint256",
