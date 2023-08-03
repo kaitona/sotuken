@@ -48,30 +48,9 @@ contract Quiz_Dapp is class_room {
 
     event Create_quiz(address indexed _sender, uint256 indexed id);
 
-    function create_quiz(
-        string memory _title,
-        string memory _explanation,
-        string memory _thumbnail_url,
-        string memory _content,
-        uint256 _answer_type,
-        string memory _answer_data,
-        string memory _answer,
-        uint256 _startline_after_epoch,
-        uint256 _timelimit_after_epoch,
-        uint256 _reward,
-        uint256 _respondent_limit
-    ) public returns (uint256 id) {
-        require(
-            token.allowance(msg.sender, address(this)) >=
-                _reward * _respondent_limit,
-            "Not enough token approve fees"
-        );
-        token.transferFrom_explanation(
-            msg.sender,
-            address(this),
-            _reward * _respondent_limit * 10**token.decimals(),
-            "create_quiz"
-        );
+    function create_quiz(string memory _title, string memory _explanation, string memory _thumbnail_url, string memory _content, uint256 _answer_type, string memory _answer_data, string memory _answer, uint256 _startline_after_epoch, uint256 _timelimit_after_epoch, uint256 _reward, uint256 _respondent_limit) public returns (uint256 id) {
+        require(token.allowance(msg.sender, address(this)) >= _reward * _respondent_limit, "Not enough token approve fees");
+        token.transferFrom_explanation(msg.sender, address(this), _reward * _respondent_limit * 10 ** token.decimals(), "create_quiz");
         id = quizs.length;
         quizs.push();
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
@@ -94,25 +73,9 @@ contract Quiz_Dapp is class_room {
         return id;
     }
 
-    function get_quiz(uint256 _quiz_id)
-        public
-        view
-        returns (
-            uint256 id,
-            address owner,
-            string memory title,
-            string memory explanation,
-            string memory thumbnail_url,
-            string memory content,
-            string memory answer_data,
-            uint256 create_time_epoch,
-            uint256 start_time_epoch,
-            uint256 time_limit_epoch,
-            uint256 reward,
-            uint256 respondent_count,
-            uint256 respondent_limit
-        )
-    {
+    function get_quiz(
+        uint256 _quiz_id
+    ) public view returns (uint256 id, address owner, string memory title, string memory explanation, string memory thumbnail_url, string memory content, string memory answer_data, uint256 create_time_epoch, uint256 start_time_epoch, uint256 time_limit_epoch, uint256 reward, uint256 respondent_count, uint256 respondent_limit) {
         id = _quiz_id;
         owner = quizs[_quiz_id].owner;
         title = quizs[_quiz_id].title;
@@ -128,30 +91,11 @@ contract Quiz_Dapp is class_room {
         respondent_limit = quizs[_quiz_id].respondent_limit;
     }
 
-    function get_quiz_answer_type(uint256 _quiz_id)
-        public
-        view
-        returns (uint256 answer_type)
-    {
+    function get_quiz_answer_type(uint256 _quiz_id) public view returns (uint256 answer_type) {
         answer_type = quizs[_quiz_id].answer_type;
     }
 
-    function get_quiz_simple(uint256 _quiz_id)
-        public
-        view
-        returns (
-            uint256 id,
-            address owner,
-            string memory title,
-            string memory explanation,
-            string memory thumbnail_url,
-            uint256 time_limit_epoch,
-            uint256 reward,
-            uint256 respondent_count,
-            uint256 respondent_limit,
-            uint256 state
-        )
-    {
+    function get_quiz_simple(uint256 _quiz_id) public view returns (uint256 id, address owner, string memory title, string memory explanation, string memory thumbnail_url, uint256 time_limit_epoch, uint256 reward, uint256 respondent_count, uint256 respondent_limit, uint256 state) {
         id = _quiz_id;
         owner = quizs[_quiz_id].owner;
         title = quizs[_quiz_id].title;
@@ -164,41 +108,21 @@ contract Quiz_Dapp is class_room {
         state = quizs[_quiz_id].respondents_map[msg.sender];
     }
 
-    event Post_answer(
-        address indexed _sender,
-        uint256 indexed quiz_id,
-        uint256 indexed answer_id
-    );
+    event Post_answer(address indexed _sender, uint256 indexed quiz_id, uint256 indexed answer_id);
 
-    function post_answer(uint256 _quiz_id, string memory _answer)
-        public
-        returns (uint256 answer_id, uint256 reward)
-    {
-        require(
-            quizs[_quiz_id].respondent_count < quizs[_quiz_id].respondent_limit,
-            "You have reached the maximum number of responses"
-        );
-        require(
-            quizs[_quiz_id].respondents_map[msg.sender] == 0,
-            "already answered"
-        );
-        require(
-            quizs[_quiz_id].time_limit_epoch >= block.timestamp,
-            "end quiz"
-        );
+    function post_answer(uint256 _quiz_id, string memory _answer) public returns (uint256 answer_id, uint256 reward) {
+        require(quizs[_quiz_id].respondent_count < quizs[_quiz_id].respondent_limit, "You have reached the maximum number of responses");
+        require(quizs[_quiz_id].respondents_map[msg.sender] == 0, "already answered");
+        require(quizs[_quiz_id].time_limit_epoch >= block.timestamp, "end quiz");
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
         bool result;
         if (answer_hash == quizs[_quiz_id].answer_hash) {
             reward = quizs[_quiz_id].reward;
             quizs[_quiz_id].respondent_count += 1;
-            token.transfer_explanation(
-                msg.sender,
-                reward * 10**token.decimals(),
-                "correct answer"
-            );
+            token.transfer_explanation(msg.sender, reward * 10 ** token.decimals(), "correct answer");
             if (check_teacher(quizs[_quiz_id].owner) == true) {
                 //教員から出された問題であれば結果に反映
-                users[msg.sender].result += reward * 10**token.decimals();
+                users[msg.sender].result += reward * 10 ** token.decimals();
             }
             result = true;
             quizs[_quiz_id].respondents_map[msg.sender] = 2;
@@ -220,16 +144,7 @@ contract Quiz_Dapp is class_room {
         emit Post_answer(msg.sender, _quiz_id, answer_id);
     }
 
-    function get_quiz_respondent(uint256 _quiz_id, uint256 answer_id)
-        public
-        view
-        returns (
-            address respondent,
-            uint256 answer_time,
-            uint256 reward,
-            bool result
-        )
-    {
+    function get_quiz_respondent(uint256 _quiz_id, uint256 answer_id) public view returns (address respondent, uint256 answer_time, uint256 reward, bool result) {
         respondent = quizs[_quiz_id].answers[answer_id].respondent;
         answer_time = quizs[_quiz_id].answers[answer_id].answer_time;
         reward = quizs[_quiz_id].answers[answer_id].reward;
@@ -250,16 +165,7 @@ contract Quiz_Dapp is class_room {
         return true;
     }
 
-    function get_user(address _target)
-        public
-        view
-        returns (
-            string memory student_id,
-            string memory img_url,
-            uint256 result,
-            bool state
-        )
-    {
+    function get_user(address _target) public view returns (string memory student_id, string memory img_url, uint256 result, bool state) {
         if (_target == msg.sender) {
             student_id = users[_target].user_id;
             img_url = users[_target].img_url;
@@ -278,12 +184,7 @@ contract Quiz_Dapp is class_room {
         uint256 result;
     }
 
-    function get_student_results()
-        public
-        view
-        isTeacher
-        returns (Result[] memory)
-    {
+    function get_student_results() public view isTeacher returns (Result[] memory) {
         address[] memory students = get_student_all();
         Result[] memory results = new Result[](students.length);
         for (uint256 i = 0; i < students.length; i++) {
@@ -305,41 +206,17 @@ interface TokenInterface {
 
     function balanceOf(address _owner) external view returns (uint256 balance);
 
-    function transfer(address _to, uint256 _value)
-        external
-        returns (bool success);
+    function transfer(address _to, uint256 _value) external returns (bool success);
 
-    function transfer_explanation(
-        address _to,
-        uint256 _value,
-        string memory _explanation
-    ) external returns (bool success);
+    function transfer_explanation(address _to, uint256 _value, string memory _explanation) external returns (bool success);
 
-    function transferFrom(
-        address _from,
-        address _to,
-        uint256 _value
-    ) external returns (bool success);
+    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
 
-    function transferFrom_explanation(
-        address sender,
-        address recipient,
-        uint256 amount,
-        string memory _explanation
-    ) external returns (bool);
+    function transferFrom_explanation(address sender, address recipient, uint256 amount, string memory _explanation) external returns (bool);
 
-    function approve(address _spender, uint256 _value)
-        external
-        returns (bool success);
+    function approve(address _spender, uint256 _value) external returns (bool success);
 
-    function approve_explanation(
-        address _spender,
-        uint256 _value,
-        string memory _explanation
-    ) external returns (bool success);
+    function approve_explanation(address _spender, uint256 _value, string memory _explanation) external returns (bool success);
 
-    function allowance(address _owner, address _spender)
-        external
-        view
-        returns (uint256 remaining);
+    function allowance(address _owner, address _spender) external view returns (uint256 remaining);
 }
