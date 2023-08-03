@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Form, Button } from "react-bootstrap";
+import React, {useState, useEffect} from "react";
+import {Form, Button} from "react-bootstrap";
 function View_result(props) {
-
     const [results, setResults] = useState([]);
-
 
     //初回のみ実行
     useEffect(() => {
-
         props.cont.get_results().then((result) => {
             console.log(result);
             setResults(result);
         });
-
     }, []);
 
     return (
@@ -34,12 +30,10 @@ function View_result(props) {
                                 <td>{Number(item.result) / 10 ** 18}点</td>
                             </tr>
                         );
-                    })
-                    }
+                    })}
                 </tbody>
             </table>
         </div>
-
     );
 }
 

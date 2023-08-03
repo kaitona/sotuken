@@ -1,61 +1,54 @@
-#overlay{
-    /*　画面全体を覆う設定　*/
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background-color:rgba(0,0,0,0.5);
-    
-    /*　画面の中央に要素を表示させる設定　*/
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    }
-    
+#overlay {
+  /*　画面全体を覆う設定　*/
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  /*　画面の中央に要素を表示させる設定　*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* KEYFRAMES */
 
-
 @keyframes pulse {
-from {
+  from {
     opacity: 1;
     transform: scale(1);
-}
-to {
-    opacity: .25;
-    transform: scale(.75);
-}
+  }
+  to {
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
 }
 
 /* PULSE BUBBLES */
 
 .pulse-container {
-width: 120px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin: 0 auto;
-
+  width: 120px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
 }
 
 .pulse-bubble {
-width: 20px;
-height: 20px;
-border-radius: 50%;
-background-color: #3ff9dc;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #3ff9dc;
 }
 
 .pulse-bubble-1 {
-    animation: pulse .4s ease 0s infinite alternate;
+  animation: pulse 0.4s ease 0s infinite alternate;
 }
 .pulse-bubble-2 {
-    animation: pulse .4s ease .2s infinite alternate;
+  animation: pulse 0.4s ease 0.2s infinite alternate;
 }
 .pulse-bubble-3 {
-    animation: pulse .4s ease .4s infinite alternate;
+  animation: pulse 0.4s ease 0.4s infinite alternate;
 }
-  
-  
- 
-

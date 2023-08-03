@@ -1,7 +1,6 @@
 @media screen and (max-width: 600px) {
   .user_card {
-
-    background: #D9D9D9;
+    background: #d9d9d9;
     border-radius: 8px;
     padding: 24px;
     position: relative;
@@ -10,7 +9,7 @@
   }
 
   .transaction_card {
-    background: #D9D9D9;
+    background: #d9d9d9;
     border-radius: 8px;
     padding: 24px;
     position: relative;
@@ -27,11 +26,9 @@
   }
 }
 
-
 @media screen and (min-width: 601px) {
   .user_card {
-
-    background: #D9D9D9;
+    background: #d9d9d9;
     border-radius: 8px;
     padding: 24px;
     position: relative;
@@ -42,7 +39,7 @@
   }
 
   .transaction_card {
-    background: #D9D9D9;
+    background: #d9d9d9;
     border-radius: 8px;
     padding: 24px;
     position: relative;
