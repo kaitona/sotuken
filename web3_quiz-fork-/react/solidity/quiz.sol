@@ -185,11 +185,7 @@ contract Quiz_Dapp is class_room {
         }
     }
 
-    function get_num_of_students()
-        public
-        view
-        returns (uint256 num_of_students)
-    {
+    function get_num_of_students() public view returns (uint256 num_of_students) {
         num_of_students = student_address_list.length;
         return num_of_students;
     }

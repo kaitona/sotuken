@@ -8,6 +8,7 @@ import Tabs from "react-bootstrap/Tabs";
 import "./navbar.css";
 import { AiFillPropertySafety, AiOutlineUser } from "react-icons/ai";
 import { MdOutlineQuiz } from "react-icons/md";
+import { RiFileSettingsLine } from "react-icons/ri";
 import { AiOutlineUnorderedList } from "react-icons/ai";
 import { BrowserRouter as Router, Route, NavLink, Switch } from "react-router-dom";
 import { AiFillHome, AiFillSetting, AiFillStar } from "react-icons/ai";
@@ -17,13 +18,13 @@ import Modal_change_network from "./Modal_change_network";
 
 function create_edit_button() {
     return (
-        <>
+        <div>
             <div className="col-1"></div>
             <div className="col-3">
                 <Nav.Item>
                     <Nav.Link eventKey="edit" href={"/#"}>
                         <div className="col-12">
-                            <AiOutlineUser size={30} />
+                            <RiFileSettingsLine size={30} />
                         </div>
                         <div className="col-12 d-flex justify-content-center align-items-center">
                             <font size="2">テストの編集</font>
@@ -31,8 +32,8 @@ function create_edit_button() {
                     </Nav.Link>
                 </Nav.Item>
             </div>
-        </>
-    )
+        </div>
+    );
 }
 
 function Nav_menu(props) {
@@ -45,13 +46,9 @@ function Nav_menu(props) {
         const get_variable = async () => {
             setChain_id(await props.cont.get_chain_id());
             Set_useing_address(await props.cont.get_address());
-        };
-
-        const is_teacher = async () => {
             setIsTeacher(await props.cont.isTeacher());
         };
 
-        is_teacher();
         get_variable();
     }, []);
     console.log(isTeacher);
@@ -68,7 +65,7 @@ function Nav_menu(props) {
                         alignItems: "center",
                     }}
                 >
-                    <div className="row justify-content-center ">
+                    <div className="row justify-content-center">
                         <div className="col-3">
                             <Nav.Item>
                                 <Nav.Link eventKey="/list_quiz" href="/list_quiz">
@@ -82,7 +79,6 @@ function Nav_menu(props) {
                             </Nav.Item>
                         </div>
                         <div className="col-1"></div>
-
                         <div className="col-3">
                             <Nav.Item>
                                 <Nav.Link eventKey="/create_quiz" href="/create_quiz">

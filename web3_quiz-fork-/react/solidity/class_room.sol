@@ -18,6 +18,14 @@ contract class_room {
         require(teachers[msg.sender] == true, "Caller is not teachers");
     }
 
+    function _isTeacher() public view returns (bool) {
+        if (teachers[msg.sender] == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function check_teacher(address _target) internal view returns (bool res) {
         res = teachers[_target];
     }

@@ -413,7 +413,6 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 let account = await this.get_address();
-                console.log(res);
                 let res = await quiz.read.get_student_results({ account, args: [] });
                 console.log(res);
                 return res;
@@ -426,7 +425,16 @@ class Contracts_MetaMask {
     }
 
     async isTeacher() {
-        return await quiz.read._isTeacher();
+        try {
+            if (ethereum) {
+                let account = await this.get_address();
+                return await quiz.read._isTeacher({ account, args: [] });
+            } else {
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            console.log(err)
+        }
     }
 }
 
