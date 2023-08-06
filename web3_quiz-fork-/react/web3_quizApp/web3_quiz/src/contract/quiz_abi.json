@@ -1,531 +1,552 @@
 {
-	"abi": [
-		{
-			"inputs": [],
-			"stateMutability": "nonpayable",
-			"type": "constructor"
-		},
-		{
-			"anonymous": false,
-			"inputs": [
-				{
-					"indexed": true,
-					"internalType": "address",
-					"name": "_sender",
-					"type": "address"
-				},
-				{
-					"indexed": true,
-					"internalType": "uint256",
-					"name": "id",
-					"type": "uint256"
-				}
-			],
-			"name": "Create_quiz",
-			"type": "event"
-		},
-		{
-			"anonymous": false,
-			"inputs": [
-				{
-					"indexed": true,
-					"internalType": "address",
-					"name": "_sender",
-					"type": "address"
-				},
-				{
-					"indexed": true,
-					"internalType": "uint256",
-					"name": "quiz_id",
-					"type": "uint256"
-				},
-				{
-					"indexed": true,
-					"internalType": "uint256",
-					"name": "answer_id",
-					"type": "uint256"
-				}
-			],
-			"name": "Post_answer",
-			"type": "event"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "address[]",
-					"name": "students_address",
-					"type": "address[]"
-				}
-			],
-			"name": "add_student",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "res",
-					"type": "bool"
-				}
-			],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "teacher_address",
-					"type": "address"
-				}
-			],
-			"name": "add_teacher",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "res",
-					"type": "bool"
-				}
-			],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "string",
-					"name": "_title",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "_explanation",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "_thumbnail_url",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "_content",
-					"type": "string"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_answer_type",
-					"type": "uint256"
-				},
-				{
-					"internalType": "string",
-					"name": "_answer_data",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "_answer",
-					"type": "string"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_startline_after_epoch",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_timelimit_after_epoch",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_reward",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_respondent_limit",
-					"type": "uint256"
-				}
-			],
-			"name": "create_quiz",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "id",
-					"type": "uint256"
-				}
-			],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_quiz_id",
-					"type": "uint256"
-				}
-			],
-			"name": "get_quiz",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "id",
-					"type": "uint256"
-				},
-				{
-					"internalType": "address",
-					"name": "owner",
-					"type": "address"
-				},
-				{
-					"internalType": "string",
-					"name": "title",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "explanation",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "thumbnail_url",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "content",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "answer_data",
-					"type": "string"
-				},
-				{
-					"internalType": "uint256",
-					"name": "create_time_epoch",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "start_time_epoch",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "time_limit_epoch",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "reward",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "respondent_count",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "respondent_limit",
-					"type": "uint256"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_quiz_id",
-					"type": "uint256"
-				}
-			],
-			"name": "get_quiz_answer_type",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "answer_type",
-					"type": "uint256"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"name": "get_quiz_length",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "length",
-					"type": "uint256"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_quiz_id",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "answer_id",
-					"type": "uint256"
-				}
-			],
-			"name": "get_quiz_respondent",
-			"outputs": [
-				{
-					"internalType": "address",
-					"name": "respondent",
-					"type": "address"
-				},
-				{
-					"internalType": "uint256",
-					"name": "answer_time",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "reward",
-					"type": "uint256"
-				},
-				{
-					"internalType": "bool",
-					"name": "result",
-					"type": "bool"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_quiz_id",
-					"type": "uint256"
-				}
-			],
-			"name": "get_quiz_simple",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "id",
-					"type": "uint256"
-				},
-				{
-					"internalType": "address",
-					"name": "owner",
-					"type": "address"
-				},
-				{
-					"internalType": "string",
-					"name": "title",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "explanation",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "thumbnail_url",
-					"type": "string"
-				},
-				{
-					"internalType": "uint256",
-					"name": "start_time_epoch",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "time_limit_epoch",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "reward",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "respondent_count",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "respondent_limit",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "state",
-					"type": "uint256"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"name": "get_student_all",
-			"outputs": [
-				{
-					"internalType": "address[]",
-					"name": "result",
-					"type": "address[]"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"name": "get_student_results",
-			"outputs": [
-				{
-					"components": [
-						{
-							"internalType": "address",
-							"name": "student",
-							"type": "address"
-						},
-						{
-							"internalType": "uint256",
-							"name": "result",
-							"type": "uint256"
-						}
-					],
-					"internalType": "struct Quiz_Dapp.Result[]",
-					"name": "",
-					"type": "tuple[]"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"name": "get_teacher_all",
-			"outputs": [
-				{
-					"internalType": "address[]",
-					"name": "result",
-					"type": "address[]"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "_target",
-					"type": "address"
-				}
-			],
-			"name": "get_user",
-			"outputs": [
-				{
-					"internalType": "string",
-					"name": "student_id",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "img_url",
-					"type": "string"
-				},
-				{
-					"internalType": "uint256",
-					"name": "result",
-					"type": "uint256"
-				},
-				{
-					"internalType": "bool",
-					"name": "state",
-					"type": "bool"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_quiz_id",
-					"type": "uint256"
-				},
-				{
-					"internalType": "string",
-					"name": "_answer",
-					"type": "string"
-				}
-			],
-			"name": "post_answer",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "answer_id",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "reward",
-					"type": "uint256"
-				}
-			],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "string",
-					"name": "_user_img",
-					"type": "string"
-				}
-			],
-			"name": "set_user_img",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "string",
-					"name": "_user_name",
-					"type": "string"
-				}
-			],
-			"name": "set_user_name",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		}
-	]
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_sender",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "Create_quiz",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_sender",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "quiz_id",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "answer_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "Post_answer",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "_isTeacher",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "isteacher",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "students_address",
+          "type": "address[]"
+        }
+      ],
+      "name": "add_student",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "res",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "teacher_address",
+          "type": "address"
+        }
+      ],
+      "name": "add_teacher",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "res",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_explanation",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_thumbnail_url",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_content",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_answer_type",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_answer_data",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_answer",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_startline_after_epoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_timelimit_after_epoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_reward",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_respondent_limit",
+          "type": "uint256"
+        }
+      ],
+      "name": "create_quiz",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_num_of_students",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "num_of_students",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "get_quiz",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "explanation",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "thumbnail_url",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "content",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "answer_data",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "create_time_epoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "start_time_epoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "time_limit_epoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "respondent_count",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "respondent_limit",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "get_quiz_answer_type",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "answer_type",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_quiz_length",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "length",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "answer_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "get_quiz_respondent",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "respondent",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "answer_time",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "result",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "get_quiz_simple",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "explanation",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "thumbnail_url",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "time_limit_epoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "respondent_count",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "respondent_limit",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "state",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_student_all",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "result",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_student_results",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "student",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "result",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Quiz_Dapp.Result[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_teacher_all",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "result",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_target",
+          "type": "address"
+        }
+      ],
+      "name": "get_user",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "student_id",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "img_url",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "result",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "state",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_answer",
+          "type": "string"
+        }
+      ],
+      "name": "post_answer",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "answer_id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_user_img",
+          "type": "string"
+        }
+      ],
+      "name": "set_user_img",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_user_name",
+          "type": "string"
+        }
+      ],
+      "name": "set_user_name",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
 }

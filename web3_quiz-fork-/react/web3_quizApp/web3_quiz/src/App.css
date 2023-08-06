@@ -37,9 +37,9 @@
   }
 }
 
-
-body, html {
+body,
+html {
   padding-bottom: 25px;
-  overflow:auto;
+  overflow: auto;
   height: 100%;
 }

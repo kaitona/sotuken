@@ -185,6 +185,15 @@ contract Quiz_Dapp is class_room {
         }
     }
 
+    function get_num_of_students()
+        public
+        view
+        returns (uint256 num_of_students)
+    {
+        num_of_students = student_address_list.length;
+        return num_of_students;
+    }
+
     struct Result {
         address student;
         uint result;
@@ -200,6 +209,15 @@ contract Quiz_Dapp is class_room {
         return results;
     }
 
+    function _isTeacher() public view returns (bool isteacher) {
+        for (uint256 index = 0; index < teacher_address_list.length; index++) {
+            if (teacher_address_list[i] == msg.sender) {
+                isteacher = true;
+                return isteacher;
+            }
+        }
+        isteacher = false;
+        return isteacher;
     function update_result(address _target, uint point) public {
         users[_target].result = point;
     }
