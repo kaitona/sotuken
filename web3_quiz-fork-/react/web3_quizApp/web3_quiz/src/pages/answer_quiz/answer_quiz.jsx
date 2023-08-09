@@ -1,11 +1,11 @@
-import {Contracts_MetaMask} from "../../contract/contracts";
+import { Contracts_MetaMask } from "../../contract/contracts";
 import Form from "react-bootstrap/Form";
-import {useState, useEffect} from "react";
-import MDEditor, {selectWord} from "@uiw/react-md-editor";
-import {useParams} from "react-router-dom";
+import { useState, useEffect } from "react";
+import MDEditor, { selectWord } from "@uiw/react-md-editor";
+import { useParams } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Wait_Modal from "../../contract/wait_Modal";
-import {ConstructorFragment} from "ethers/lib/utils";
+import { ConstructorFragment } from "ethers/lib/utils";
 function Answer_type1(props) {
     return (
         <>
@@ -120,6 +120,12 @@ function Answer_quiz(props) {
     let Contract = new Contracts_MetaMask();
     const id = useParams()["id"];
     console.log(id);
+    console.log("解答の最大数とこれまでに回答した人数");
+    async function getCorrectLimitAndCorrectCount(id) {
+        return (await Contract.get_respondentCount_and_respondentLimit(id));
+    }
+
+    console.log(getCorrectLimitAndCorrectCount(id));
 
     const [quiz, setQuiz] = useState(null);
     const [simple_quiz, setSimple_quiz] = useState(null);
@@ -147,11 +153,11 @@ function Answer_quiz(props) {
         // console.log(simple_quiz)
         return (
             <>
-                <h3 style={{margin: "50px"}}>{Number(simple_quiz["state"]) == 0 ? "初回の回答です。正解するとトークンがもらえます" : Number(simple_quiz["state"]) == 1 ? "初回の回答で間違えています。正解してもトークンはもらえません" : Number(simple_quiz["state"]) == 2 ? "正解しています" : ""}</h3>
-                <div className="container" style={{"text-align": "left", "margin-bottom": "50px"}}>
+                <h3 style={{ margin: "50px" }}>{Number(simple_quiz["state"]) == 0 ? "初回の回答です。正解するとトークンがもらえます" : Number(simple_quiz["state"]) == 1 ? "初回の回答で間違えています。正解してもトークンはもらえません" : Number(simple_quiz["state"]) == 2 ? "正解しています" : ""}</h3>
+                <div className="container" style={{ "text-align": "left", "margin-bottom": "50px" }}>
                     <h2>{quiz[2]}</h2>
                     <br />
-                    <a style={{"white-space": "pre-wrap", "font-size": "14px", "line-height": "1"}}>
+                    <a style={{ "white-space": "pre-wrap", "font-size": "14px", "line-height": "1" }}>
                         <br />
                         {quiz[3]}
                     </a>
@@ -161,7 +167,7 @@ function Answer_quiz(props) {
                     <br />
                     <br />
 
-                    <div data-color-mode="light" className="left" style={{"text-align": "left"}}>
+                    <div data-color-mode="light" className="left" style={{ "text-align": "left" }}>
                         <MDEditor.Markdown source={quiz[5]} />
                     </div>
 

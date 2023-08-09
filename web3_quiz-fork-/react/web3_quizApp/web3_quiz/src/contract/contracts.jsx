@@ -436,6 +436,10 @@ class Contracts_MetaMask {
             console.log(err)
         }
     }
+
+    async get_respondentCount_and_respondentLimit(id) {
+        return (await quiz.read.get_respondentCount_and_respondentLimit({ args: [id] }));
+    }
 }
 
 export { Contracts_MetaMask };

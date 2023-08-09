@@ -1,13 +1,13 @@
-import {Contracts_MetaMask} from "../../contract/contracts";
+import { Contracts_MetaMask } from "../../contract/contracts";
 import Form from "react-bootstrap/Form";
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import Answer_select from "./components/answer_select";
 import Button from "react-bootstrap/Button";
 import "react-datepicker/dist/react-datepicker.css";
 import Wait_Modal from "../../contract/wait_Modal";
 
-const {ethereum} = window;
+const { ethereum } = window;
 const mkdStr = "";
 
 function Create_quiz() {
@@ -21,7 +21,7 @@ function Create_quiz() {
     const [correct, setCorrect] = useState("");
     const [reply_startline, setReply_startline] = useState(
         new Date()
-            .toLocaleString("ja-JP", {timeZone: "Asia/Tokyo"})
+            .toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })
             .replace(/[/]/g, "-")
             .replace(/\s(\d):/, " 0$1:"),
     );
@@ -94,31 +94,31 @@ function Create_quiz() {
     }, []);
     console.log(reply_deadline);
     console.log(reply_startline);
-    console.log(correct_limit);
+
     return (
         <div>
             <div className="row">
                 <div className="col-2" />
                 <div className="col-8">
                     <Form>
-                        <Form.Group className="mb-3" controlId="form_titile" style={{textAlign: "left"}}>
+                        <Form.Group className="mb-3" controlId="form_titile" style={{ textAlign: "left" }}>
                             <Form.Label>タイトル</Form.Label>
                             <Form.Control type="text" placeholder="Enter Title" value={title} onChange={(event) => setTitle(event.target.value)} />
                         </Form.Group>
                     </Form>
-                    <Form.Group className="mb-3" style={{textAlign: "left"}}>
+                    <Form.Group className="mb-3" style={{ textAlign: "left" }}>
                         <Form.Label>説明</Form.Label>
                         <Form.Control as="textarea" rows={explanation.split("\n").length + 3} value={explanation} onChange={(event) => setExplanation(event.target.value)} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" style={{textAlign: "left"}}>
+                    <Form.Group className="mb-3" style={{ textAlign: "left" }}>
                         <Form.Label>サムネイル</Form.Label>
                         <Form.Control type="url" value={thumbnail_url} onChange={(event) => setThumbnail_url(event.target.value)} />
                     </Form.Group>
                     <img src={thumbnail_url} width="200" />
                     <br />
 
-                    <Form.Group className="mb-3" data-color-mode="light" style={{textAlign: "left"}}>
+                    <Form.Group className="mb-3" data-color-mode="light" style={{ textAlign: "left" }}>
                         <Form.Label>内容</Form.Label>
                         <MDEditor height={500} value={content} onChange={setContent} />
                     </Form.Group>
@@ -129,7 +129,7 @@ function Create_quiz() {
                     </Form.Group> */}
                     <Answer_select name={"回答の追加"} variable={answer_data} variable1={correct} set={setAnswer_data} set1={setCorrect} setAnswer_type={setAnswer_type} answer_type={answer_type} />
 
-                    <Form.Group className="mb-3" style={{textAlign: "left"}}>
+                    <Form.Group className="mb-3" style={{ textAlign: "left" }}>
                         <Form.Label>回答開始日時</Form.Label>
                         <Form.Control
                             type="datetime-local"
@@ -140,7 +140,7 @@ function Create_quiz() {
                         />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" style={{textAlign: "left"}}>
+                    <Form.Group className="mb-3" style={{ textAlign: "left" }}>
                         <Form.Label>回答締切日時</Form.Label>
                         <Form.Control
                             type="datetime-local"
@@ -166,8 +166,8 @@ function Create_quiz() {
                     </div>
                     */}
 
-                    <div style={{textAlign: "right"}}>
-                        <Button variant="primary" onClick={() => create_quiz()} style={{marginTop: "20px"}}>
+                    <div style={{ textAlign: "right" }}>
+                        <Button variant="primary" onClick={() => create_quiz()} style={{ marginTop: "20px" }}>
                             クイズを作成
                         </Button>
                     </div>
