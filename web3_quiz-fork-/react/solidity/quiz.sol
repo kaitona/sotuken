@@ -28,6 +28,7 @@ contract Quiz_Dapp is class_room {
         string answer_data;
         bytes32 answer_hash; //回答をハッシュ化したものを格納
         uint create_time_epoch;
+        uint256 start_time_epoch;
         uint time_limit_epoch;
         uint reward;
         uint respondent_count;
@@ -47,9 +48,21 @@ contract Quiz_Dapp is class_room {
 
     event Create_quiz(address indexed _sender, uint indexed id);
 
-    function create_quiz(string memory _title, string memory _explanation, string memory _thumbnail_url, string memory _content, uint _answer_type, string memory _answer_data, string memory _answer, uint _timelimit_after_epoch, uint _reward, uint _respondent_limit) public returns (uint id) {
+    function create_quiz(
+        string memory _title,
+        string memory _explanation,
+        string memory _thumbnail_url,
+        string memory _content,
+        uint _answer_type,
+        string memory _answer_data,
+        string memory _answer,
+        uint _startline_after_epoch,
+        uint _timelimit_after_epoch,
+        uint _reward,
+        uint _respondent_limit
+    ) public returns (uint id) {
         require(token.allowance(msg.sender, address(this)) >= _reward * _respondent_limit, "Not enough token approve fees");
-        token.transferFrom_explanation(msg.sender, address(this), _reward * _respondent_limit * 10 ** token.decimals(), "create_quiz");
+        token.transferFrom_explanation(msg.sender, address(this), _reward * _respondent_limit * 10**token.decimals(), "create_quiz");
         id = quizs.length;
         quizs.push();
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
@@ -63,6 +76,7 @@ contract Quiz_Dapp is class_room {
         quizs[id].answer_data = _answer_data;
         quizs[id].answer_hash = answer_hash;
         quizs[id].create_time_epoch = block.timestamp;
+        quizs[id].start_time_epoch = _startline_after_epoch;
         quizs[id].time_limit_epoch = _timelimit_after_epoch;
         quizs[id].reward = _reward;
         quizs[id].respondent_count = 0;
@@ -71,7 +85,25 @@ contract Quiz_Dapp is class_room {
         return id;
     }
 
-    function get_quiz(uint _quiz_id) public view returns (uint id, address owner, string memory title, string memory explanation, string memory thumbnail_url, string memory content, string memory answer_data, uint create_time_epoch, uint time_limit_epoch, uint reward, uint respondent_count, uint respondent_limit) {
+    function get_quiz(uint _quiz_id)
+        public
+        view
+        returns (
+            uint id,
+            address owner,
+            string memory title,
+            string memory explanation,
+            string memory thumbnail_url,
+            string memory content,
+            string memory answer_data,
+            uint create_time_epoch,
+            uint start_time_epoch,
+            uint time_limit_epoch,
+            uint reward,
+            uint respondent_count,
+            uint respondent_limit
+        )
+    {
         id = _quiz_id;
         owner = quizs[_quiz_id].owner;
         title = quizs[_quiz_id].title;
@@ -81,6 +113,7 @@ contract Quiz_Dapp is class_room {
         answer_data = quizs[_quiz_id].answer_data;
         time_limit_epoch = quizs[_quiz_id].time_limit_epoch;
         create_time_epoch = quizs[_quiz_id].create_time_epoch;
+        start_time_epoch = quizs[_quiz_id].start_time_epoch;
         reward = quizs[_quiz_id].reward;
         respondent_count = quizs[_quiz_id].respondent_count;
         respondent_limit = quizs[_quiz_id].respondent_limit;
@@ -90,12 +123,29 @@ contract Quiz_Dapp is class_room {
         answer_type = quizs[_quiz_id].answer_type;
     }
 
-    function get_quiz_simple(uint _quiz_id) public view returns (uint id, address owner, string memory title, string memory explanation, string memory thumbnail_url, uint time_limit_epoch, uint reward, uint respondent_count, uint respondent_limit, uint state) {
+    function get_quiz_simple(uint _quiz_id)
+        public
+        view
+        returns (
+            uint id,
+            address owner,
+            string memory title,
+            string memory explanation,
+            string memory thumbnail_url,
+            uint start_time_epoch,
+            uint time_limit_epoch,
+            uint reward,
+            uint respondent_count,
+            uint respondent_limit,
+            uint state
+        )
+    {
         id = _quiz_id;
         owner = quizs[_quiz_id].owner;
         title = quizs[_quiz_id].title;
         explanation = quizs[_quiz_id].explanation;
         thumbnail_url = quizs[_quiz_id].thumbnail_url;
+        start_time_epoch = quizs[_quiz_id].start_time_epoch;
         time_limit_epoch = quizs[_quiz_id].time_limit_epoch;
         reward = quizs[_quiz_id].reward;
         respondent_count = quizs[_quiz_id].respondent_count;
@@ -116,8 +166,8 @@ contract Quiz_Dapp is class_room {
                 //教員から出された問題であれば結果に反映　&& 初回の回答であれば
                 reward = quizs[_quiz_id].reward;
                 quizs[_quiz_id].respondent_count += 1;
-                users[msg.sender].result += reward * 10 ** token.decimals();
-                token.transfer_explanation(msg.sender, reward * 10 ** token.decimals(), "correct answer");
+                users[msg.sender].result += reward * 10**token.decimals();
+                token.transfer_explanation(msg.sender, reward * 10**token.decimals(), "correct answer");
             } else if (check_teacher(quizs[_quiz_id].owner) == true && quizs[_quiz_id].respondents_map[msg.sender] == 1) {
                 //教員から出された問題であれば結果に反映　&& 間違った回答をした後であれば
                 token.transfer_explanation(msg.sender, 0, "correct answer");
@@ -150,7 +200,16 @@ contract Quiz_Dapp is class_room {
         }
     }
 
-    function get_quiz_respondent(uint _quiz_id, uint answer_id) public view returns (address respondent, uint answer_time, uint reward, bool result) {
+    function get_quiz_respondent(uint _quiz_id, uint answer_id)
+        public
+        view
+        returns (
+            address respondent,
+            uint answer_time,
+            uint reward,
+            bool result
+        )
+    {
         respondent = quizs[_quiz_id].answers[answer_id].respondent;
         answer_time = quizs[_quiz_id].answers[answer_id].answer_time;
         reward = quizs[_quiz_id].answers[answer_id].reward;
@@ -171,7 +230,16 @@ contract Quiz_Dapp is class_room {
         return true;
     }
 
-    function get_user(address _target) public view returns (string memory student_id, string memory img_url, uint result, bool state) {
+    function get_user(address _target)
+        public
+        view
+        returns (
+            string memory student_id,
+            string memory img_url,
+            uint result,
+            bool state
+        )
+    {
         if (_target == msg.sender) {
             student_id = users[_target].user_id;
             img_url = users[_target].img_url;
@@ -205,15 +273,6 @@ contract Quiz_Dapp is class_room {
         return results;
     }
 
-    function _isTeacher() public view returns (bool isteacher) {
-        for (uint256 index = 0; index < teacher_address_list.length; index++) {
-            if (teacher_address_list[i] == msg.sender) {
-                isteacher = true;
-                return isteacher;
-            }
-        }
-        isteacher = false;
-        return isteacher;
     function update_result(address _target, uint point) public {
         users[_target].result = point;
     }
@@ -253,6 +312,11 @@ contract Quiz_Dapp is class_room {
         }
         return arr;
     }
+
+    function get_respondentCount_and_respondentLimit(uint _quiz_id) public view returns (uint respondentCount, uint respondentLimit) {
+        respondentCount = quizs[_quiz_id].respondent_count;
+        respondentLimit = quizs[_quiz_id].respondent_limit;
+    }
 }
 
 interface TokenInterface {
@@ -268,15 +332,32 @@ interface TokenInterface {
 
     function transfer(address _to, uint256 _value) external returns (bool success);
 
-    function transfer_explanation(address _to, uint256 _value, string memory _explanation) external returns (bool success);
+    function transfer_explanation(
+        address _to,
+        uint256 _value,
+        string memory _explanation
+    ) external returns (bool success);
 
-    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) external returns (bool success);
 
-    function transferFrom_explanation(address sender, address recipient, uint256 amount, string memory _explanation) external returns (bool);
+    function transferFrom_explanation(
+        address sender,
+        address recipient,
+        uint256 amount,
+        string memory _explanation
+    ) external returns (bool);
 
     function approve(address _spender, uint256 _value) external returns (bool success);
 
-    function approve_explanation(address _spender, uint256 _value, string memory _explanation) external returns (bool success);
+    function approve_explanation(
+        address _spender,
+        uint256 _value,
+        string memory _explanation
+    ) external returns (bool success);
 
     function allowance(address _owner, address _spender) external view returns (uint256 remaining);
 }
