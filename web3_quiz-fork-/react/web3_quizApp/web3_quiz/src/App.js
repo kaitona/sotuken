@@ -1,7 +1,7 @@
-import {useEffect, useState, useRef} from "react";
+import { useEffect, useState, useRef } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Nav_menu from "./pages/navbar/navbar";
 import Login from "./contract/login";
 import User_page from "./pages/user_page/user_page";
@@ -9,7 +9,9 @@ import Create_quiz from "./pages/create_quiz/create_quiz";
 import List_quiz from "./pages/list_quiz/list_quiz_top";
 import Answer_quiz from "./pages/answer_quiz/answer_quiz";
 import Admin_page from "./pages/admin_page/admin";
-import {Contracts_MetaMask} from "./contract/contracts";
+import Edit_list from "./pages/edit_list/edit_list_top"
+import Edit_quiz from "./pages/edit_quiz/edit_quiz"
+import { Contracts_MetaMask } from "./contract/contracts";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -39,6 +41,13 @@ function App() {
                         <Routes>
                             {/* <Route path={'/answer_quiz/:id'} element={<Answer_quiz url={'answer_quiz'} />} cont={cont} /> */}
                             <Route path={"/admin"} element={<Admin_page url={"admin"} cont={cont} />} />
+                            quiz_comp
+                        </Routes>
+                        <Routes>
+                            <Route path={"/edit_list"} element={<Edit_list url={"edit_list"} cont={cont} />} />
+                        </Routes>
+                        <Routes>
+                            <Route path={"/edit_quiz/:id"} element={<Edit_quiz url={"edit_quiz"} cont={cont} />} />
                             quiz_comp
                         </Routes>
                     </BrowserRouter>

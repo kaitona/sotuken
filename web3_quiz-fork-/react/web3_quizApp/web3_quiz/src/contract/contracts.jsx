@@ -305,6 +305,10 @@ class Contracts_MetaMask {
         }
     }
 
+    async get_quiz_all_data(id) {
+        return await quiz.read.get_quiz_all_data({ args: [id] });
+    }
+
     async get_quiz(id) {
         const answer_typr = await quiz.read.get_quiz_answer_type({ args: [id] });
         const res = await quiz.read.get_quiz({ args: [id] });
@@ -313,6 +317,28 @@ class Contracts_MetaMask {
 
     async get_quiz_simple(id) {
         return await quiz.read.get_quiz_simple({ args: [id] });
+    }
+
+    async get_quiz_all_data_list(start, end) {
+        //取得したクイズを格納する配列
+        let res = [];
+        let account = await this.get_address();
+
+        console.log(start, end);
+        if (start <= end) {
+            for (let i = start; i < end; i++) {
+                console.log(i);
+                res.push(await quiz.read.get_quiz_all_data({ account, args: [i] }));
+                console.log(res);
+            }
+        } else {
+            for (let i = start - 1; i >= end; i--) {
+                console.log(i);
+                res.push(await quiz.read.get_quiz_all_data({ account, args: [i] }));
+                console.log(res);
+            }
+        }
+        return res;
     }
 
     //startからendまでのクイズを取得

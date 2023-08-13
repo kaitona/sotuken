@@ -85,6 +85,42 @@ contract Quiz_Dapp is class_room {
         return id;
     }
 
+    function get_quiz_all_data(uint _quiz_id)
+        public
+        view
+        returns (
+            uint id,
+            address owner,
+            string memory title,
+            string memory explanation,
+            string memory thumbnail_url,
+            string memory content,
+            uint _answer_type,
+            string memory answer_data,
+            uint start_time_epoch,
+            uint time_limit_epoch,
+            uint reward,
+            uint respondent_count,
+            uint respondent_limit,
+            uint state
+        )
+    {
+        id = _quiz_id;
+        owner = quizs[_quiz_id].owner;
+        title = quizs[_quiz_id].title;
+        explanation = quizs[_quiz_id].explanation;
+        thumbnail_url = quizs[_quiz_id].thumbnail_url;
+        content = quizs[_quiz_id].content;
+        _answer_type = quizs[id].answer_type;
+        answer_data = quizs[_quiz_id].answer_data;
+        start_time_epoch = quizs[_quiz_id].start_time_epoch;
+        time_limit_epoch = quizs[_quiz_id].time_limit_epoch;
+        reward = quizs[_quiz_id].reward;
+        respondent_count = quizs[_quiz_id].respondent_count;
+        respondent_limit = quizs[_quiz_id].respondent_limit;
+        state = quizs[_quiz_id].respondents_map[msg.sender];
+    }
+
     function get_quiz(uint _quiz_id)
         public
         view

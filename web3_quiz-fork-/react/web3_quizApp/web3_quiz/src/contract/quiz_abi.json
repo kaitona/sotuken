@@ -288,6 +288,90 @@
           "type": "uint256"
         }
       ],
+      "name": "get_quiz_all_data",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "explanation",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "thumbnail_url",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "content",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_answer_type",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "answer_data",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "start_time_epoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "time_limit_epoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "respondent_count",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "respondent_limit",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "state",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        }
+      ],
       "name": "get_quiz_answer_type",
       "outputs": [
         {
