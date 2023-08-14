@@ -256,6 +256,69 @@ class Contracts_MetaMask {
         }
     }
 
+    async edit_quiz(id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline, setShow) {
+        setShow(true);
+        console.log([id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline]);
+        let res = null;
+        let hash = null;
+        try {
+            if (ethereum) {
+                let account = await this.get_address();
+                let approval = await token.read.allowance({ account, args: [account, quiz_address] });
+
+
+                hash = await this._edit_quiz(account, id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline);
+                console.log(hash);
+                if (hash) {
+                    res = await publicClient.waitForTransactionReceipt({ hash });
+                }
+                console.log(res);
+
+                console.log("create_quiz_cont");
+            } else {
+                setShow(false);
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            setShow(false);
+            console.log(err);
+        }
+        document.location.href = "/edit_list";
+    }
+
+    async _edit_quiz(account, id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline) {
+        const dateStartObj = new Date(reply_startline);
+        const dateEndObj = new Date(reply_deadline);
+
+        // Date オブジェクトをエポック秒に変換する
+        const epochStartSeconds = Math.floor(dateStartObj.getTime() / 1000);
+        const epochEndSeconds = Math.floor(dateEndObj.getTime() / 1000);
+        try {
+            if (ethereum) {
+                //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
+
+                try {
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName: "edit_quiz",
+                        args: [id, owner, title, explanation, thumbnail_url, content, epochStartSeconds, epochEndSeconds],
+                        //args: ["a", "a", "a", "a", 1, "a", "a", epochStartSeconds, epochEndSeconds, 2, 2],
+                    });
+
+                    return await walletClient.writeContract(request);
+                } catch (e) {
+                    console.log(e);
+                }
+            } else {
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     async create_answer(id, answer, setShow, setContent) {
         console.log(id, answer);
         try {

@@ -36,6 +36,25 @@
         {
           "indexed": true,
           "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "Edit_quiz",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_sender",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
           "name": "quiz_id",
           "type": "uint256"
         },
@@ -182,6 +201,60 @@
         {
           "internalType": "uint256",
           "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_explanation",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_thumbnail_url",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_content",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_startline_after_epoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_timelimit_after_epoch",
+          "type": "uint256"
+        }
+      ],
+      "name": "edit_quiz",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "quiz_id",
           "type": "uint256"
         }
       ],

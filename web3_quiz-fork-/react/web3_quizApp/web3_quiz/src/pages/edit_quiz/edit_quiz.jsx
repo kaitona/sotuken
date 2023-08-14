@@ -12,17 +12,15 @@ import Wait_Modal from "../../contract/wait_Modal";
 const { ethereum } = window;
 const mkdStr = "";
 
-function Create_quiz() {
+function Edit_quiz() {
     const [id, setId] = useState(useParams()["id"]);
+    const [owner, setOwner] = useState(null);
 
     const [useing_address, Set_useing_address] = useState(null);
     const [title, setTitle] = useState("");
     const [explanation, setExplanation] = useState("");
     const [thumbnail_url, setThumbnail_url] = useState("");
     const [content, setContent] = useState("");
-    const [answer_type, setAnswer_type] = useState(0);
-    const [answer_data, setAnswer_data] = useState([]);
-    const [correct, setCorrect] = useState("");
     const [reply_startline, setReply_startline] = useState(
         new Date()
             .toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })
@@ -30,30 +28,22 @@ function Create_quiz() {
             .replace(/\s(\d):/, " 0$1:"),
     );
     const [reply_deadline, setReply_deadline] = useState(getLocalizedDateTimeString(addDays(new Date(), 0)));
-    const [reward, setReward] = useState(0);
-
     let Contract = new Contracts_MetaMask();
 
-    const [correct_limit, setCorrect_limit] = useState(null);
-    const [state, setState] = useState("Null");
     const [now, setnow] = useState(null);
     const [show, setShow] = useState(false);
 
     const location = useLocation();
     const quiz = location.state.args;
 
-    const create_quiz = async () => {
-        console.log(title, explanation, thumbnail_url, content, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
+    const edit_quiz = async () => {
+        console.log(id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline);
 
-        if (correct !== "") {
-            console.log(new Date(reply_startline).getTime(), new Date(reply_deadline).getTime());
-            if (new Date(reply_startline).getTime() < new Date(reply_deadline).getTime()) {
-                Contract.create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow);
-            } else {
-                alert("回答開始日時を回答締切日時より前に設定してください");
-            }
+        console.log(new Date(reply_startline).getTime(), new Date(reply_deadline).getTime());
+        if (new Date(reply_startline).getTime() < new Date(reply_deadline).getTime()) {
+            Contract.edit_quiz(id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline, setShow);
         } else {
-            alert("正解を入力してください");
+            alert("回答開始日時を回答締切日時より前に設定してください");
         }
     };
     function getLocalizedDateTimeString(now = new Date()) {
@@ -95,18 +85,13 @@ function Create_quiz() {
         // const diff_time = new Date(now + 100);
         // setReply_deadline(addDays(now, 5));
         console.log(id);
-
+        setOwner(quiz[1]);
         setTitle(quiz[2]);
         setExplanation(quiz[3]);
         setThumbnail_url(quiz[4]);
         setContent(quiz[5]);
-        setAnswer_type(quiz[6]);
-        setAnswer_data(quiz[7]);
         setReply_startline(getLocalizedDateTimeString(new Date(quiz[8] * 1000)));
         setReply_deadline(getLocalizedDateTimeString(new Date(quiz[9] * 1000)));
-        setReward(quiz[10]);
-        setCorrect_limit(quiz[12]);
-        setState(quiz[13]);
         setnow(getLocalizedDateTimeString());
         console.log(quiz)
         // console.log(now);
@@ -171,8 +156,8 @@ function Create_quiz() {
 
 
                     <div style={{ textAlign: "right" }}>
-                        <Button variant="primary" onClick={() => create_quiz()} style={{ marginTop: "20px" }}>
-                            クイズを作成
+                        <Button variant="primary" onClick={() => edit_quiz()} style={{ marginTop: "20px" }}>
+                            クイズをの編集を実行
                         </Button>
                     </div>
                 </div>
@@ -214,4 +199,4 @@ function Create_quiz() {
 }
 */}
 
-export default Create_quiz;
+export default Edit_quiz;

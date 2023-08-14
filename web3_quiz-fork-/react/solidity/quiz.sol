@@ -85,6 +85,30 @@ contract Quiz_Dapp is class_room {
         return id;
     }
 
+    event Edit_quiz(address indexed _sender, uint indexed id);
+
+    function edit_quiz(
+        uint id,
+        address owner,
+        string memory _title,
+        string memory _explanation,
+        string memory _thumbnail_url,
+        string memory _content,
+        uint _startline_after_epoch,
+        uint _timelimit_after_epoch
+    ) public returns (uint quiz_id) {
+        // quizs.push(Quiz(id,msg.sender,_title,_thumbnail_url,_content,_choices,answer_hash,answer_hash,block.timestamp,_reward,_respondent_limit,Answer(msg.sender,block.timestamp,0)));
+        quizs[id].owner = owner;
+        quizs[id].title = _title;
+        quizs[id].explanation = _explanation;
+        quizs[id].thumbnail_url = _thumbnail_url;
+        quizs[id].content = _content;
+        quizs[id].start_time_epoch = _startline_after_epoch;
+        quizs[id].time_limit_epoch = _timelimit_after_epoch;
+        emit Edit_quiz(msg.sender, id);
+        return id;
+    }
+
     function get_quiz_all_data(uint _quiz_id)
         public
         view
