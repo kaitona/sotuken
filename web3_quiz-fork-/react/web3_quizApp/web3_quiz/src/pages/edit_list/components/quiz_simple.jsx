@@ -143,13 +143,14 @@ function Simple_quiz(props) {
                             </div>
                         </div>
                     </Link>
-                    <Link to={`/edit_quiz/${Number(props.quiz[0])}`} state={{ args: [Number(props.quiz[0]), props.quiz[1], props.quiz[2], props.quiz[3], props.quiz[4], props.quiz[5], Number(props.quiz[6]), props.quiz[7], Number(props.quiz[8]), Number(props.quiz[9]), Number(props.quiz[10]), Number(props.quiz[11]), Number(props.quiz[12]), Number(props.quiz[13])] }}>
-                        <div style={{ textAlign: "right" }}>
-                            <Button variant="primary" style={{ marginTop: "20px" }}>
-                                編集
-                            </Button>
-                        </div>
-                    </Link>
+                    <div style={{ textAlign: "right" }}>
+                        <Button as={Link} to={`/edit_quiz/${Number(props.quiz[0])}`} state={{ args: [Number(props.quiz[0]), props.quiz[1], props.quiz[2], props.quiz[3], props.quiz[4], props.quiz[5], Number(props.quiz[6]), props.quiz[7], Number(props.quiz[8]), Number(props.quiz[9]), Number(props.quiz[10]), Number(props.quiz[11]), Number(props.quiz[12]), Number(props.quiz[13])] }} variant="primary" style={{ marginTop: "20px" }}>
+                            編集
+                        </Button>
+                        <Button as={Link} to={`/investment_page/${Number(props.quiz[0])}`} state={{ args: [Number(props.quiz[0])] }} variant="primary" style={{ marginTop: "20px", marginLeft: "10px", marginRight: "0px" }}>
+                            報酬の追加
+                        </Button>
+                    </div>
                 </div>
             </div>
         </>

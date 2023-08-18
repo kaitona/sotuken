@@ -84,10 +84,10 @@ function Create_quiz() {
         // let now = new Date();
         // const diff_time = new Date(now + 100);
         // setReply_deadline(addDays(now, 5));
-        async function get_contrant() {
+        async function get_contract() {
             setCorrect_limit(await Contract.get_num_of_students());
         }
-        get_contrant();
+        get_contract();
         setnow(getLocalizedDateTimeString());
         // console.log(now);
         // console.log(new Date().toISOString().slice(0, 16));

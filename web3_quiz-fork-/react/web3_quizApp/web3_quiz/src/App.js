@@ -9,8 +9,9 @@ import Create_quiz from "./pages/create_quiz/create_quiz";
 import List_quiz from "./pages/list_quiz/list_quiz_top";
 import Answer_quiz from "./pages/answer_quiz/answer_quiz";
 import Admin_page from "./pages/admin_page/admin";
-import Edit_list from "./pages/edit_list/edit_list_top"
-import Edit_quiz from "./pages/edit_quiz/edit_quiz"
+import Edit_list from "./pages/edit_list/edit_list_top";
+import Edit_quiz from "./pages/edit_quiz/edit_quiz";
+import Investment_page from "./pages/investment_page/investment_page";
 import { Contracts_MetaMask } from "./contract/contracts";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -48,6 +49,10 @@ function App() {
                         </Routes>
                         <Routes>
                             <Route path={"/edit_quiz/:id"} element={<Edit_quiz url={"edit_quiz"} cont={cont} />} />
+                            quiz_comp
+                        </Routes>
+                        <Routes>
+                            <Route path={"/investment_page/:id"} element={<Investment_page url={"investment_page"} cont={cont} />} />
                             quiz_comp
                         </Routes>
                     </BrowserRouter>
