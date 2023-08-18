@@ -232,6 +232,7 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
+                console.log(quiz.read.sum_of_investment({account, args:[amount, numOfStudent]}));
                 try {
                     const { request } = await publicClient.simulateContract({
                         account,

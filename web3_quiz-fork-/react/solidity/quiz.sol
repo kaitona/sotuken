@@ -109,8 +109,16 @@ contract Quiz_Dapp is class_room {
         return id;
     }
 
-    event Investment_to_quiz(address indexed _sender, uint indexed id);
+    function sum_of_investment(
+        uint amount,
+        uint numOfStudent
+    ) public view returns (uint sum, uint allowance){
+        sum = amount * numOfStudent;
+        allowance = token.allowance(msg.sender, address(this));
+    }
 
+    event Investment_to_quiz(address indexed _sender, uint indexed id);
+    
     function investment_to_quiz(
         uint id,
         uint amount,
