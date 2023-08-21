@@ -109,23 +109,20 @@ contract Quiz_Dapp is class_room {
         return id;
     }
 
-    function sum_of_investment(
-        uint amount,
-        uint numOfStudent
-    ) public view returns (uint sum, uint allowance){
+    function sum_of_investment(uint amount, uint numOfStudent) public view returns (uint sum, uint allowance) {
         sum = amount * numOfStudent;
         allowance = token.allowance(msg.sender, address(this));
     }
 
     event Investment_to_quiz(address indexed _sender, uint indexed id);
-    
+
     function investment_to_quiz(
         uint id,
         uint amount,
         bool isNotPayingOut,
         uint numOfStudent
     ) public returns (uint quiz_id) {
-        require(token.allowance(msg.sender, address(this)) >= amount * numOfStudent, "Not enough token approve fees");
+        require(token.allowance(msg.sender, address(this)) >= amount * numOfStudent * 10**token.decimals(), "Not enough token approve fees");
         token.transferFrom_explanation(msg.sender, address(this), amount * numOfStudent * 10**token.decimals(), "investment_to_quiz");
 
         quizs[id].reward += amount;

@@ -203,9 +203,9 @@ class Contracts_MetaMask {
                 let approval = await token.read.allowance({ account, args: [account, quiz_address] })
                 console.log(Number(approval));
                 console.log(amount * numOfStudent * 10 ** 18);
-                if (Number(approval) >= Number(amount * numOfStudent * 10 ** 18)){
+                if (Number(approval) >= Number(amount * numOfStudent * 10 ** 18)) {
                     console.log("approveのかち");
-                }else{
+                } else {
                     console.log("払う量の価値");
                 }
 
@@ -243,7 +243,7 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
-                console.log(quiz.read.sum_of_investment({account, args:[amount, numOfStudent]}));
+                console.log(await quiz.read.sum_of_investment({ account, args: [amount, numOfStudent] }));
                 try {
                     const { request } = await publicClient.simulateContract({
                         account,
