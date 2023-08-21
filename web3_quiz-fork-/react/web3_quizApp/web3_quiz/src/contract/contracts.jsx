@@ -1,10 +1,10 @@
-import { createPublicClient, createWalletClient, http, getContract, parseAbiItem, custom, UnauthorizedProviderError, decodeFunctionResult } from "viem";
+import {createPublicClient, createWalletClient, http, getContract, parseAbiItem, custom, UnauthorizedProviderError, decodeFunctionResult} from "viem";
 import token_contract from "./token_abi.json";
 import quiz_contract from "./quiz_abi.json";
-import { chainId, rpc, quiz_address, token_address } from "./config";
-import { fujihalab } from "./network";
+import {chainId, rpc, quiz_address, token_address} from "./config";
+import {fujihalab} from "./network";
 
-const { ethereum } = window;
+const {ethereum} = window;
 
 const walletClient = createWalletClient({
     chain: fujihalab,
@@ -62,7 +62,7 @@ class Contracts_MetaMask {
 
     async change_network() {
         try {
-            await walletClient.switchChain({ id: fujihalab.id });
+            await walletClient.switchChain({id: fujihalab.id});
         } catch (e) {
             //userがrejectした場合
             if (e.code === 4001) {
@@ -74,7 +74,7 @@ class Contracts_MetaMask {
     }
     async add_network() {
         try {
-            await walletClient.addChain({ chain: fujihalab });
+            await walletClient.addChain({chain: fujihalab});
         } catch (e) {
             console.log(e);
         }
@@ -84,7 +84,7 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 console.log(token_address);
-                const balance = await token.read.balanceOf({ args: [address] });
+                const balance = await token.read.balanceOf({args: [address]});
                 console.log(balance);
                 console.log(Number(balance) / 10 ** 18);
                 //16進数を10進数に変換
@@ -121,12 +121,12 @@ class Contracts_MetaMask {
                 console.log(start, end);
                 if (start <= end) {
                     for (let i = start; i < end; i++) {
-                        res.push(await token.read.get_user_history({ account, args: [address, i] }));
+                        res.push(await token.read.get_user_history({account, args: [address, i]}));
                     }
                 } else {
                     //console.log("33");
                     for (let i = start - 1; i >= end; i--) {
-                        res.push(await token.read.get_user_history({ account, args: [address, i] }));
+                        res.push(await token.read.get_user_history({account, args: [address, i]}));
                     }
                 }
 
@@ -142,7 +142,7 @@ class Contracts_MetaMask {
     async get_user_history_len(address) {
         console.log(token_address);
         let account = await this.get_address();
-        const res = await token.read.get_user_history_len({ account, args: [address] });
+        const res = await token.read.get_user_history_len({account, args: [address]});
         return Number(res);
     }
 
@@ -151,7 +151,7 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 console.log(token_address);
-                const res = await quiz.read.get_user({ args: [address] });
+                const res = await quiz.read.get_user({args: [address]});
                 return [res[0], res[1], Number(res[2]), res[3]];
             } else {
                 console.log("Ethereum object does not exist");
@@ -166,7 +166,7 @@ class Contracts_MetaMask {
             if (ethereum) {
                 console.log(amount);
                 try {
-                    const { request } = await publicClient.simulateContract({
+                    const {request} = await publicClient.simulateContract({
                         account,
                         address: token_address,
                         abi: token_abi,
@@ -200,7 +200,7 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 let account = await this.get_address();
-                let approval = await token.read.allowance({ account, args: [account, quiz_address] })
+                let approval = await token.read.allowance({account, args: [account, quiz_address]});
                 console.log(Number(approval));
                 console.log(amount * numOfStudent * 10 ** 18);
                 if (Number(approval) >= Number(amount * numOfStudent * 10 ** 18)) {
@@ -212,24 +212,23 @@ class Contracts_MetaMask {
                 if (Number(approval) >= Number(amount * numOfStudent * 10 ** 18)) {
                     hash = await this.approve(account, amount * numOfStudent * 10 ** 18);
                     if (hash) {
-                        res = await publicClient.waitForTransactionReceipt({ hash });
+                        res = await publicClient.waitForTransactionReceipt({hash});
                         hash = await this._investment_to_quiz(account, id, amount, is_not_paying_out, numOfStudent);
                         if (hash) {
-                            res = await publicClient.waitForTransactionReceipt({ hash });
+                            res = await publicClient.waitForTransactionReceipt({hash});
                         }
                     }
                 } else {
                     hash = await this.approve(account, amount * numOfStudent * 10 ** 18);
                     if (hash) {
-                        res = await publicClient.waitForTransactionReceipt({ hash });
+                        res = await publicClient.waitForTransactionReceipt({hash});
                         hash = await this._investment_to_quiz(account, Number(id), Number(amount), is_not_paying_out, Number(numOfStudent));
                         console.log(hash);
                         if (hash) {
-                            res = await publicClient.waitForTransactionReceipt({ hash });
+                            res = await publicClient.waitForTransactionReceipt({hash});
                         }
                     }
                 }
-
             } else {
                 console.log("Ethereum object does not exist");
             }
@@ -243,9 +242,9 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
-                console.log(await quiz.read.sum_of_investment({ account, args: [amount, numOfStudent] }));
+                console.log(await quiz.read.sum_of_investment({account, args: [amount, numOfStudent]}));
                 try {
-                    const { request } = await publicClient.simulateContract({
+                    const {request} = await publicClient.simulateContract({
                         account,
                         address: quiz_address,
                         abi: quiz_abi,
@@ -273,21 +272,21 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 let account = await this.get_address();
-                let approval = await token.read.allowance({ account, args: [account, quiz_address] });
+                let approval = await token.read.allowance({account, args: [account, quiz_address]});
 
                 if (Number(approval) >= Number(reward * correct_limit * 10 ** 18)) {
                     hash = await this._create_quiz(account, title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
                     if (hash) {
-                        res = await publicClient.waitForTransactionReceipt({ hash });
+                        res = await publicClient.waitForTransactionReceipt({hash});
                     }
                 } else {
                     hash = await this.approve(account, reward * correct_limit * 10 ** 18);
                     if (hash) {
-                        res = await publicClient.waitForTransactionReceipt({ hash });
+                        res = await publicClient.waitForTransactionReceipt({hash});
                         hash = await this._create_quiz(account, title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
                         console.log(hash);
                         if (hash) {
-                            res = await publicClient.waitForTransactionReceipt({ hash });
+                            res = await publicClient.waitForTransactionReceipt({hash});
                         }
                     }
                 }
@@ -315,7 +314,7 @@ class Contracts_MetaMask {
                 //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
                 console.log(answer_type);
                 try {
-                    const { request } = await publicClient.simulateContract({
+                    const {request} = await publicClient.simulateContract({
                         account,
                         address: quiz_address,
                         abi: quiz_abi,
@@ -344,13 +343,12 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 let account = await this.get_address();
-                let approval = await token.read.allowance({ account, args: [account, quiz_address] });
-
+                let approval = await token.read.allowance({account, args: [account, quiz_address]});
 
                 hash = await this._edit_quiz(account, id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline);
                 console.log(hash);
                 if (hash) {
-                    res = await publicClient.waitForTransactionReceipt({ hash });
+                    res = await publicClient.waitForTransactionReceipt({hash});
                 }
                 console.log(res);
 
@@ -378,7 +376,7 @@ class Contracts_MetaMask {
                 //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
 
                 try {
-                    const { request } = await publicClient.simulateContract({
+                    const {request} = await publicClient.simulateContract({
                         account,
                         address: quiz_address,
                         abi: quiz_abi,
@@ -418,7 +416,7 @@ class Contracts_MetaMask {
                     // else {
                     //     setContent("不正解です。待機すると、マイページに遷移します");
                     // }
-                    let res = await publicClient.waitForTransactionReceipt({ hash });
+                    let res = await publicClient.waitForTransactionReceipt({hash});
                     console.log(res);
                     document.location.href = "/user_page/" + account;
                 }
@@ -434,7 +432,7 @@ class Contracts_MetaMask {
 
     async _post_answer(account, id, answer) {
         try {
-            const { request } = await publicClient.simulateContract({
+            const {request} = await publicClient.simulateContract({
                 account,
                 address: quiz_address,
                 abi: quiz_abi,
@@ -449,17 +447,17 @@ class Contracts_MetaMask {
     }
 
     async get_quiz_all_data(id) {
-        return await quiz.read.get_quiz_all_data({ args: [id] });
+        return await quiz.read.get_quiz_all_data({args: [id]});
     }
 
     async get_quiz(id) {
-        const answer_typr = await quiz.read.get_quiz_answer_type({ args: [id] });
-        const res = await quiz.read.get_quiz({ args: [id] });
+        const answer_typr = await quiz.read.get_quiz_answer_type({args: [id]});
+        const res = await quiz.read.get_quiz({args: [id]});
         return [...res, answer_typr];
     }
 
     async get_quiz_simple(id) {
-        return await quiz.read.get_quiz_simple({ args: [id] });
+        return await quiz.read.get_quiz_simple({args: [id]});
     }
 
     async get_quiz_all_data_list(start, end) {
@@ -471,13 +469,13 @@ class Contracts_MetaMask {
         if (start <= end) {
             for (let i = start; i < end; i++) {
                 console.log(i);
-                res.push(await quiz.read.get_quiz_all_data({ account, args: [i] }));
+                res.push(await quiz.read.get_quiz_all_data({account, args: [i]}));
                 console.log(res);
             }
         } else {
             for (let i = start - 1; i >= end; i--) {
                 console.log(i);
-                res.push(await quiz.read.get_quiz_all_data({ account, args: [i] }));
+                res.push(await quiz.read.get_quiz_all_data({account, args: [i]}));
                 console.log(res);
             }
         }
@@ -495,13 +493,13 @@ class Contracts_MetaMask {
         if (start <= end) {
             for (let i = start; i < end; i++) {
                 console.log(i);
-                res.push(await quiz.read.get_quiz_simple({ account, args: [i] }));
+                res.push(await quiz.read.get_quiz_simple({account, args: [i]}));
                 console.log(res);
             }
         } else {
             for (let i = start - 1; i >= end; i--) {
                 console.log(i);
-                res.push(await quiz.read.get_quiz_simple({ account, args: [i] }));
+                res.push(await quiz.read.get_quiz_simple({account, args: [i]}));
                 console.log(res);
             }
         }
@@ -522,7 +520,7 @@ class Contracts_MetaMask {
             if (ethereum) {
                 try {
                     let account = await this.get_address();
-                    const { request } = await publicClient.simulateContract({
+                    const {request} = await publicClient.simulateContract({
                         account,
                         address: quiz_address,
                         abi: quiz_abi,
@@ -546,7 +544,7 @@ class Contracts_MetaMask {
             if (ethereum) {
                 try {
                     let account = await this.get_address();
-                    const { request } = await publicClient.simulateContract({
+                    const {request} = await publicClient.simulateContract({
                         account,
                         address: quiz_address,
                         abi: quiz_abi,
@@ -569,7 +567,7 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 let account = await this.get_address();
-                return await quiz.read.get_teacher_all({ account, args: [] });
+                return await quiz.read.get_teacher_all({account, args: []});
             } else {
                 console.log("Ethereum object does not exist");
             }
@@ -582,7 +580,7 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 let account = await this.get_address();
-                let res = await quiz.read.get_student_results({ account, args: [] });
+                let res = await quiz.read.get_student_results({account, args: []});
                 console.log(res);
                 return res;
             } else {
@@ -597,18 +595,18 @@ class Contracts_MetaMask {
         try {
             if (ethereum) {
                 let account = await this.get_address();
-                return await quiz.read._isTeacher({ account, args: [] });
+                return await quiz.read._isTeacher({account, args: []});
             } else {
                 console.log("Ethereum object does not exist");
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
     async get_respondentCount_and_respondentLimit(id) {
-        return (await quiz.read.get_respondentCount_and_respondentLimit({ args: [id] }));
+        return await quiz.read.get_respondentCount_and_respondentLimit({args: [id]});
     }
 }
 
-export { Contracts_MetaMask };
+export {Contracts_MetaMask};
