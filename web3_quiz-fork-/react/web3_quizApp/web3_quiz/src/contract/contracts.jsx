@@ -173,6 +173,7 @@ class Contracts_MetaMask {
                         functionName: "approve",
                         args: [quiz_address, amount],
                     });
+                    console.log("成功");
                     return await walletClient.writeContract(request);
                 } catch (e) {
                     console.log(e);
@@ -200,18 +201,28 @@ class Contracts_MetaMask {
             if (ethereum) {
                 let account = await this.get_address();
                 let approval = await token.read.allowance({ account, args: [account, quiz_address] })
-                console.log(approval);
+                console.log(Number(approval));
+                console.log(amount * numOfStudent * 10 ** 18);
+                if (Number(approval) >= Number(amount * numOfStudent * 10 ** 18)){
+                    console.log("approveのかち");
+                }else{
+                    console.log("払う量の価値");
+                }
 
                 if (Number(approval) >= Number(amount * numOfStudent * 10 ** 18)) {
-                    hash = await this._investment_to_quiz(account, id, amount, is_not_paying_out, numOfStudent);
+                    hash = await this.approve(account, amount * numOfStudent * 10 ** 18);
                     if (hash) {
                         res = await publicClient.waitForTransactionReceipt({ hash });
+                        hash = await this._investment_to_quiz(account, id, amount, is_not_paying_out, numOfStudent);
+                        if (hash) {
+                            res = await publicClient.waitForTransactionReceipt({ hash });
+                        }
                     }
                 } else {
                     hash = await this.approve(account, amount * numOfStudent * 10 ** 18);
                     if (hash) {
                         res = await publicClient.waitForTransactionReceipt({ hash });
-                        hash = await this._investment_to_quiz(account, id, amount, is_not_paying_out, numOfStudent);
+                        hash = await this._investment_to_quiz(account, Number(id), Number(amount), is_not_paying_out, Number(numOfStudent));
                         console.log(hash);
                         if (hash) {
                             res = await publicClient.waitForTransactionReceipt({ hash });
