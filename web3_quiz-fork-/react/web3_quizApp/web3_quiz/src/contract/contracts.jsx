@@ -168,12 +168,13 @@ class Contracts_MetaMask {
                 try {
                     const {request} = await publicClient.simulateContract({
                         account,
-                        address: token_address,
-                        abi: token_abi,
-                        functionName: "approve",
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName: "set_approve",
                         args: [quiz_address, amount],
                     });
                     console.log("成功");
+                    console.log(request);
                     return await walletClient.writeContract(request);
                 } catch (e) {
                     console.log(e);
@@ -204,6 +205,8 @@ class Contracts_MetaMask {
                 let approval = await token.read.allowance({account, args: [account, quiz_address]});
                 console.log(Number(approval));
                 console.log(amount * numOfStudent);
+                let approvement = await quiz.read.set_approve({account, args: [quiz_address, amount * numOfStudent]});
+                console.log(approvement);
                 if (Number(approval) >= Number(amount * numOfStudent)) {
                     console.log("approveのかち");
                 } else {
