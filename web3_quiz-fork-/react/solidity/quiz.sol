@@ -4,7 +4,7 @@ pragma solidity ^0.8.2;
 import "./class_room.sol";
 
 contract Quiz_Dapp is class_room {
-    address Token_address = 0xA63551e91e360274BE55391dD2A4A93D308Adb01;
+    address Token_address = 0x60e4999c31f497c02b784E9B138dC000d30d2068;
     TokenInterface token = TokenInterface(Token_address);
 
     struct User {
@@ -48,10 +48,14 @@ contract Quiz_Dapp is class_room {
 
     event Set_approve(bool isSuccess, uint allowance, address owner, address spender);
 
-    function set_approve(
-        address spender,
-        uint amount
-    ) public returns (bool isSuccess, uint allowance, address owner){
+    function set_approve(address spender, uint amount)
+        public
+        returns (
+            bool isSuccess,
+            uint allowance,
+            address owner
+        )
+    {
         owner = msg.sender;
         isSuccess = token.approve(spender, amount);
         allowance = token.allowance(msg.sender, spender);
@@ -74,7 +78,7 @@ contract Quiz_Dapp is class_room {
         uint _respondent_limit
     ) public returns (uint id) {
         require(token.allowance(msg.sender, address(this)) >= _reward * _respondent_limit, "Not enough token approve fees");
-        token.transferFrom_explanation(msg.sender, address(this), _reward * _respondent_limit * 10**token.decimals(), "create_quiz");
+        token.transferFrom_explanation(msg.sender, address(this), _reward * _respondent_limit, "create_quiz");
         id = quizs.length;
         quizs.push();
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
@@ -121,10 +125,28 @@ contract Quiz_Dapp is class_room {
         return id;
     }
 
-    function sum_of_investment(
-        uint amount,
-        uint numOfStudent
-    ) public view returns (uint sum, uint allowance){
+    event Set_spender_approve(address spender, uint amount);
+
+    function set_spender_approve(address spender, uint amount) public returns (bool isSuccess) {
+        isSuccess = token.approve(spender, amount);
+        emit Set_spender_approve(spender, amount);
+    }
+
+    function show_allowance(address spender)
+        public
+        view
+        returns (
+            uint amount,
+            address owner,
+            address thisAddress
+        )
+    {
+        owner = msg.sender;
+        amount = token.allowance(owner, spender);
+        thisAddress = address(this);
+    }
+
+    function sum_of_investment(uint amount, uint numOfStudent) public view returns (uint sum, uint allowance) {
         sum = amount * numOfStudent;
         allowance = token.allowance(msg.sender, address(this));
     }
@@ -138,7 +160,7 @@ contract Quiz_Dapp is class_room {
         uint numOfStudent
     ) public returns (uint quiz_id) {
         require(token.allowance(msg.sender, address(this)) >= amount * numOfStudent, "Not enough token approve fees");
-        token.transferFrom_explanation(msg.sender, address(this), amount * numOfStudent * 10**token.decimals(), "investment_to_quiz");
+        token.transferFrom_explanation(msg.sender, address(this), amount * numOfStudent, "investment_to_quiz");
 
         quizs[id].reward += amount;
 
