@@ -227,7 +227,7 @@ class Contracts_MetaMask {
         } catch (err) {
             console.log(err);
         }
-        //document.location.href = "/edit_list";
+        document.location.href = "/edit_list";
     }
 
     async _investment_to_quiz(account, id, amount, isNotPayingOut, numOfStudent) {
@@ -292,7 +292,7 @@ class Contracts_MetaMask {
             setShow(false);
             console.log(err);
         }
-        //document.location.href = "/answer_quiz/" + res.logs[2].topics[2];
+        document.location.href = "/answer_quiz/" + res.logs[2].topics[2];
     }
 
     async _create_quiz(account, title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit) {
@@ -398,7 +398,7 @@ class Contracts_MetaMask {
 
                 setShow(true);
                 setContent("書き込み中...");
-                let hash = await this._post_answer(account, id, answer);
+                let hash = await this._save_answer(account, id, answer);
 
                 if (hash) {
                     // const res1 = await quiz.read.post_answer_view({account,args:[id, answer.toString()]})
@@ -411,7 +411,8 @@ class Contracts_MetaMask {
                     // }
                     let res = await publicClient.waitForTransactionReceipt({ hash });
                     console.log(res);
-                    document.location.href = "/user_page/" + account;
+                    //document.location.href = "/user_page/" + account;
+                    document.location.href = "list_quiz";
                 }
                 console.log("create_answer_cont");
             } else {
@@ -421,6 +422,22 @@ class Contracts_MetaMask {
             console.log(err);
         }
         setShow(false);
+    }
+
+    async _save_answer(account, id, answer) {
+        try {
+            const { request } = await publicClient.simulateContract({
+                account,
+                address: quiz_address,
+                abi: quiz_abi,
+                functionName: "save_answer",
+                args: [id, answer.toString()],
+            });
+            console.log("正常そう");
+            return await walletClient.writeContract(request);
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     async _post_answer(account, id, answer) {

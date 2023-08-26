@@ -36,6 +36,7 @@ contract Quiz_Dapp is class_room {
         mapping(address => uint) respondents_map; //0が未回答,1が不正解,2が正解
         mapping(address => uint) respondents_state;
         Answer[] answers;
+        mapping(address => bytes32) students_answer_hashs;
     }
     struct Answer {
         address respondent;
@@ -238,6 +239,11 @@ contract Quiz_Dapp is class_room {
         respondent_limit = quizs[_quiz_id].respondent_limit;
     }
 
+    function get_student_answer_hash(address _sender, uint _quiz_id) public view returns (bytes32){
+        bytes32 answer_hash = quizs[_quiz_id].student_answer_hashs[_sender];
+        return answer_hash;
+    }
+
     function get_quiz_answer_type(uint _quiz_id) public view returns (uint answer_type) {
         answer_type = quizs[_quiz_id].answer_type;
     }
@@ -272,6 +278,26 @@ contract Quiz_Dapp is class_room {
         state = quizs[_quiz_id].respondents_map[msg.sender];
     }
 
+    event Save_answer(address indexed _sender, uint indexed quiz_id, uint indexed answer_id );
+
+    function save_answer(uint  _quiz_id, string memory _answer) public returns (uint answer_id){
+        require(quizs[_quiz_id].time_limit_epoch >= block.timestamp, "end quiz");
+        bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
+
+        if(quizs[_quiz_id].respondents_map[msg.sender] == 0){
+            quizs[_quiz_id].respondent_count += 1;
+        }
+
+        quizs[_quiz_id].students_answer_hashs[msg.sender] = answer_hash;
+        answer_id = quizs[_quiz_id].answers.length;
+        quizs[_quiz_id].respondents_state[msg.sender] = answer_id;
+        quizs[_quiz_id].answers.push();
+        quizs[_quiz_id].answers[answer_id].respondent = msg.sender;
+        quizs[_quiz_id].answers[answer_id].answer_time = block.timestamp;
+        
+        emit Save_answer(msg.sender, _quiz_id, answer_id);
+    }
+
     event Post_answer(address indexed _sender, uint indexed quiz_id, uint indexed answer_id);
 
     function post_answer(uint _quiz_id, string memory _answer) public returns (uint answer_id, uint reward) {
@@ -285,8 +311,8 @@ contract Quiz_Dapp is class_room {
                 //教員から出された問題であれば結果に反映　&& 初回の回答であれば
                 reward = quizs[_quiz_id].reward;
                 quizs[_quiz_id].respondent_count += 1;
-                users[msg.sender].result += reward * 10**token.decimals();
-                token.transfer_explanation(msg.sender, reward * 10**token.decimals(), "correct answer");
+                users[msg.sender].result += reward;
+                token.transfer_explanation(msg.sender, reward, "correct answer");
             } else if (check_teacher(quizs[_quiz_id].owner) == true && quizs[_quiz_id].respondents_map[msg.sender] == 1) {
                 //教員から出された問題であれば結果に反映　&& 間違った回答をした後であれば
                 token.transfer_explanation(msg.sender, 0, "correct answer");
