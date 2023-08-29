@@ -241,7 +241,7 @@ class Contracts_MetaMask {
                         address: quiz_address,
                         abi: quiz_abi,
                         functionName: "investment_to_quiz",
-                        args: [id, amount.toString(), isNotPayingOut, numOfStudent],
+                        args: [id, amount.toString(), numOfStudent],
                     });
 
                     return await walletClient.writeContract(request);

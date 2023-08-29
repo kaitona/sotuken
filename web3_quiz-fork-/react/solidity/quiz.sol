@@ -33,7 +33,7 @@ contract Quiz_Dapp is class_room {
         uint reward;
         uint respondent_count;
         uint respondent_limit;
-        mapping(address => uint) respondents_map; //0が未回答,1が不正解,2が正解
+        mapping(address => uint) respondents_map; //0が未回答,1が不正解,2が正解,3が回答済み
         mapping(address => uint) respondents_state;
         Answer[] answers;
         mapping(address => bytes32) students_answer_hashs;
@@ -157,7 +157,6 @@ contract Quiz_Dapp is class_room {
     function investment_to_quiz(
         uint id,
         uint amount,
-        bool isNotPayingOut,
         uint numOfStudent
     ) public returns (uint quiz_id) {
         require(token.allowance(msg.sender, address(this)) >= amount * numOfStudent, "Not enough token approve fees");
@@ -240,7 +239,7 @@ contract Quiz_Dapp is class_room {
     }
 
     function get_student_answer_hash(address _sender, uint _quiz_id) public view returns (bytes32){
-        bytes32 answer_hash = quizs[_quiz_id].student_answer_hashs[_sender];
+        bytes32 answer_hash = quizs[_quiz_id].students_answer_hashs[_sender];
         return answer_hash;
     }
 
@@ -278,24 +277,65 @@ contract Quiz_Dapp is class_room {
         state = quizs[_quiz_id].respondents_map[msg.sender];
     }
 
-    event Save_answer(address indexed _sender, uint indexed quiz_id, uint indexed answer_id );
+    event Save_answer(address indexed _sender, uint indexed _quiz_id, string indexed _quiz_state);
 
     function save_answer(uint  _quiz_id, string memory _answer) public returns (uint answer_id){
         require(quizs[_quiz_id].time_limit_epoch >= block.timestamp, "end quiz");
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
 
-        if(quizs[_quiz_id].respondents_map[msg.sender] == 0){
+        if((quizs[_quiz_id].respondents_map[msg.sender] == 0) && (quizs[_quiz_id].time_limit_epoch >= block.timestamp)){
             quizs[_quiz_id].respondent_count += 1;
+            quizs[_quiz_id].students_answer_hashs[msg.sender] = answer_hash;
         }
 
-        quizs[_quiz_id].students_answer_hashs[msg.sender] = answer_hash;
         answer_id = quizs[_quiz_id].answers.length;
         quizs[_quiz_id].respondents_state[msg.sender] = answer_id;
         quizs[_quiz_id].answers.push();
         quizs[_quiz_id].answers[answer_id].respondent = msg.sender;
         quizs[_quiz_id].answers[answer_id].answer_time = block.timestamp;
+        quizs[_quiz_id].respondents_map[msg.sender] = 3;
+
+        string memory _quiz_state = "enable answer";
+        if(quizs[_quiz_id].time_limit_epoch < block.timestamp){
+            _quiz_state = "end quiz";
+        }
         
-        emit Save_answer(msg.sender, _quiz_id, answer_id);
+        emit Save_answer(msg.sender, _quiz_id, _quiz_state);
+    }
+
+    event Payment_of_reward(uint indexed _quiz_id);
+
+    function payment_of_reward(uint _quiz_id) public returns(uint correct_count){
+        address[] memory students = get_student_all();
+        uint now_time = block.timestamp;
+        correct_count = 0; 
+
+        for (uint i = 0; i < students.length; i++){
+            address student = students[i];
+            bool result;
+            uint reward;
+            uint answer_id = quizs[_quiz_id].respondents_state[student];
+        
+            bytes32 student_answer_hash = get_student_answer_hash(student, _quiz_id);
+            if(quizs[_quiz_id].answer_hash == student_answer_hash && quizs[_quiz_id].respondents_map[student] != 0 && quizs[_quiz_id].answers[answer_id].answer_time <= now_time){
+                reward = quizs[_quiz_id].reward;
+                users[student].result += reward;
+                token.transfer_explanation(student, reward, "correct answer");
+                quizs[_quiz_id].respondents_map[student] = 2;
+                result = true;
+                correct_count += 1;
+            }else{
+                reward = 0;
+                token.transfer_explanation(student, 0, "Incorrect answer");
+                result = false;
+                quizs[_quiz_id].respondents_map[msg.sender] = 1;
+            }
+
+            quizs[_quiz_id].answers[answer_id].reward = reward;
+            quizs[_quiz_id].answers[answer_id].result = result;
+        }
+
+        emit Payment_of_reward(_quiz_id);
     }
 
     event Post_answer(address indexed _sender, uint indexed quiz_id, uint indexed answer_id);
