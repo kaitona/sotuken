@@ -10,6 +10,7 @@ function Investment_to_quiz() {
     const [amount, setAmount] = useState(0);
     const [isNotPayingOut, setIsNotPayingOut] = useState("true");
     const [numOfStudent, setNumOfStudent] = useState(0);
+    const [answer, setAnswer] = useState("");
 
     let Contract = new Contracts_MetaMask();
 
@@ -26,7 +27,11 @@ function Investment_to_quiz() {
     get_contract();
 
     const investment_to_quiz = async () => {
-        Contract.investment_to_quiz(id, amount, isNotPayingOut, numOfStudent);
+        if ((answer == "" && isNotPayingOut == "false") == false){
+            Contract.investment_to_quiz(id, amount, answer, isNotPayingOut, numOfStudent);
+        }else{
+            alert("答えを入力してください");
+        }
     };
 
     console.log(isNotPayingOut);
@@ -40,7 +45,6 @@ function Investment_to_quiz() {
                 </div>
                 <div className="col-10">
                     以下に追加する報酬(Wake)の量を指定してください<br />
-                    //1行のみのフォームにしたい
                     <input
                         type="text"
                         className="form-control"
@@ -51,7 +55,19 @@ function Investment_to_quiz() {
                     />
                     正答した生徒一人ひとりに与えられるWakeトークン量： {amount}Wake
                     <br />
-                    あなたから払いだされるWakeトークン量； {amount * numOfStudent}Wake
+                    あなたから払いだされるWakeトークン量： {amount * numOfStudent}Wake
+
+                </div>
+                <div className="col-10" style={{ marginTop: "20px" }}>
+                    以下に確定した答えを入力してください
+                    <input
+                        type="text"
+                        className="form-control"
+                        value={answer}
+                        onChange={(event) => {
+                            setAnswer(event.target.value);
+                        }}
+                    />
 
                 </div>
                 <br />
@@ -78,7 +94,7 @@ function Investment_to_quiz() {
                     </label>
                 </div>
                 <Button variant="primary" onClick={() => investment_to_quiz()} style={{ marginTop: "20px" }}>
-                    クイズを作成
+                    報酬の追加、報酬の払い出しを実行
                 </Button>
 
             </div>

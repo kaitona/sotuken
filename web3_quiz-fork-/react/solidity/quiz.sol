@@ -280,10 +280,9 @@ contract Quiz_Dapp is class_room {
     event Save_answer(address indexed _sender, uint indexed _quiz_id, string indexed _quiz_state);
 
     function save_answer(uint  _quiz_id, string memory _answer) public returns (uint answer_id){
-        require(quizs[_quiz_id].time_limit_epoch >= block.timestamp, "end quiz");
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
 
-        if((quizs[_quiz_id].respondents_map[msg.sender] == 0) && (quizs[_quiz_id].time_limit_epoch >= block.timestamp)){
+        if(quizs[_quiz_id].respondents_map[msg.sender] == 0){
             quizs[_quiz_id].respondent_count += 1;
             quizs[_quiz_id].students_answer_hashs[msg.sender] = answer_hash;
         }
@@ -305,9 +304,10 @@ contract Quiz_Dapp is class_room {
 
     event Payment_of_reward(uint indexed _quiz_id);
 
-    function payment_of_reward(uint _quiz_id) public returns(uint correct_count){
+    function payment_of_reward(uint _quiz_id, string memory _answer) public returns(uint correct_count){
         address[] memory students = get_student_all();
         uint now_time = block.timestamp;
+        bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
         correct_count = 0; 
 
         for (uint i = 0; i < students.length; i++){
@@ -317,7 +317,7 @@ contract Quiz_Dapp is class_room {
             uint answer_id = quizs[_quiz_id].respondents_state[student];
         
             bytes32 student_answer_hash = get_student_answer_hash(student, _quiz_id);
-            if(quizs[_quiz_id].answer_hash == student_answer_hash && quizs[_quiz_id].respondents_map[student] != 0 && quizs[_quiz_id].answers[answer_id].answer_time <= now_time){
+            if(answer_hash == student_answer_hash && quizs[_quiz_id].respondents_map[student] != 0 && quizs[_quiz_id].answers[answer_id].answer_time <= quizs[_quiz_id].time_limit_epoch){
                 reward = quizs[_quiz_id].reward;
                 users[student].result += reward;
                 token.transfer_explanation(student, reward, "correct answer");

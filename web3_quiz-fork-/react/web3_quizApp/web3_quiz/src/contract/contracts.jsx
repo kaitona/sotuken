@@ -186,10 +186,12 @@ class Contracts_MetaMask {
         }
     }
 
-    async investment_to_quiz(id, amount, isNotPayingOut, numOfStudent) {
+    async investment_to_quiz(id, amount, answer, isNotPayingOut, numOfStudent) {
         console.log([id, amount, isNotPayingOut, numOfStudent]);
         let res = null;
+        let res2 = null;
         let hash = null;
+        let hash2 = null;
         let is_not_paying_out = null;
         amount = Number(amount) * 10 ** 18;
 
@@ -206,7 +208,7 @@ class Contracts_MetaMask {
                 console.log(amount * numOfStudent);
 
                 if (Number(approval) >= Number(amount * numOfStudent)) {
-                    hash = await this._investment_to_quiz(account, id, amount, is_not_paying_out, numOfStudent);
+                    hash = await this._investment_to_quiz(account, id, amount, numOfStudent);
                     if (hash) {
                         res = await publicClient.waitForTransactionReceipt({ hash });
                     }
@@ -214,11 +216,18 @@ class Contracts_MetaMask {
                     hash = await this.approve(account, amount * numOfStudent);
                     if (hash) {
                         res = await publicClient.waitForTransactionReceipt({ hash });
-                        hash = await this._investment_to_quiz(account, id, amount, is_not_paying_out, numOfStudent);
+                        hash = await this._investment_to_quiz(account, id, amount, numOfStudent);
                         console.log(hash);
                         if (hash) {
                             res = await publicClient.waitForTransactionReceipt({ hash });
                         }
+                    }
+                }
+
+                if(is_not_paying_out == false){
+                    hash2 = await this._payment_of_reward(account, id, answer);
+                    if(hash){
+                        res2 = await publicClient.waitForTransactionReceipt({ hash });
                     }
                 }
             } else {
@@ -230,8 +239,8 @@ class Contracts_MetaMask {
         document.location.href = "/edit_list";
     }
 
-    async _investment_to_quiz(account, id, amount, isNotPayingOut, numOfStudent) {
-        console.log([account, id, amount, isNotPayingOut, numOfStudent])
+    async _investment_to_quiz(account, id, amount, numOfStudent) {
+        console.log([account, id, amount, numOfStudent])
         try {
             if (ethereum) {
                 //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
@@ -252,6 +261,31 @@ class Contracts_MetaMask {
                 console.log("Ethereum object does not exist");
             }
         } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async _payment_of_reward(account, id, answer){
+        console.log([account, id, answer]);
+        try{
+            if(ethereum){
+                try{
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName:"payment_of_reward",
+                        args:[id, answer],
+                    });
+
+                    return await walletClient.writeContract(request);
+                }catch(e){
+                    console.log(e);
+                }
+            }else{
+                console.log("Ethereum object does not exist");
+            }
+        }catch(err){
             console.log(err);
         }
     }
