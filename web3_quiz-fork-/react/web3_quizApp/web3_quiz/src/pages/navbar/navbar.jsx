@@ -22,7 +22,7 @@ function create_edit_button() {
             <div className="col-1"></div>
             <div className="col-3">
                 <Nav.Item>
-                    <Nav.Link eventKey="edit" href={"/#"}>
+                    <Nav.Link eventKey="edit" href={"/edit_list"}>
                         <div className="col-12">
                             <RiFileSettingsLine size={30} />
                         </div>

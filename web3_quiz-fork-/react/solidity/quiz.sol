@@ -4,7 +4,7 @@ pragma solidity ^0.8.2;
 import "./class_room.sol";
 
 contract Quiz_Dapp is class_room {
-    address Token_address = 0xA63551e91e360274BE55391dD2A4A93D308Adb01;
+    address Token_address = 0x60e4999c31f497c02b784E9B138dC000d30d2068;
     TokenInterface token = TokenInterface(Token_address);
 
     struct User {
@@ -33,9 +33,10 @@ contract Quiz_Dapp is class_room {
         uint reward;
         uint respondent_count;
         uint respondent_limit;
-        mapping(address => uint) respondents_map; //0が未回答,1が不正解,2が正解
+        mapping(address => uint) respondents_map; //0が未回答,1が不正解,2が正解,3が回答済み
         mapping(address => uint) respondents_state;
         Answer[] answers;
+        mapping(address => bytes32) students_answer_hashs;
     }
     struct Answer {
         address respondent;
@@ -45,6 +46,22 @@ contract Quiz_Dapp is class_room {
     }
 
     Quiz[] private quizs;
+
+    event Set_approve(bool isSuccess, uint allowance, address owner, address spender);
+
+    function set_approve(address spender, uint amount)
+        public
+        returns (
+            bool isSuccess,
+            uint allowance,
+            address owner
+        )
+    {
+        owner = msg.sender;
+        isSuccess = token.approve(spender, amount);
+        allowance = token.allowance(msg.sender, spender);
+        emit Set_approve(isSuccess, allowance, owner, spender);
+    }
 
     event Create_quiz(address indexed _sender, uint indexed id);
 
@@ -62,7 +79,7 @@ contract Quiz_Dapp is class_room {
         uint _respondent_limit
     ) public returns (uint id) {
         require(token.allowance(msg.sender, address(this)) >= _reward * _respondent_limit, "Not enough token approve fees");
-        token.transferFrom_explanation(msg.sender, address(this), _reward * _respondent_limit * 10**token.decimals(), "create_quiz");
+        token.transferFrom_explanation(msg.sender, address(this), _reward * _respondent_limit, "create_quiz");
         id = quizs.length;
         quizs.push();
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
@@ -83,6 +100,108 @@ contract Quiz_Dapp is class_room {
         quizs[id].respondent_limit = _respondent_limit;
         emit Create_quiz(msg.sender, id);
         return id;
+    }
+
+    event Edit_quiz(address indexed _sender, uint indexed id);
+
+    function edit_quiz(
+        uint id,
+        address owner,
+        string memory _title,
+        string memory _explanation,
+        string memory _thumbnail_url,
+        string memory _content,
+        uint _startline_after_epoch,
+        uint _timelimit_after_epoch
+    ) public returns (uint quiz_id) {
+        // quizs.push(Quiz(id,msg.sender,_title,_thumbnail_url,_content,_choices,answer_hash,answer_hash,block.timestamp,_reward,_respondent_limit,Answer(msg.sender,block.timestamp,0)));
+        quizs[id].owner = owner;
+        quizs[id].title = _title;
+        quizs[id].explanation = _explanation;
+        quizs[id].thumbnail_url = _thumbnail_url;
+        quizs[id].content = _content;
+        quizs[id].start_time_epoch = _startline_after_epoch;
+        quizs[id].time_limit_epoch = _timelimit_after_epoch;
+        emit Edit_quiz(msg.sender, id);
+        return id;
+    }
+
+    event Set_spender_approve(address spender, uint amount);
+
+    function set_spender_approve(address spender, uint amount) public returns (bool isSuccess) {
+        isSuccess = token.approve(spender, amount);
+        emit Set_spender_approve(spender, amount);
+    }
+
+    function show_allowance(address spender)
+        public
+        view
+        returns (
+            uint amount,
+            address owner,
+            address thisAddress
+        )
+    {
+        owner = msg.sender;
+        amount = token.allowance(owner, spender);
+        thisAddress = address(this);
+    }
+
+    function sum_of_investment(uint amount, uint numOfStudent) public view returns (uint sum, uint allowance) {
+        sum = amount * numOfStudent;
+        allowance = token.allowance(msg.sender, address(this));
+    }
+
+    event Investment_to_quiz(address indexed _sender, uint indexed id);
+
+    function investment_to_quiz(
+        uint id,
+        uint amount,
+        uint numOfStudent
+    ) public returns (uint quiz_id) {
+        require(token.allowance(msg.sender, address(this)) >= amount * numOfStudent, "Not enough token approve fees");
+        token.transferFrom_explanation(msg.sender, address(this), amount * numOfStudent, "investment_to_quiz");
+
+        quizs[id].reward += amount;
+
+        emit Investment_to_quiz(msg.sender, id);
+        return id;
+    }
+
+    function get_quiz_all_data(uint _quiz_id)
+        public
+        view
+        returns (
+            uint id,
+            address owner,
+            string memory title,
+            string memory explanation,
+            string memory thumbnail_url,
+            string memory content,
+            uint _answer_type,
+            string memory answer_data,
+            uint start_time_epoch,
+            uint time_limit_epoch,
+            uint reward,
+            uint respondent_count,
+            uint respondent_limit,
+            uint state
+        )
+    {
+        id = _quiz_id;
+        owner = quizs[_quiz_id].owner;
+        title = quizs[_quiz_id].title;
+        explanation = quizs[_quiz_id].explanation;
+        thumbnail_url = quizs[_quiz_id].thumbnail_url;
+        content = quizs[_quiz_id].content;
+        _answer_type = quizs[id].answer_type;
+        answer_data = quizs[_quiz_id].answer_data;
+        start_time_epoch = quizs[_quiz_id].start_time_epoch;
+        time_limit_epoch = quizs[_quiz_id].time_limit_epoch;
+        reward = quizs[_quiz_id].reward;
+        respondent_count = quizs[_quiz_id].respondent_count;
+        respondent_limit = quizs[_quiz_id].respondent_limit;
+        state = quizs[_quiz_id].respondents_map[msg.sender];
     }
 
     function get_quiz(uint _quiz_id)
@@ -119,6 +238,11 @@ contract Quiz_Dapp is class_room {
         respondent_limit = quizs[_quiz_id].respondent_limit;
     }
 
+    function get_student_answer_hash(address _sender, uint _quiz_id) public view returns (bytes32){
+        bytes32 answer_hash = quizs[_quiz_id].students_answer_hashs[_sender];
+        return answer_hash;
+    }
+
     function get_quiz_answer_type(uint _quiz_id) public view returns (uint answer_type) {
         answer_type = quizs[_quiz_id].answer_type;
     }
@@ -153,6 +277,67 @@ contract Quiz_Dapp is class_room {
         state = quizs[_quiz_id].respondents_map[msg.sender];
     }
 
+    event Save_answer(address indexed _sender, uint indexed _quiz_id, string indexed _quiz_state);
+
+    function save_answer(uint  _quiz_id, string memory _answer) public returns (uint answer_id){
+        bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
+
+        if(quizs[_quiz_id].respondents_map[msg.sender] == 0){
+            quizs[_quiz_id].respondent_count += 1;
+            quizs[_quiz_id].students_answer_hashs[msg.sender] = answer_hash;
+        }
+
+        answer_id = quizs[_quiz_id].answers.length;
+        quizs[_quiz_id].respondents_state[msg.sender] = answer_id;
+        quizs[_quiz_id].answers.push();
+        quizs[_quiz_id].answers[answer_id].respondent = msg.sender;
+        quizs[_quiz_id].answers[answer_id].answer_time = block.timestamp;
+        quizs[_quiz_id].respondents_map[msg.sender] = 3;
+
+        string memory _quiz_state = "enable answer";
+        if(quizs[_quiz_id].time_limit_epoch < block.timestamp){
+            _quiz_state = "end quiz";
+        }
+        
+        emit Save_answer(msg.sender, _quiz_id, _quiz_state);
+    }
+
+    event Payment_of_reward(uint indexed _quiz_id);
+
+    function payment_of_reward(uint _quiz_id, string memory _answer) public returns(uint correct_count){
+        address[] memory students = get_student_all();
+        uint now_time = block.timestamp;
+        bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
+        correct_count = 0; 
+
+        for (uint i = 0; i < students.length; i++){
+            address student = students[i];
+            bool result;
+            uint reward;
+            uint answer_id = quizs[_quiz_id].respondents_state[student];
+        
+            bytes32 student_answer_hash = get_student_answer_hash(student, _quiz_id);
+            if(answer_hash == student_answer_hash && quizs[_quiz_id].respondents_map[student] != 0 && quizs[_quiz_id].answers[answer_id].answer_time <= quizs[_quiz_id].time_limit_epoch){
+                reward = quizs[_quiz_id].reward;
+                users[student].result += reward;
+                token.transfer_explanation(student, reward, "correct answer");
+                quizs[_quiz_id].respondents_map[student] = 2;
+                result = true;
+                correct_count += 1;
+            }else{
+                reward = 0;
+                token.transfer_explanation(student, 0, "Incorrect answer");
+                result = false;
+                quizs[_quiz_id].respondents_map[msg.sender] = 1;
+            }
+
+            quizs[_quiz_id].answers[answer_id].reward = reward;
+            quizs[_quiz_id].answers[answer_id].result = result;
+        }
+
+        emit Payment_of_reward(_quiz_id);
+    }
+
     event Post_answer(address indexed _sender, uint indexed quiz_id, uint indexed answer_id);
 
     function post_answer(uint _quiz_id, string memory _answer) public returns (uint answer_id, uint reward) {
@@ -166,8 +351,8 @@ contract Quiz_Dapp is class_room {
                 //教員から出された問題であれば結果に反映　&& 初回の回答であれば
                 reward = quizs[_quiz_id].reward;
                 quizs[_quiz_id].respondent_count += 1;
-                users[msg.sender].result += reward * 10**token.decimals();
-                token.transfer_explanation(msg.sender, reward * 10**token.decimals(), "correct answer");
+                users[msg.sender].result += reward;
+                token.transfer_explanation(msg.sender, reward, "correct answer");
             } else if (check_teacher(quizs[_quiz_id].owner) == true && quizs[_quiz_id].respondents_map[msg.sender] == 1) {
                 //教員から出された問題であれば結果に反映　&& 間違った回答をした後であれば
                 token.transfer_explanation(msg.sender, 0, "correct answer");

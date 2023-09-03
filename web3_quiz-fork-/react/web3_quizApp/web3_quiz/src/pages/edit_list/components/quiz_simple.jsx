@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Modal from "./Modal";
 import { Link } from "react-router-dom";
+import Button from "react-bootstrap/Button";
 import "./quiz_simple.css";
 
 function Time_diff(props) {
@@ -88,11 +89,11 @@ function Simple_quiz(props) {
 
     const search = useLocation().search;
     console.log(props.quiz);
-    console.log(props.quiz[5]);
-    console.log(props.quiz[6]);
+    console.log(props.quiz[8]);
+    console.log(props.quiz[9]);
     return (
         <>
-            {/* <Modal show={show} setShow={setShow} id={props.quiz[0].toNumber()} /> */}
+
             <div onClick={() => setShow(true)}>
                 <div className="quiz_card">
                     <Link to={{ pathname: "/answer_quiz/" + Number(props.quiz[0]), state: { back_page: 0 } }} style={{ color: "black", textDecoration: "none" }}>
@@ -108,42 +109,48 @@ function Simple_quiz(props) {
                                     <div className="col-sm-12 col-md-12 col-lg-12 ">{props.quiz[3]}</div>
                                 </div>
                                 <div className="row h-20" style={{ fontSize: "14px" }}>
-                                    <Time_diff start={Number(props.quiz[5])} limit={Number(props.quiz[6])} />
+                                    <Time_diff start={Number(props.quiz[8])} limit={Number(props.quiz[9])} />
                                 </div>
                                 <div className="d-flex" style={{ fontSize: "14px", lineHeight: "1" }}>
-                                    {/* <div className="col-4 ">{Date(props.item[4].toNumber() * 1000)}</div> */}
+
 
                                     <div className="col-3">
                                         <div className="col">報酬</div>
                                         <div className="col" style={{ textAlign: "center" }}>
-                                            {Number(props.quiz[7]) / (10 ** 18)}Wake
+                                            {Number(props.quiz[10]) / (10 ** 18)}Wake
                                         </div>
                                     </div>
                                     <div className="col-3">
                                         <div className="col">正解数</div>
                                         <div className="col" style={{ textAlign: "center" }}>
-                                            {Number(props.quiz[8])}
+                                            {Number(props.quiz[11])}
                                         </div>
                                     </div>
                                     <div className="col-3">
                                         <div className="col">上限</div>
                                         <div className="col" style={{ textAlign: "center" }}>
-                                            {Number(props.quiz[9])}
+                                            {Number(props.quiz[12])}
                                         </div>
                                     </div>
                                     <div className="col-3">
                                         <div className="col">状態</div>
                                         <div className="col" style={{ textAlign: "center" }}>
-                                            {Number(props.quiz[10]) == 0 ? "未回答" : Number(props.quiz[10]) == 1 ? "不正解" : Number(props.quiz[10]) == 2 ? "正解" : ""}
+                                            {Number(props.quiz[13]) == 0 ? "未回答" : Number(props.quiz[13]) == 1 ? "不正解" : Number(props.quiz[13]) == 2 ? "正解" : ""}
                                         </div>
                                     </div>
-                                    {/* <div className="col-3 ">正解数:{props.quiz[7].toNumber()}</div>
-                            <div className="col-3 ">上限:{props.quiz[8].toNumber()}</div>
-                            <div className="col-3 "> 状態:{props.quiz[9].toNumber()}</div> */}
+
                                 </div>
                             </div>
                         </div>
                     </Link>
+                    <div style={{ textAlign: "right" }}>
+                        <Button as={Link} to={`/edit_quiz/${Number(props.quiz[0])}`} state={{ args: [Number(props.quiz[0]), props.quiz[1], props.quiz[2], props.quiz[3], props.quiz[4], props.quiz[5], Number(props.quiz[6]), props.quiz[7], Number(props.quiz[8]), Number(props.quiz[9]), Number(props.quiz[10]), Number(props.quiz[11]), Number(props.quiz[12]), Number(props.quiz[13])] }} variant="primary" style={{ marginTop: "20px" }}>
+                            編集
+                        </Button>
+                        <Button as={Link} to={`/investment_page/${Number(props.quiz[0])}`} state={{ args: [Number(props.quiz[0])] }} variant="primary" style={{ marginTop: "20px", marginLeft: "10px", marginRight: "0px" }}>
+                            報酬の追加
+                        </Button>
+                    </div>
                 </div>
             </div>
         </>

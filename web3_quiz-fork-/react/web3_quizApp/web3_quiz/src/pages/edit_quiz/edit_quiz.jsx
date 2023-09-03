@@ -1,6 +1,8 @@
 import { Contracts_MetaMask } from "../../contract/contracts";
 import Form from "react-bootstrap/Form";
 import { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import MDEditor from "@uiw/react-md-editor";
 import Answer_select from "./components/answer_select";
 import Button from "react-bootstrap/Button";
@@ -10,43 +12,38 @@ import Wait_Modal from "../../contract/wait_Modal";
 const { ethereum } = window;
 const mkdStr = "";
 
-function Create_quiz() {
+function Edit_quiz() {
+    const [id, setId] = useState(useParams()["id"]);
+    const [owner, setOwner] = useState(null);
+
     const [useing_address, Set_useing_address] = useState(null);
     const [title, setTitle] = useState("");
     const [explanation, setExplanation] = useState("");
     const [thumbnail_url, setThumbnail_url] = useState("");
     const [content, setContent] = useState("");
-    const [answer_type, setAnswer_type] = useState(0);
-    const [answer_data, setAnswer_data] = useState([]);
-    const [correct, setCorrect] = useState("");
     const [reply_startline, setReply_startline] = useState(
         new Date()
             .toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })
             .replace(/[/]/g, "-")
             .replace(/\s(\d):/, " 0$1:"),
     );
-    const [reply_deadline, setReply_deadline] = useState(getLocalizedDateTimeString(addDays(new Date(), 1)));
-    const [reward, setReward] = useState(0);
-
+    const [reply_deadline, setReply_deadline] = useState(getLocalizedDateTimeString(addDays(new Date(), 0)));
     let Contract = new Contracts_MetaMask();
 
-    const [correct_limit, setCorrect_limit] = useState(null);
-    const [state, setState] = useState("Null");
     const [now, setnow] = useState(null);
     const [show, setShow] = useState(false);
 
-    const create_quiz = async () => {
-        console.log(title, explanation, thumbnail_url, content, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
+    const location = useLocation();
+    const quiz = location.state.args;
 
-        if (correct !== "") {
-            console.log(new Date(reply_startline).getTime(), new Date(reply_deadline).getTime());
-            if (new Date(reply_startline).getTime() < new Date(reply_deadline).getTime()) {
-                Contract.create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow);
-            } else {
-                alert("回答開始日時を回答締切日時より前に設定してください");
-            }
+    const edit_quiz = async () => {
+        console.log(id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline);
+
+        console.log(new Date(reply_startline).getTime(), new Date(reply_deadline).getTime());
+        if (new Date(reply_startline).getTime() < new Date(reply_deadline).getTime()) {
+            Contract.edit_quiz(id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline, setShow);
         } else {
-            alert("正解を入力してください");
+            alert("回答開始日時を回答締切日時より前に設定してください");
         }
     };
     function getLocalizedDateTimeString(now = new Date()) {
@@ -78,20 +75,29 @@ function Create_quiz() {
         date.setDate(date.getDate() + days);
         return date;
     }
+    function date_format(date) {
+        return date.split(" ").join("T").slice(0, date.length - 3);
+    }
 
     //初回のみ実行
     useEffect(() => {
         // let now = new Date();
         // const diff_time = new Date(now + 100);
         // setReply_deadline(addDays(now, 5));
-        async function get_contract() {
-            setCorrect_limit(await Contract.get_num_of_students());
-        }
-        get_contract();
+        console.log(id);
+        setOwner(quiz[1]);
+        setTitle(quiz[2]);
+        setExplanation(quiz[3]);
+        setThumbnail_url(quiz[4]);
+        setContent(quiz[5]);
+        setReply_startline(getLocalizedDateTimeString(new Date(quiz[8] * 1000)));
+        setReply_deadline(getLocalizedDateTimeString(new Date(quiz[9] * 1000)));
         setnow(getLocalizedDateTimeString());
+        console.log(quiz)
         // console.log(now);
         // console.log(new Date().toISOString().slice(0, 16));
     }, []);
+    console.log(now);
     console.log(reply_deadline);
     console.log(reply_startline);
 
@@ -123,19 +129,16 @@ function Create_quiz() {
                         <MDEditor height={500} value={content} onChange={setContent} />
                     </Form.Group>
 
-                    {/*<Form.Group className="mb-3" style={{ textAlign: "left" }}>
-                        <Form.Label>選択肢(正解の回答にチェックを入れてください)</Form.Label><br />
-                        <Answer_area1 name={"回答の追加"} variable={answer_data} variable1={correct} set={setAnswer_data} set1={setCorrect}/>
-                    </Form.Group> */}
+                    {/*
                     <Answer_select name={"回答の追加"} variable={answer_data} variable1={correct} set={setAnswer_data} set1={setCorrect} setAnswer_type={setAnswer_type} answer_type={answer_type} />
-
+                    */}
                     <Form.Group className="mb-3" style={{ textAlign: "left" }}>
                         <Form.Label>回答開始日時</Form.Label>
                         <Form.Control
                             type="datetime-local"
-                            defaultValue={now}
-                            //value={reply_deadline}
-                            min={now}
+                            //defaultValue={reply_startline}
+                            value={reply_startline}
+                            min={reply_startline}
                             onChange={(event) => setReply_startline(new Date(event.target.value))}
                         />
                     </Form.Group>
@@ -144,31 +147,17 @@ function Create_quiz() {
                         <Form.Label>回答締切日時</Form.Label>
                         <Form.Control
                             type="datetime-local"
-                            defaultValue={reply_deadline}
-                            //value={reply_deadline}
-                            min={now}
+                            //defaultValue={reply_deadline}
+                            value={reply_deadline}
+                            min={reply_deadline}
                             onChange={(event) => setReply_deadline(new Date(event.target.value))}
                         />
                     </Form.Group>
-                    {/*
-                    <div className="row">
 
-                        <Form.Group className="mb-3 col-4" style={{ textAlign: "left" }}>
-                            <Form.Label>報酬</Form.Label>
-                            <Form.Control type="number" min={1} step={1} value={reward} onChange={(event) => setReward(parseInt(event.target.value))} />
-                        </Form.Group>
-                        <div className="col-1" />
-
-                        <Form.Group className="mb-3 col-4" style={{ textAlign: "left" }}>
-                            <Form.Label>正解の上限</Form.Label>
-                            <Form.Control type="number" min={1} step={1} value={correct_limit} onChange={(event) => setCorrect_limit(parseInt(event.target.value))} />
-                        </Form.Group>
-                    </div>
-                    */}
 
                     <div style={{ textAlign: "right" }}>
-                        <Button variant="primary" onClick={() => create_quiz()} style={{ marginTop: "20px" }}>
-                            クイズを作成
+                        <Button variant="primary" onClick={() => edit_quiz()} style={{ marginTop: "20px" }}>
+                            クイズをの編集を実行
                         </Button>
                     </div>
                 </div>
@@ -178,6 +167,36 @@ function Create_quiz() {
             <Wait_Modal showFlag={show} />
         </div>
     );
+
+
+
+
+
 }
 
-export default Create_quiz;
+{/*
+const { ethereum } = window;
+const mkdStr = "";
+
+function Create_quiz() {
+    let Contract = new Contracts_MetaMask();
+    const [id, setId] = useState(useParams()["id"]);
+    const [quiz, setQuiz] = useState(null);
+    console.log(id);
+
+    useEffect(() => {
+        // let now = new Date();
+        // const diff_time = new Date(now + 100);
+        // setReply_deadline(addDays(now, 5));
+        const get_contract = async () => {
+            setQuiz(await Contract.get_quiz_all_data(id));
+        };
+        get_contract(id);
+        console.log(quiz);
+        // console.log(now);
+        // console.log(new Date().toISOString().slice(0, 16));
+    }, []);
+}
+*/}
+
+export default Edit_quiz;

@@ -173,6 +173,7 @@ class Contracts_MetaMask {
                         functionName: "approve",
                         args: [quiz_address, amount],
                     });
+                    console.log("成功");
                     return await walletClient.writeContract(request);
                 } catch (e) {
                     console.log(e);
@@ -185,23 +186,128 @@ class Contracts_MetaMask {
         }
     }
 
+    async investment_to_quiz(id, amount, answer, isNotPayingOut, numOfStudent) {
+        console.log([id, amount, isNotPayingOut, numOfStudent]);
+        let res = null;
+        let res2 = null;
+        let hash = null;
+        let hash2 = null;
+        let is_not_paying_out = null;
+        amount = Number(amount) * 10 ** 18;
+
+        if (isNotPayingOut === "false") {
+            is_not_paying_out = false;
+        } else {
+            is_not_paying_out = true;
+        }
+        try {
+            if (ethereum) {
+                let account = await this.get_address();
+                let approval = await token.read.allowance({ account, args: [account, quiz_address] });
+                console.log(Number(approval));
+                console.log(amount * numOfStudent);
+
+                if (Number(approval) >= Number(amount * numOfStudent)) {
+                    hash = await this._investment_to_quiz(account, id, amount, numOfStudent);
+                    if (hash) {
+                        res = await publicClient.waitForTransactionReceipt({ hash });
+                    }
+                } else {
+                    hash = await this.approve(account, amount * numOfStudent);
+                    if (hash) {
+                        res = await publicClient.waitForTransactionReceipt({ hash });
+                        hash = await this._investment_to_quiz(account, id, amount, numOfStudent);
+                        console.log(hash);
+                        if (hash) {
+                            res = await publicClient.waitForTransactionReceipt({ hash });
+                        }
+                    }
+                }
+
+                if(is_not_paying_out == false){
+                    hash2 = await this._payment_of_reward(account, id, answer);
+                    if(hash){
+                        res2 = await publicClient.waitForTransactionReceipt({ hash });
+                    }
+                }
+            } else {
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+        document.location.href = "/edit_list";
+    }
+
+    async _investment_to_quiz(account, id, amount, numOfStudent) {
+        console.log([account, id, amount, numOfStudent])
+        try {
+            if (ethereum) {
+                //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
+                try {
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName: "investment_to_quiz",
+                        args: [id, amount.toString(), numOfStudent],
+                    });
+
+                    return await walletClient.writeContract(request);
+                } catch (e) {
+                    console.log(e);
+                }
+            } else {
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async _payment_of_reward(account, id, answer){
+        console.log([account, id, answer]);
+        try{
+            if(ethereum){
+                try{
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName:"payment_of_reward",
+                        args:[id, answer],
+                    });
+
+                    return await walletClient.writeContract(request);
+                }catch(e){
+                    console.log(e);
+                }
+            }else{
+                console.log("Ethereum object does not exist");
+            }
+        }catch(err){
+            console.log(err);
+        }
+    }
+
     async create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow) {
         setShow(true);
         console.log([title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit]);
         let res = null;
         let hash = null;
+        reward = reward * 10 ** 18;
         try {
             if (ethereum) {
                 let account = await this.get_address();
                 let approval = await token.read.allowance({ account, args: [account, quiz_address] });
 
-                if (Number(approval) >= Number(reward * correct_limit * 10 ** 18)) {
+                if (Number(approval) >= Number(reward * correct_limit)) {
                     hash = await this._create_quiz(account, title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
                     if (hash) {
                         res = await publicClient.waitForTransactionReceipt({ hash });
                     }
                 } else {
-                    hash = await this.approve(account, reward * correct_limit * 10 ** 18);
+                    hash = await this.approve(account, reward * correct_limit);
                     if (hash) {
                         res = await publicClient.waitForTransactionReceipt({ hash });
                         hash = await this._create_quiz(account, title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
@@ -256,6 +362,68 @@ class Contracts_MetaMask {
         }
     }
 
+    async edit_quiz(id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline, setShow) {
+        setShow(true);
+        console.log([id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline]);
+        let res = null;
+        let hash = null;
+        try {
+            if (ethereum) {
+                let account = await this.get_address();
+                let approval = await token.read.allowance({ account, args: [account, quiz_address] });
+
+                hash = await this._edit_quiz(account, id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline);
+                console.log(hash);
+                if (hash) {
+                    res = await publicClient.waitForTransactionReceipt({ hash });
+                }
+                console.log(res);
+
+                console.log("create_quiz_cont");
+            } else {
+                setShow(false);
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            setShow(false);
+            console.log(err);
+        }
+        document.location.href = "/edit_list";
+    }
+
+    async _edit_quiz(account, id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline) {
+        const dateStartObj = new Date(reply_startline);
+        const dateEndObj = new Date(reply_deadline);
+
+        // Date オブジェクトをエポック秒に変換する
+        const epochStartSeconds = Math.floor(dateStartObj.getTime() / 1000);
+        const epochEndSeconds = Math.floor(dateEndObj.getTime() / 1000);
+        try {
+            if (ethereum) {
+                //console.log(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, epochStartSeconds, epochEndSeconds, reward, correct_limit);
+
+                try {
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName: "edit_quiz",
+                        args: [id, owner, title, explanation, thumbnail_url, content, epochStartSeconds, epochEndSeconds],
+                        //args: ["a", "a", "a", "a", 1, "a", "a", epochStartSeconds, epochEndSeconds, 2, 2],
+                    });
+
+                    return await walletClient.writeContract(request);
+                } catch (e) {
+                    console.log(e);
+                }
+            } else {
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     async create_answer(id, answer, setShow, setContent) {
         console.log(id, answer);
         try {
@@ -264,7 +432,7 @@ class Contracts_MetaMask {
 
                 setShow(true);
                 setContent("書き込み中...");
-                let hash = await this._post_answer(account, id, answer);
+                let hash = await this._save_answer(account, id, answer);
 
                 if (hash) {
                     // const res1 = await quiz.read.post_answer_view({account,args:[id, answer.toString()]})
@@ -277,7 +445,8 @@ class Contracts_MetaMask {
                     // }
                     let res = await publicClient.waitForTransactionReceipt({ hash });
                     console.log(res);
-                    document.location.href = "/user_page/" + account;
+                    //document.location.href = "/user_page/" + account;
+                    document.location.href = "list_quiz";
                 }
                 console.log("create_answer_cont");
             } else {
@@ -287,6 +456,22 @@ class Contracts_MetaMask {
             console.log(err);
         }
         setShow(false);
+    }
+
+    async _save_answer(account, id, answer) {
+        try {
+            const { request } = await publicClient.simulateContract({
+                account,
+                address: quiz_address,
+                abi: quiz_abi,
+                functionName: "save_answer",
+                args: [id, answer.toString()],
+            });
+            console.log("正常そう");
+            return await walletClient.writeContract(request);
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     async _post_answer(account, id, answer) {
@@ -305,6 +490,10 @@ class Contracts_MetaMask {
         }
     }
 
+    async get_quiz_all_data(id) {
+        return await quiz.read.get_quiz_all_data({ args: [id] });
+    }
+
     async get_quiz(id) {
         const answer_typr = await quiz.read.get_quiz_answer_type({ args: [id] });
         const res = await quiz.read.get_quiz({ args: [id] });
@@ -313,6 +502,28 @@ class Contracts_MetaMask {
 
     async get_quiz_simple(id) {
         return await quiz.read.get_quiz_simple({ args: [id] });
+    }
+
+    async get_quiz_all_data_list(start, end) {
+        //取得したクイズを格納する配列
+        let res = [];
+        let account = await this.get_address();
+
+        console.log(start, end);
+        if (start <= end) {
+            for (let i = start; i < end; i++) {
+                console.log(i);
+                res.push(await quiz.read.get_quiz_all_data({ account, args: [i] }));
+                console.log(res);
+            }
+        } else {
+            for (let i = start - 1; i >= end; i--) {
+                console.log(i);
+                res.push(await quiz.read.get_quiz_all_data({ account, args: [i] }));
+                console.log(res);
+            }
+        }
+        return res;
     }
 
     //startからendまでのクイズを取得
@@ -433,12 +644,12 @@ class Contracts_MetaMask {
                 console.log("Ethereum object does not exist");
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
     async get_respondentCount_and_respondentLimit(id) {
-        return (await quiz.read.get_respondentCount_and_respondentLimit({ args: [id] }));
+        return await quiz.read.get_respondentCount_and_respondentLimit({ args: [id] });
     }
 }
 
