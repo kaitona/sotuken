@@ -150,8 +150,9 @@ class Contracts_MetaMask {
     async get_user_data(address) {
         try {
             if (ethereum) {
+                let account = await this.get_address();
                 console.log(token_address);
-                const res = await quiz.read.get_user({ args: [address] });
+                const res = await quiz.read.get_user({ account, args: [address] });
                 return [res[0], res[1], Number(res[2]), res[3]];
             } else {
                 console.log("Ethereum object does not exist");
@@ -640,6 +641,28 @@ class Contracts_MetaMask {
             if (ethereum) {
                 let account = await this.get_address();
                 return await quiz.read._isTeacher({ account, args: [] });
+            } else {
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async get_only_student_results(){
+        try{
+            if (ethereum){
+                let account = await this.get_address();
+                let res = await quiz.read.get_only_student_results({ account, args: [] });
+                console.log(res);
+                for(let i=0; i < res.length; i++){
+                    res[i] = Number(res[i]);
+                }
+                await res.sort(function(a, b) {
+                    return b - a;
+                  });
+                console.log(res);
+                return res;
             } else {
                 console.log("Ethereum object does not exist");
             }
