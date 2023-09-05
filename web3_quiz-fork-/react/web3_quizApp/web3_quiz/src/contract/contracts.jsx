@@ -671,6 +671,21 @@ class Contracts_MetaMask {
         }
     }
 
+    async get_rank(result){
+        try{
+            if(ethereum){
+                let results = await this.get_only_student_results();
+                for(let i=0; i < results.length; i++){
+                    if(result == results[i]) return i+1;
+                }
+            } else {
+                console.log("Ethereum object does not existt");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     async get_respondentCount_and_respondentLimit(id) {
         return await quiz.read.get_respondentCount_and_respondentLimit({ args: [id] });
     }
