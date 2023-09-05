@@ -6,6 +6,7 @@ import "./class_room.sol";
 contract Quiz_Dapp is class_room {
     address Token_address = 0x60e4999c31f497c02b784E9B138dC000d30d2068;
     TokenInterface token = TokenInterface(Token_address);
+    uint[] users_result;
 
     struct User {
         string user_id;
@@ -333,6 +334,12 @@ contract Quiz_Dapp is class_room {
 
             quizs[_quiz_id].answers[answer_id].reward = reward;
             quizs[_quiz_id].answers[answer_id].result = result;
+
+            if(i < users_result.length){
+                users_result[i] = users[students[i]].result;
+            }else{
+                users_result.push(users[students[i]].result);
+            }
         }
 
         emit Payment_of_reward(_quiz_id);
@@ -456,6 +463,10 @@ contract Quiz_Dapp is class_room {
             results[i].result = users[students[i]].result;
         }
         return results;
+    }
+
+    function get_only_student_results() public view returns (uint[] memory results){
+        results = users_result;
     }
 
     function update_result(address _target, uint point) public {
