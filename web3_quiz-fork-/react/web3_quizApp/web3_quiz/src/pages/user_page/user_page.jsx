@@ -34,6 +34,7 @@ function User_page() {
         Setuser_name(user_name);
         SetIcons(image);
         SetResult(result / 10 ** 18);
+        console.log(await cont.get_only_student_results());
         Set_state(state);
 
         cont.get_user_history_len(address).then((data) => {
