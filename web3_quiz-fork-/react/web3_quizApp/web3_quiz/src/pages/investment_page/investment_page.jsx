@@ -11,6 +11,7 @@ function Investment_to_quiz() {
     const [isNotPayingOut, setIsNotPayingOut] = useState("true");
     const [numOfStudent, setNumOfStudent] = useState(0);
     const [answer, setAnswer] = useState("");
+    const [isteacher, setisteacher] = useState(null);
 
     let Contract = new Contracts_MetaMask();
 
@@ -24,7 +25,12 @@ function Investment_to_quiz() {
         setNumOfStudent(await Contract.get_num_of_students());
     }
 
+    async function is_teacher(){
+        setisteacher(await Contract.isTeacher());
+    }
+
     get_contract();
+    is_teacher();
 
     const convertFullWidthNumbersToHalf = (()=>{
         // 全角数字と半角数字の差分を計算
@@ -48,69 +54,73 @@ function Investment_to_quiz() {
     console.log(isNotPayingOut);
 
 
-    return (
-        <>
-            <div className="row justify-content-center">
-                <div className="col-10">
-                    このテストのIDは{id}です
-                </div>
-                <div className="col-10">
-                    以下に追加する報酬(Wake)の量を指定してください<br />
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={amount}
-                        onChange={(event) => {
-                            setAmount(event.target.value);
-                        }}
-                    />
-                    正答した生徒一人ひとりに与えられるWakeトークン量： {amount}Wake
-                    <br />
-                    あなたから払いだされるWakeトークン量： {amount * numOfStudent}Wake
-
-                </div>
-                <div className="col-10" style={{ marginTop: "20px" }}>
-                    以下に確定した答えを入力してください
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={answer}
-                        onChange={(event) => {
-                            setAnswer(event.target.value);
-                        }}
-                    />
-
-                </div>
-                <br />
-                以下は、解答を確定して報酬の払い出しを行うか行わないかの選択です。
-                <div className="col-10">
-                    <label>
+    if(isteacher){
+        return (
+            <>
+                <div className="row justify-content-center">
+                    <div className="col-10">
+                        このテストのIDは{id}です
+                    </div>
+                    <div className="col-10">
+                        以下に追加する報酬(Wake)の量を指定してください<br />
                         <input
-                            type="radio"
-                            value="true"
-                            onChange={handleOptionChange}
-                            checked={isNotPayingOut === "true"}
+                            type="text"
+                            className="form-control"
+                            value={amount}
+                            onChange={(event) => {
+                                setAmount(event.target.value);
+                            }}
                         />
-                        まだ報酬の払い出しを行わない
-                    </label>
-                    <br />
-                    <label>
-                        <input
-                            type="radio"
-                            value="false"
-                            onChange={handleOptionChange}
-                            checked={isNotPayingOut === "false"}
-                        />
-                        解答を確定して報酬を払い出す
-                    </label>
-                </div>
-                <Button variant="primary" onClick={() => investment_to_quiz()} style={{ marginTop: "20px" }}>
-                    報酬の追加、報酬の払い出しを実行
-                </Button>
+                        正答した生徒一人ひとりに与えられるWakeトークン量： {amount}Wake
+                        <br />
+                        あなたから払いだされるWakeトークン量： {amount * numOfStudent}Wake
 
-            </div>
-        </>
-    );
+                    </div>
+                    <div className="col-10" style={{ marginTop: "20px" }}>
+                        以下に確定した答えを入力してください
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={answer}
+                            onChange={(event) => {
+                                setAnswer(event.target.value);
+                            }}
+                        />
+
+                    </div>
+                    <br />
+                    以下は、解答を確定して報酬の払い出しを行うか行わないかの選択です。
+                    <div className="col-10">
+                        <label>
+                            <input
+                                type="radio"
+                                value="true"
+                                onChange={handleOptionChange}
+                                checked={isNotPayingOut === "true"}
+                            />
+                            まだ報酬の払い出しを行わない
+                        </label>
+                        <br />
+                        <label>
+                            <input
+                                type="radio"
+                                value="false"
+                                onChange={handleOptionChange}
+                                checked={isNotPayingOut === "false"}
+                            />
+                            解答を確定して報酬を払い出す
+                        </label>
+                    </div>
+                    <Button variant="primary" onClick={() => investment_to_quiz()} style={{ marginTop: "20px" }}>
+                        報酬の追加、報酬の払い出しを実行
+                    </Button>
+
+                </div>
+            </>
+        );
+    }else{
+        return(<></>);
+    }
 }
 
 export default Investment_to_quiz;
