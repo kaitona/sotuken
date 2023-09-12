@@ -135,13 +135,26 @@ function Answer_quiz(props) {
         setSimple_quiz(await Contract.get_quiz_simple(id));
     };
 
+    const convertFullWidthNumbersToHalf = (()=>{
+        // 全角数字と半角数字の差分を計算
+        const diff = "０".charCodeAt(0) - "0".charCodeAt(0);
+
+            // 置換関数を返す
+        return text => text.replace(
+                    /[０-９]/g
+                    ,m=>String.fromCharCode( m.charCodeAt(0) - diff )
+        ); 
+    })();
+
     const create_answer = async () => {
         if (parseInt(quiz[8]).toString() <= now) {
-            const res = Contract.create_answer(id, answer, setShow, setContent);
+            const res = Contract.create_answer(id, convertFullWidthNumbersToHalf(answer), setShow, setContent);
         } else {
             alert("まだ回答開始時間になっていません");
         }
     };
+
+    
 
     useEffect(() => {
         get_quiz();

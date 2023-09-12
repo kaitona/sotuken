@@ -79,6 +79,10 @@ function User_card(props) {
                             <div>{props.token}wake</div>
                         </div>
                         <div className="col token-result d-flex flex-column">
+                            <div>現在の順位</div>
+                            <div>{props.num_of_student}人中{props.rank}位</div>
+                        </div>
+                        <div className="col token-result d-flex flex-column">
                             <div>授業での配点</div>
                             <div>{props.result}点</div>
                         </div>

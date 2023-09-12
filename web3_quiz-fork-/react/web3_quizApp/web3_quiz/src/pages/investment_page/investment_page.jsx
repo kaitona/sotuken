@@ -26,9 +26,20 @@ function Investment_to_quiz() {
 
     get_contract();
 
+    const convertFullWidthNumbersToHalf = (()=>{
+        // 全角数字と半角数字の差分を計算
+        const diff = "０".charCodeAt(0) - "0".charCodeAt(0);
+
+            // 置換関数を返す
+        return text => text.replace(
+                    /[０-９]/g
+                    ,m=>String.fromCharCode( m.charCodeAt(0) - diff )
+        ); 
+    })();
+
     const investment_to_quiz = async () => {
         if ((answer == "" && isNotPayingOut == "false") == false){
-            Contract.investment_to_quiz(id, amount, answer, isNotPayingOut, numOfStudent);
+            Contract.investment_to_quiz(id, amount, convertFullWidthNumbersToHalf(answer), isNotPayingOut, numOfStudent);
         }else{
             alert("答えを入力してください");
         }
