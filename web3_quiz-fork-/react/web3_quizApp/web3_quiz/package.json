@@ -11,7 +11,6 @@
     "@uiw/react-md-editor": "^3.20.8",
     "axios": "^1.3.5",
     "bootstrap": "^5.2.3",
-    "csv-writer": "^1.6.0",
     "discord.js": "^14.9.0",
     "ethers": "^5.7.2",
     "html-react-parser": "^3.0.15",
@@ -21,6 +20,7 @@
     "react-bootstrap": "^2.7.4",
     "react-bootstrap-counter": "^1.0.1",
     "react-bootstrap-range-slider": "^3.0.8",
+    "react-csv": "^2.2.2",
     "react-datepicker": "^4.11.0",
     "react-datetime": "^3.2.0",
     "react-dom": "^18.2.0",
@@ -49,6 +49,9 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "browser": {
+    "fs": false
   },
   "browserslist": {
     "production": [

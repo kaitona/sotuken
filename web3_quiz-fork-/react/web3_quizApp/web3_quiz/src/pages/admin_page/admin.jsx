@@ -1,15 +1,15 @@
-import {id} from "ethers/lib/utils";
-import React, {useState, useEffect} from "react";
-import {Form, Button} from "react-bootstrap";
+import { id } from "ethers/lib/utils";
+import React, { useState, useEffect } from "react";
+import { Form, Button } from "react-bootstrap";
 import Add_students from "./components/add_student";
 import Add_teacher from "./components/add_teacher";
 import View_result from "./components/view_results";
 function Admin_page(props) {
     const [component, setComponent] = useState("Add_students");
-    const[isteacher, setisteacher] = useState(null);
+    const [isteacher, setisteacher] = useState(null);
 
     const handleClick = (event) => {
-        const {name} = event.target;
+        const { name } = event.target;
         console.log(name);
         setComponent(name);
     };
@@ -18,23 +18,24 @@ function Admin_page(props) {
         async function is_teacher() {
             setisteacher(await props.cont.isTeacher());
         }
-        is_teacher()
+
+        is_teacher();
     }, []);
 
-    if(isteacher){
+    if (isteacher) {
         return (
-            <div style={{width: "70%", margin: "0 auto"}}>
-                <div className="btn-group" style={{margin: "20px"}}>
+            <div style={{ width: "70%", margin: "0 auto" }}>
+                <div className="btn-group" style={{ margin: "20px" }}>
                     <button type="button" name="Add_students" className="btn btn-primary" onClick={handleClick}>
                         生徒を追加
                     </button>
                 </div>
-                <div className="btn-group" style={{margin: "20px"}}>
+                <div className="btn-group" style={{ margin: "20px" }}>
                     <button type="button" name="Add_teacher" className="btn btn-primary" onClick={handleClick}>
                         教員orTAを追加
                     </button>
                 </div>
-                <div className="btn-group" style={{margin: "20px"}}>
+                <div className="btn-group" style={{ margin: "20px" }}>
                     <button type="button" name="View_result" className="btn btn-primary" onClick={handleClick}>
                         生徒の成績を閲覧
                     </button>
@@ -46,8 +47,8 @@ function Admin_page(props) {
                 {component === "View_result" && <View_result cont={props.cont} />}
             </div>
         );
-    }else{
-        return(<></>);
+    } else {
+        return (<></>);
     }
 }
 
