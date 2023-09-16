@@ -48,6 +48,7 @@ function View_result(props) {
 
     return (
         <div className="mypage">
+
             <div class="row">
                 <Button variant="primary" onClick={() => handle_export_csv()}>成績データのCSVファイルの出力</Button>
                 {csvdownloader === true && <Create_csvlink cont={data} />}
