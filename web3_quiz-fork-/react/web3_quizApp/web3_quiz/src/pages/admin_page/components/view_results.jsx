@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
-import { createObjectCsvWriter } from 'csv-writer';
+//import { createObjectCsvWriter } from 'csv-writer';
 import { Contracts_MetaMask } from "../../../contract/contracts";
 function View_result(props) {
 
@@ -10,7 +10,7 @@ function View_result(props) {
 
     const handle_export_csv = () => {
         console.log(data_for_survey);
-
+        {/*
         const data = data_for_survey;
 
         const csvHeader = [
@@ -38,6 +38,7 @@ function View_result(props) {
         downloadLink.href = 'exported_data.csv'; // 保存したファイルのパス
         downloadLink.download = 'exported_data.csv'; // ダウンロード時のファイル名
         downloadLink.click();
+        */}
 
     }
 
