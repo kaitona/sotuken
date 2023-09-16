@@ -447,7 +447,7 @@ class Contracts_MetaMask {
                     let res = await publicClient.waitForTransactionReceipt({ hash });
                     console.log(res);
                     //document.location.href = "/user_page/" + account;
-                    document.location.href = "list_quiz";
+                    document.location.href = "/list_quiz";
                 }
                 console.log("create_answer_cont");
             } else {
