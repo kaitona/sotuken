@@ -11,6 +11,7 @@ contract Quiz_Dapp is class_room {
     struct User {
         string user_id;
         string img_url;
+        uint create_quiz_count;
         uint result;
     }
 
@@ -99,6 +100,7 @@ contract Quiz_Dapp is class_room {
         quizs[id].reward = _reward;
         quizs[id].respondent_count = 0;
         quizs[id].respondent_limit = _respondent_limit;
+        users[msg.sender].create_quiz_count += 1;
         emit Create_quiz(msg.sender, id);
         return id;
     }
@@ -114,7 +116,7 @@ contract Quiz_Dapp is class_room {
         string memory _content,
         uint _startline_after_epoch,
         uint _timelimit_after_epoch
-    ) public returns (uint quiz_id) {
+    ) public isTeacher returns (uint quiz_id) {
         // quizs.push(Quiz(id,msg.sender,_title,_thumbnail_url,_content,_choices,answer_hash,answer_hash,block.timestamp,_reward,_respondent_limit,Answer(msg.sender,block.timestamp,0)));
         quizs[id].owner = owner;
         quizs[id].title = _title;
@@ -159,7 +161,7 @@ contract Quiz_Dapp is class_room {
         uint id,
         uint amount,
         uint numOfStudent
-    ) public returns (uint quiz_id) {
+    ) public isTeacher returns (uint quiz_id) {
         require(token.allowance(msg.sender, address(this)) >= amount * numOfStudent, "Not enough token approve fees");
         token.transferFrom_explanation(msg.sender, address(this), amount * numOfStudent, "investment_to_quiz");
 
@@ -307,7 +309,6 @@ contract Quiz_Dapp is class_room {
 
     function payment_of_reward(uint _quiz_id, string memory _answer) public returns(uint correct_count){
         address[] memory students = get_student_all();
-        uint now_time = block.timestamp;
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
         correct_count = 0; 
 
@@ -345,6 +346,7 @@ contract Quiz_Dapp is class_room {
         emit Payment_of_reward(_quiz_id);
     }
 
+    /*
     event Post_answer(address indexed _sender, uint indexed quiz_id, uint indexed answer_id);
 
     function post_answer(uint _quiz_id, string memory _answer) public returns (uint answer_id, uint reward) {
@@ -383,6 +385,7 @@ contract Quiz_Dapp is class_room {
 
         emit Post_answer(msg.sender, _quiz_id, answer_id);
     }
+    */
 
     function post_answer_view(uint _quiz_id, string memory _answer) public view returns (bool result) {
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
@@ -512,6 +515,25 @@ contract Quiz_Dapp is class_room {
     function get_respondentCount_and_respondentLimit(uint _quiz_id) public view returns (uint respondentCount, uint respondentLimit) {
         respondentCount = quizs[_quiz_id].respondent_count;
         respondentLimit = quizs[_quiz_id].respondent_limit;
+    }
+
+    struct Survey_data{
+            address user;
+            uint create_quiz_count;
+            uint result;
+        }    
+
+    function get_data_for_survey() public isTeacher view returns(Survey_data[] memory){
+        
+        address[] memory user_addresses = get_student_all();
+        Survey_data[] memory users_data = new Survey_data[](user_addresses.length);
+
+        for(uint i=0; i<user_addresses.length; i++){
+            address user = user_addresses[i];
+            Survey_data memory user_data = Survey_data(user, users[user].create_quiz_count, users[user].result);
+            users_data[i] = user_data;
+        }
+        return users_data;
     }
 }
 

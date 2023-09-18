@@ -33,6 +33,8 @@ function Edit_quiz() {
     const [now, setnow] = useState(null);
     const [show, setShow] = useState(false);
 
+    const [isteacher, setisteacher] = useState(null);
+
     const location = useLocation();
     const quiz = location.state.args;
 
@@ -79,6 +81,10 @@ function Edit_quiz() {
         return date.split(" ").join("T").slice(0, date.length - 3);
     }
 
+    async function is_teacher() {
+        setisteacher(await Contract.isTeacher());
+    }
+
     //初回のみ実行
     useEffect(() => {
         // let now = new Date();
@@ -93,6 +99,7 @@ function Edit_quiz() {
         setReply_startline(getLocalizedDateTimeString(new Date(quiz[8] * 1000)));
         setReply_deadline(getLocalizedDateTimeString(new Date(quiz[9] * 1000)));
         setnow(getLocalizedDateTimeString());
+        is_teacher();
         console.log(quiz)
         // console.log(now);
         // console.log(new Date().toISOString().slice(0, 16));
@@ -101,72 +108,76 @@ function Edit_quiz() {
     console.log(reply_deadline);
     console.log(reply_startline);
 
-    return (
-        <div>
-            <div className="row">
-                <div className="col-2" />
-                <div className="col-8">
-                    <Form>
-                        <Form.Group className="mb-3" controlId="form_titile" style={{ textAlign: "left" }}>
-                            <Form.Label>タイトル</Form.Label>
-                            <Form.Control type="text" placeholder="Enter Title" value={title} onChange={(event) => setTitle(event.target.value)} />
+    if (isteacher) {
+        return (
+            <div>
+                <div className="row">
+                    <div className="col-2" />
+                    <div className="col-8">
+                        <Form>
+                            <Form.Group className="mb-3" controlId="form_titile" style={{ textAlign: "left" }}>
+                                <Form.Label>タイトル</Form.Label>
+                                <Form.Control type="text" placeholder="Enter Title" value={title} onChange={(event) => setTitle(event.target.value)} />
+                            </Form.Group>
+                        </Form>
+                        <Form.Group className="mb-3" style={{ textAlign: "left" }}>
+                            <Form.Label>説明</Form.Label>
+                            <Form.Control as="textarea" rows={explanation.split("\n").length + 3} value={explanation} onChange={(event) => setExplanation(event.target.value)} />
                         </Form.Group>
-                    </Form>
-                    <Form.Group className="mb-3" style={{ textAlign: "left" }}>
-                        <Form.Label>説明</Form.Label>
-                        <Form.Control as="textarea" rows={explanation.split("\n").length + 3} value={explanation} onChange={(event) => setExplanation(event.target.value)} />
-                    </Form.Group>
 
-                    <Form.Group className="mb-3" style={{ textAlign: "left" }}>
-                        <Form.Label>サムネイル</Form.Label>
-                        <Form.Control type="url" value={thumbnail_url} onChange={(event) => setThumbnail_url(event.target.value)} />
-                    </Form.Group>
-                    <img src={thumbnail_url} width="200" />
-                    <br />
+                        <Form.Group className="mb-3" style={{ textAlign: "left" }}>
+                            <Form.Label>サムネイル</Form.Label>
+                            <Form.Control type="url" value={thumbnail_url} onChange={(event) => setThumbnail_url(event.target.value)} />
+                        </Form.Group>
+                        <img src={thumbnail_url} width="200" />
+                        <br />
 
-                    <Form.Group className="mb-3" data-color-mode="light" style={{ textAlign: "left" }}>
-                        <Form.Label>内容</Form.Label>
-                        <MDEditor height={500} value={content} onChange={setContent} />
-                    </Form.Group>
+                        <Form.Group className="mb-3" data-color-mode="light" style={{ textAlign: "left" }}>
+                            <Form.Label>内容</Form.Label>
+                            <MDEditor height={500} value={content} onChange={setContent} />
+                        </Form.Group>
 
-                    {/*
-                    <Answer_select name={"回答の追加"} variable={answer_data} variable1={correct} set={setAnswer_data} set1={setCorrect} setAnswer_type={setAnswer_type} answer_type={answer_type} />
-                    */}
-                    <Form.Group className="mb-3" style={{ textAlign: "left" }}>
-                        <Form.Label>回答開始日時</Form.Label>
-                        <Form.Control
-                            type="datetime-local"
-                            //defaultValue={reply_startline}
-                            value={reply_startline}
-                            min={reply_startline}
-                            onChange={(event) => setReply_startline(new Date(event.target.value))}
-                        />
-                    </Form.Group>
+                        {/*
+                        <Answer_select name={"回答の追加"} variable={answer_data} variable1={correct} set={setAnswer_data} set1={setCorrect} setAnswer_type={setAnswer_type} answer_type={answer_type} />
+                        */}
+                        <Form.Group className="mb-3" style={{ textAlign: "left" }}>
+                            <Form.Label>回答開始日時</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                defaultValue={reply_startline}
+                                //value={reply_startline}
+                                //min={reply_startline}
+                                onChange={(event) => setReply_startline(new Date(event.target.value))}
+                            />
+                        </Form.Group>
 
-                    <Form.Group className="mb-3" style={{ textAlign: "left" }}>
-                        <Form.Label>回答締切日時</Form.Label>
-                        <Form.Control
-                            type="datetime-local"
-                            //defaultValue={reply_deadline}
-                            value={reply_deadline}
-                            min={reply_deadline}
-                            onChange={(event) => setReply_deadline(new Date(event.target.value))}
-                        />
-                    </Form.Group>
+                        <Form.Group className="mb-3" style={{ textAlign: "left" }}>
+                            <Form.Label>回答締切日時</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                defaultValue={reply_deadline}
+                                //value={reply_deadline}
+                                //min={reply_deadline}
+                                onChange={(event) => setReply_deadline(new Date(event.target.value))}
+                            />
+                        </Form.Group>
 
 
-                    <div style={{ textAlign: "right" }}>
-                        <Button variant="primary" onClick={() => edit_quiz()} style={{ marginTop: "20px" }}>
-                            クイズをの編集を実行
-                        </Button>
+                        <div style={{ textAlign: "right" }}>
+                            <Button variant="primary" onClick={() => edit_quiz()} style={{ marginTop: "20px" }}>
+                                クイズをの編集を実行
+                            </Button>
+                        </div>
                     </div>
+                    <div className="col-2" />
                 </div>
-                <div className="col-2" />
-            </div>
 
-            <Wait_Modal showFlag={show} />
-        </div>
-    );
+                <Wait_Modal showFlag={show} />
+            </div>
+        );
+    } else {
+        return (<></>);
+    }
 
 
 

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Nav_menu from "./pages/navbar/navbar";
 import Login from "./contract/login";
 import User_page from "./pages/user_page/user_page";
@@ -17,6 +17,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
     const cont = new Contracts_MetaMask();
+    const is_teacher = cont.isTeacher();
 
     return (
         <div className="App">
@@ -42,6 +43,7 @@ function App() {
                         <Routes>
                             {/* <Route path={'/answer_quiz/:id'} element={<Answer_quiz url={'answer_quiz'} />} cont={cont} /> */}
                             <Route path={"/admin"} element={<Admin_page url={"admin"} cont={cont} />} />
+                            {/*<Route path={"/admin"} element={ is_teacher ? <Admin_page url={"admin"} cont={cont} /> : <Navigate replace to="/list_quiz" />}/>*/}
                             quiz_comp
                         </Routes>
                         <Routes>

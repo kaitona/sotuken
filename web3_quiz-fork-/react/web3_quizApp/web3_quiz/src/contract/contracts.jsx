@@ -225,9 +225,9 @@ class Contracts_MetaMask {
                     }
                 }
 
-                if(is_not_paying_out == false){
+                if (is_not_paying_out == false) {
                     hash2 = await this._payment_of_reward(account, id, answer);
-                    if(hash){
+                    if (hash) {
                         res2 = await publicClient.waitForTransactionReceipt({ hash });
                     }
                 }
@@ -266,27 +266,27 @@ class Contracts_MetaMask {
         }
     }
 
-    async _payment_of_reward(account, id, answer){
+    async _payment_of_reward(account, id, answer) {
         console.log([account, id, answer]);
-        try{
-            if(ethereum){
-                try{
+        try {
+            if (ethereum) {
+                try {
                     const { request } = await publicClient.simulateContract({
                         account,
                         address: quiz_address,
                         abi: quiz_abi,
-                        functionName:"payment_of_reward",
-                        args:[id, answer],
+                        functionName: "payment_of_reward",
+                        args: [id, answer],
                     });
 
                     return await walletClient.writeContract(request);
-                }catch(e){
+                } catch (e) {
                     console.log(e);
                 }
-            }else{
+            } else {
                 console.log("Ethereum object does not exist");
             }
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
@@ -447,7 +447,7 @@ class Contracts_MetaMask {
                     let res = await publicClient.waitForTransactionReceipt({ hash });
                     console.log(res);
                     //document.location.href = "/user_page/" + account;
-                    document.location.href = "list_quiz";
+                    document.location.href = "/list_quiz";
                 }
                 console.log("create_answer_cont");
             } else {
@@ -649,18 +649,18 @@ class Contracts_MetaMask {
         }
     }
 
-    async get_only_student_results(){
-        try{
-            if (ethereum){
+    async get_only_student_results() {
+        try {
+            if (ethereum) {
                 let account = await this.get_address();
                 let res = await quiz.read.get_only_student_results({ account, args: [] });
                 console.log(res);
-                for(let i=0; i < res.length; i++){
+                for (let i = 0; i < res.length; i++) {
                     res[i] = Number(res[i]);
                 }
-                await res.sort(function(a, b) {
+                await res.sort(function (a, b) {
                     return b - a;
-                  });
+                });
                 console.log(res);
                 return res;
             } else {
@@ -671,15 +671,15 @@ class Contracts_MetaMask {
         }
     }
 
-    async get_rank(result){
-        try{
-            if(ethereum){
+    async get_rank(result) {
+        try {
+            if (ethereum) {
                 let results = await this.get_only_student_results();
-                for(let i=0; i < results.length; i++){
-                    if(result == results[i]) return i+1;
+                for (let i = 0; i < results.length; i++) {
+                    if (result == results[i]) return i + 1;
                 }
             } else {
-                console.log("Ethereum object does not existt");
+                console.log("Ethereum object does not exists");
             }
         } catch (err) {
             console.log(err);
@@ -688,6 +688,20 @@ class Contracts_MetaMask {
 
     async get_respondentCount_and_respondentLimit(id) {
         return await quiz.read.get_respondentCount_and_respondentLimit({ args: [id] });
+    }
+
+    async get_data_for_survey() {
+        try {
+            if (ethereum) {
+                let account = await this.get_address();
+                let res = await quiz.read.get_data_for_survey({ account, args: [] });
+                return res;
+            } else {
+                console.log("Ethereum object does not exists");
+            }
+        } catch (err) {
+            console.log(err);
+        }
     }
 }
 
