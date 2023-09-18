@@ -81,7 +81,7 @@ function Edit_quiz() {
         return date.split(" ").join("T").slice(0, date.length - 3);
     }
 
-    async function is_teacher(){
+    async function is_teacher() {
         setisteacher(await Contract.isTeacher());
     }
 
@@ -108,7 +108,7 @@ function Edit_quiz() {
     console.log(reply_deadline);
     console.log(reply_startline);
 
-    if(isteacher){
+    if (isteacher) {
         return (
             <div>
                 <div className="row">
@@ -144,9 +144,9 @@ function Edit_quiz() {
                             <Form.Label>回答開始日時</Form.Label>
                             <Form.Control
                                 type="datetime-local"
-                                //defaultValue={reply_startline}
-                                value={reply_startline}
-                                min={reply_startline}
+                                defaultValue={reply_startline}
+                                //value={reply_startline}
+                                //min={reply_startline}
                                 onChange={(event) => setReply_startline(new Date(event.target.value))}
                             />
                         </Form.Group>
@@ -155,9 +155,9 @@ function Edit_quiz() {
                             <Form.Label>回答締切日時</Form.Label>
                             <Form.Control
                                 type="datetime-local"
-                                //defaultValue={reply_deadline}
-                                value={reply_deadline}
-                                min={reply_deadline}
+                                defaultValue={reply_deadline}
+                                //value={reply_deadline}
+                                //min={reply_deadline}
                                 onChange={(event) => setReply_deadline(new Date(event.target.value))}
                             />
                         </Form.Group>
@@ -175,8 +175,8 @@ function Edit_quiz() {
                 <Wait_Modal showFlag={show} />
             </div>
         );
-    }else{
-        return(<></>);
+    } else {
+        return (<></>);
     }
 
 
