@@ -344,6 +344,30 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "get_confirm_answer",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "confirm_answer",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "is_payment",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "get_data_for_survey",
       "outputs": [

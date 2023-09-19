@@ -35,6 +35,8 @@ contract Quiz_Dapp is class_room {
         uint reward;
         uint respondent_count;
         uint respondent_limit;
+        bool is_payment;
+        string confirm_answer;
         mapping(address => uint) respondents_map; //0が未回答,1が不正解,2が正解,3が回答済み
         mapping(address => uint) respondents_state;
         Answer[] answers;
@@ -241,6 +243,11 @@ contract Quiz_Dapp is class_room {
         respondent_limit = quizs[_quiz_id].respondent_limit;
     }
 
+    function get_confirm_answer(uint _quiz_id) public view returns(string memory confirm_answer, bool is_payment){
+        confirm_answer = quizs[_quiz_id].confirm_answer;
+        is_payment = quizs[_quiz_id].is_payment;
+    }
+
     function get_student_answer_hash(address _sender, uint _quiz_id) public view returns (bytes32){
         bytes32 answer_hash = quizs[_quiz_id].students_answer_hashs[_sender];
         return answer_hash;
@@ -335,6 +342,8 @@ contract Quiz_Dapp is class_room {
 
             quizs[_quiz_id].answers[answer_id].reward = reward;
             quizs[_quiz_id].answers[answer_id].result = result;
+            quizs[_quiz_id].is_payment = true;
+            quizs[_quiz_id].confirm_answer = _answer;
 
             if(i < users_result.length){
                 users_result[i] = users[students[i]].result;

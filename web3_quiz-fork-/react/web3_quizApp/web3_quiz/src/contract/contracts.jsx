@@ -498,11 +498,16 @@ class Contracts_MetaMask {
     async get_quiz(id) {
         const answer_typr = await quiz.read.get_quiz_answer_type({ args: [id] });
         const res = await quiz.read.get_quiz({ args: [id] });
-        return [...res, answer_typr];
+        const res2 = await this.get_confirm_answer(id);
+        return [...res, answer_typr, ...res2];
     }
 
     async get_quiz_simple(id) {
         return await quiz.read.get_quiz_simple({ args: [id] });
+    }
+
+    async get_confirm_answer(id){
+        return await quiz.read.get_confirm_answer({ args: [id]});
     }
 
     async get_quiz_all_data_list(start, end) {
