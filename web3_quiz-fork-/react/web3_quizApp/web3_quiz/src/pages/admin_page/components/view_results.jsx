@@ -11,19 +11,19 @@ function getCurrentDateTime() {
     const hours = String(now.getHours()).padStart(2, '0'); // 時を2桁にパディング
     const minutes = String(now.getMinutes()).padStart(2, '0'); // 分を2桁にパディング
     const seconds = String(now.getSeconds()).padStart(2, '0'); // 秒を2桁にパディング
-  
+
     const formattedDateTime = `${year}${month}${day}${hours}${minutes}${seconds}`;
     return formattedDateTime;
-  }
+}
 
 function Create_csvlink(props) {
     return (
         <div>
             <div><CSVLink filename={`students_data_${getCurrentDateTime()}.csv`} variant="primary" data={props.cont[0]}>こちらから学生の成績データをダウンロード</CSVLink></div>
-            <div><CSVLink filename={`quizs_data_${getCurrentDateTime()}.csv`}variant="primary" data={props.cont[1]}>こちらから小テストの統計データをダウンロード</CSVLink></div>
+            <div><CSVLink filename={`quizs_data_${getCurrentDateTime()}.csv`} variant="primary" data={props.cont[1]}>こちらから小テストの統計データをダウンロード</CSVLink></div>
         </div>
     );
-        
+
 }
 
 function View_result(props) {
@@ -33,7 +33,7 @@ function View_result(props) {
     const [data_for_survey_users, setData_for_survey_users] = useState(null);
     const [data_for_survey_quizs, setData_for_survey_quizs] = useState(null);
     const [usersData, setUsersData] = useState(null);
-    const[quizsData, setQuizsData] = useState(null);
+    const [quizsData, setQuizsData] = useState(null);
     const [csvdownloader, setCsvdownloader] = useState(false);
 
     const handle_export_csv = () => {
@@ -50,7 +50,7 @@ function View_result(props) {
             Object.keys(data_for_survey_quizs[0])
         ]
         for (let i = 0; i < data_for_survey_quizs.length; i++) {
-            quizs_data.push([Number(data_for_survey_quizs[i].reward).toString(), (Number(data_for_survey_quizs[i].respondent_count)).toString()]);
+            quizs_data.push([(Number(data_for_survey_quizs[i].reward) / (10 ** 18)).toString(), (Number(data_for_survey_quizs[i].respondent_count)).toString()]);
         }
 
         setUsersData(users_data);
