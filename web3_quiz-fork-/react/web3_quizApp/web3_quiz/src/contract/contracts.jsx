@@ -695,11 +695,24 @@ class Contracts_MetaMask {
         return await quiz.read.get_respondentCount_and_respondentLimit({ args: [id] });
     }
 
-    async get_data_for_survey() {
+    async get_data_for_survey_users() {
         try {
             if (ethereum) {
                 let account = await this.get_address();
-                let res = await quiz.read.get_data_for_survey({ account, args: [] });
+                let res = await quiz.read.get_data_for_survey_users({ account, args: [] });
+                return res;
+            } else {
+                console.log("Ethereum object does not exists");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    async get_data_for_survey_quizs() {
+        try {
+            if (ethereum) {
+                let account = await this.get_address();
+                let res = await quiz.read.get_data_for_survey_quizs({ account, args: [] });
                 return res;
             } else {
                 console.log("Ethereum object does not exists");

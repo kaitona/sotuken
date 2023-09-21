@@ -526,23 +526,38 @@ contract Quiz_Dapp is class_room {
         respondentLimit = quizs[_quiz_id].respondent_limit;
     }
 
-    struct Survey_data{
-            address user;
-            uint create_quiz_count;
-            uint result;
-        }    
+    struct Survey_data_user{
+        address user;
+        uint create_quiz_count;
+        uint result;
+    }    
 
-    function get_data_for_survey() public isTeacher view returns(Survey_data[] memory){
+    function get_data_for_survey_users() public isTeacher view returns(Survey_data_user[] memory){
         
         address[] memory user_addresses = get_student_all();
-        Survey_data[] memory users_data = new Survey_data[](user_addresses.length);
+        Survey_data_user[] memory users_data = new Survey_data_user[](user_addresses.length);
 
         for(uint i=0; i<user_addresses.length; i++){
             address user = user_addresses[i];
-            Survey_data memory user_data = Survey_data(user, users[user].create_quiz_count, users[user].result);
+            Survey_data_user memory user_data = Survey_data_user(user, users[user].create_quiz_count, users[user].result);
             users_data[i] = user_data;
         }
         return users_data;
+    }
+
+    struct Survey_data_quiz{
+        uint reward;
+        uint respondent_count;
+    }
+
+    function get_data_for_survey_quizs() public isTeacher view returns(Survey_data_quiz[] memory){
+
+        Survey_data_quiz[] memory quizs_data = new Survey_data_quiz[](get_quiz_length());
+
+        for(uint i=0; i<get_quiz_length(); i++){
+            quizs_data[i] = Survey_data_quiz(quizs[i].reward, quizs[i].respondent_count);
+        }
+        return quizs_data;
     }
 }
 

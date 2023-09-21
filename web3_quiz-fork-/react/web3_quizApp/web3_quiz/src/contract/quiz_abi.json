@@ -369,7 +369,32 @@
     },
     {
       "inputs": [],
-      "name": "get_data_for_survey",
+      "name": "get_data_for_survey_quizs",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "reward",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "respondent_count",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Quiz_Dapp.Survey_data_quiz[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_data_for_survey_users",
       "outputs": [
         {
           "components": [
@@ -389,7 +414,7 @@
               "type": "uint256"
             }
           ],
-          "internalType": "struct Quiz_Dapp.Survey_data[]",
+          "internalType": "struct Quiz_Dapp.Survey_data_user[]",
           "name": "",
           "type": "tuple[]"
         }
