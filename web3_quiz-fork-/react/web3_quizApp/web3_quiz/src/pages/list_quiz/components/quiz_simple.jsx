@@ -120,7 +120,7 @@ function Simple_quiz(props) {
                                         </div>
                                     </div>
                                     <div className="col-3">
-                                        <div className="col">正解数</div>
+                                        <div className="col">回答者数</div>
                                         <div className="col" style={{ textAlign: "center" }}>
                                             {Number(props.quiz[8])}
                                         </div>

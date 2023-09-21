@@ -1,6 +1,6 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 
-import {AiOutlineArrowRight} from "react-icons/ai";
+import { AiOutlineArrowRight } from "react-icons/ai";
 import Change_user from "./change_user";
 
 import Form from "react-bootstrap/Form";
@@ -65,15 +65,15 @@ function User_card(props) {
                         }}
                     /> */}
                     {/* <div className="user_name">{props.user_name}</div> */}
-                    <Button variant="primary" onClick={() => props.cont.add_token_wallet()} style={{position: "absolute", top: 0, left: 0}}>
+                    <Button variant="primary" onClick={() => props.cont.add_token_wallet()} style={{ position: "absolute", top: 0, left: 0 }}>
                         トークンをwalletに追加
                     </Button>
-                    <div className="address" style={{"margin-top": "50px"}}>
+                    <div className="address" style={{ "margin-top": "50px" }}>
                         {props.address.slice(0, 20)}....
                     </div>
 
                     {/* マージンを設定 */}
-                    <div className="row" style={{marginTop: "20px"}}>
+                    <div className="row" style={{ marginTop: "20px" }}>
                         <div className="col token d-flex flex-column">
                             <div>保有トークン</div>
                             <div>{props.token}wake</div>
@@ -83,7 +83,7 @@ function User_card(props) {
                             <div>{props.num_of_student}人中{props.rank}位</div>
                         </div>
                         <div className="col token-result d-flex flex-column">
-                            <div>授業での配点</div>
+                            <div>獲得点数</div>
                             <div>{props.result}点</div>
                         </div>
                     </div>
@@ -94,33 +94,33 @@ function User_card(props) {
         return (
             <>
                 <div className="user_card">
-                    <Button variant="primary" onClick={() => Setstate(true)} style={{position: "absolute", top: 0, left: 0}}>
+                    <Button variant="primary" onClick={() => Setstate(true)} style={{ position: "absolute", top: 0, left: 0 }}>
                         <>キャンセル</>
                     </Button>
-                    <div style={{"margin-top": "30px"}}>
+                    <div style={{ "margin-top": "30px" }}>
                         <Form onSubmit={update_handler}>
                             <div className="icon_image">
-                                <Form.Group className="mb-3" controlId="form_image_url" style={{textAlign: "left"}}>
+                                <Form.Group className="mb-3" controlId="form_image_url" style={{ textAlign: "left" }}>
                                     <Form.Label>アイコン</Form.Label>
                                     <Form.Control type="text" placeholder="image_url" value={image_url} onChange={(event) => SetImage_url(event.target.value)} />
                                 </Form.Group>
                             </div>
-                            <img src={image_url} alt="" style={{width: `75px`, height: `75px`, borderRadius: "50%"}} />
+                            <img src={image_url} alt="" style={{ width: `75px`, height: `75px`, borderRadius: "50%" }} />
 
                             <div className="user_name">
-                                {nameError && <p style={{color: "red"}}>入力形式が間違っています</p>}
-                                <Form.Group className="mb-3" controlId="form_name" style={{textAlign: "left"}}>
+                                {nameError && <p style={{ color: "red" }}>入力形式が間違っています</p>}
+                                <Form.Group className="mb-3" controlId="form_name" style={{ textAlign: "left" }}>
                                     <Form.Label>User_Name 例:22P5000</Form.Label>
                                     <Form.Control type="name" placeholder="Enter Name" value={name} onChange={handle_SetName} />
                                 </Form.Group>
                             </div>
-                            <Button variant="primary" onClick={update_handler} style={{marginTop: "20px"}}>
+                            <Button variant="primary" onClick={update_handler} style={{ marginTop: "20px" }}>
                                 <>更新</>
                             </Button>
                         </Form>
                     </div>
                     <div className="address">{props.address.slice(0, 20)}</div>
-                    <div className="row" style={{marginTop: "20px"}}>
+                    <div className="row" style={{ marginTop: "20px" }}>
                         <div className="col token d-flex flex-column">
                             <div>保有トークン</div>
                             <div>{props.token}wake</div>
