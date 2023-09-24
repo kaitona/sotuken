@@ -22,7 +22,6 @@ function Time_diff(props) {
         // console.log(date1.toISOString());
         // console.log(date2.toISOString());
         // console.log("////")
-        console.log(epochTime1);
 
         let elapsedTime = 0;
 
@@ -82,19 +81,22 @@ function Time_diff(props) {
 
 function Simple_quiz(props) {
     const [show, setShow] = useState(false);
+    const [isreward, setIsreward] = useState(true);
     useEffect(() => {
         console.log("show", show);
+        if(Number(props.quiz[7]) == 0){
+            setIsreward(false);
+        }
     }, [show]);
-
+    console.log(Number(props.quiz[7]));
+    console.log(isreward)
     const search = useLocation().search;
     console.log(props.quiz);
-    console.log(props.quiz[5]);
-    console.log(props.quiz[6]);
     return (
         <>
             {/* <Modal show={show} setShow={setShow} id={props.quiz[0].toNumber()} /> */}
             <div onClick={() => setShow(true)}>
-                <div className="quiz_card">
+                <div className={`quiz_card ${isreward == true ?  'border border-primary' : '' }`}>
                     <Link to={{ pathname: "/answer_quiz/" + Number(props.quiz[0]), state: { back_page: 0 } }} style={{ color: "black", textDecoration: "none" }}>
                         <div className="row quiz_card_1">
                             <div className="col-2">

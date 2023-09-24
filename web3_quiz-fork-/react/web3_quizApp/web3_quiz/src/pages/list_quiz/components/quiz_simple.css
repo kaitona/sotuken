@@ -22,3 +22,6 @@
     margin: 10px auto;
   }
 }
+.border {
+  border: 1px solid red;
+}
