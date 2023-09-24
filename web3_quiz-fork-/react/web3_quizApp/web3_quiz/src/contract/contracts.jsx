@@ -506,6 +506,10 @@ class Contracts_MetaMask {
         return await quiz.read.get_quiz_simple({ args: [id] });
     }
 
+    async get_is_payment(id){
+        return await quiz.read.get_is_payment({ args: [id] });
+    }
+
     async get_confirm_answer(id){
         return await quiz.read.get_confirm_answer({ args: [id]});
     }

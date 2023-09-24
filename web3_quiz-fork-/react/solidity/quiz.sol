@@ -209,6 +209,10 @@ contract Quiz_Dapp is class_room {
         state = quizs[_quiz_id].respondents_map[msg.sender];
     }
 
+    function get_is_payment(uint _quiz_id) public view returns(bool is_payment){
+        is_payment = quizs[_quiz_id].is_payment;
+    }
+
     function get_quiz(uint _quiz_id)
         public
         view
@@ -326,7 +330,7 @@ contract Quiz_Dapp is class_room {
             uint answer_id = quizs[_quiz_id].respondents_state[student];
         
             bytes32 student_answer_hash = get_student_answer_hash(student, _quiz_id);
-            if(answer_hash == student_answer_hash && quizs[_quiz_id].respondents_map[student] != 0 && quizs[_quiz_id].answers[answer_id].answer_time <= quizs[_quiz_id].time_limit_epoch){
+            if(answer_hash == student_answer_hash && quizs[_quiz_id].respondents_map[student] != 0){
                 reward = quizs[_quiz_id].reward;
                 users[student].result += reward;
                 token.transfer_explanation(student, reward, "correct answer");
@@ -353,6 +357,21 @@ contract Quiz_Dapp is class_room {
         }
 
         emit Payment_of_reward(_quiz_id);
+    }
+
+    event Adding_reward(uint indexed _quiz_id);
+
+    function adding_reward(uint _quiz_id) public isTeacher returns(address owner){
+        owner = quizs[_quiz_id].owner;
+        bool isTeacher = _isTeacher(owner);
+        if(!isTeacher){
+            token.approve(address(this), quizs[_quiz_id].reward);
+            require(token.allowance(msg.sender, address(this)) >= quizs[_quiz_id].reward, "Not enough token approve fees for addding reward");
+            token.transferFrom_explanation(msg.sender, address(this), quizs[_quiz_id].reward, "investment_to_quiz");
+            users[owner].result += quizs[_quiz_id].reward;
+            token.transfer_explanation(owner, quizs[_quiz_id].reward, "Thank you for creating quiz!!");
+            emit Adding_reward(_quiz_id);
+        }
     }
 
     /*

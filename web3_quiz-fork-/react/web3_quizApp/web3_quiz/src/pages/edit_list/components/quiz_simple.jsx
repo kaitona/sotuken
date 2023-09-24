@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import "./quiz_simple.css";
+import { Contracts_MetaMask } from "../../../contract/contracts";
 
 function Time_diff(props) {
     function convertSecondsToHours(secondsLimit, secondsStart) {
@@ -82,20 +83,34 @@ function Time_diff(props) {
 }
 
 function Simple_quiz(props) {
+    let contract = new Contracts_MetaMask();
+    const search = useLocation().search;
+
     const [show, setShow] = useState(false);
+    const [is_payment, setIs_payment] = useState(false);
+
+    console.log(props.quiz);
+    console.log(props.quiz[8]);
+    console.log(props.quiz[9]);
+
+    async function get_is_payment(id){
+        setIs_payment(await contract.get_is_payment(id));
+    }
+
     useEffect(() => {
         console.log("show", show);
     }, [show]);
 
-    const search = useLocation().search;
-    console.log(props.quiz);
-    console.log(props.quiz[8]);
-    console.log(props.quiz[9]);
+    useEffect(() =>{
+        get_is_payment(props.quiz[0]);
+    }, []);
+    console.log(is_payment);
+
     return (
         <>
 
             <div onClick={() => setShow(true)}>
-                <div className="quiz_card">
+                <div className={`quiz_card ${is_payment ? 'border border-danger' : '' }`}>
                     <Link to={{ pathname: "/answer_quiz/" + Number(props.quiz[0]), state: { back_page: 0 } }} style={{ color: "black", textDecoration: "none" }}>
                         <div className="row quiz_card_1">
                             <div className="col-2">
