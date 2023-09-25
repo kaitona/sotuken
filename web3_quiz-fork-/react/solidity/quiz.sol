@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+/// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
 import "./class_room.sol";
@@ -365,7 +365,6 @@ contract Quiz_Dapp is class_room {
         owner = quizs[_quiz_id].owner;
         bool isTeacher = _isTeacher(owner);
         if(!isTeacher){
-            token.approve(address(this), quizs[_quiz_id].reward);
             require(token.allowance(msg.sender, address(this)) >= quizs[_quiz_id].reward, "Not enough token approve fees for addding reward");
             token.transferFrom_explanation(msg.sender, address(this), quizs[_quiz_id].reward, "investment_to_quiz");
             users[owner].result += quizs[_quiz_id].reward;
