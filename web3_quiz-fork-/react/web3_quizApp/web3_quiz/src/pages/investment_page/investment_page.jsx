@@ -12,12 +12,19 @@ function Investment_to_quiz() {
     const [numOfStudent, setNumOfStudent] = useState(0);
     const [answer, setAnswer] = useState("");
     const [isteacher, setisteacher] = useState(null);
+    const [isNotAddingReward, setIsNotAddingReward] = useState("true");
 
     let Contract = new Contracts_MetaMask();
 
     const handleOptionChange = (event) => {
         setIsNotPayingOut(event.target.value);
         console.log(isNotPayingOut);
+
+    };
+
+    const adding_reward = (event) => {
+        setIsNotAddingReward(event.target.value);
+        console.log(isNotAddingReward);
 
     };
 
@@ -45,7 +52,7 @@ function Investment_to_quiz() {
 
     const investment_to_quiz = async () => {
         if ((answer == "" && isNotPayingOut == "false") == false) {
-            Contract.investment_to_quiz(id, amount, convertFullWidthNumbersToHalf(answer), isNotPayingOut, numOfStudent);
+            Contract.investment_to_quiz(id, amount, convertFullWidthNumbersToHalf(answer), isNotPayingOut, numOfStudent, isNotAddingReward);
         } else {
             alert("答えを入力してください");
         }
@@ -111,6 +118,29 @@ function Investment_to_quiz() {
                             解答を確定して報酬を払い出す
                         </label>
                     </div>
+                    <br />
+                    この問題は発表されましたか？発表されていれば発表者に二倍のトークンを支払います
+                    <div className="col-10">
+                        <label>
+                            <input
+                                type="radio"
+                                value="true"
+                                onChange={adding_reward}
+                                checked={isNotAddingReward === "true"}
+                            />
+                            発表されていない
+                        </label>
+                        <br />
+                        <label>
+                            <input
+                                type="radio"
+                                value="false"
+                                onChange={adding_reward}
+                                checked={isNotAddingReward === "false"}
+                            />発表されている
+                        </label>
+                    </div>
+
                     <Button className="col-10" variant="primary" onClick={() => investment_to_quiz()} style={{ marginTop: "20px" }}>
                         報酬の追加、報酬の払い出しを実行
                     </Button>

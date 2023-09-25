@@ -187,13 +187,14 @@ class Contracts_MetaMask {
         }
     }
 
-    async investment_to_quiz(id, amount, answer, isNotPayingOut, numOfStudent) {
-        console.log([id, amount, isNotPayingOut, numOfStudent]);
+    async investment_to_quiz(id, amount, answer, isNotPayingOut, numOfStudent, isNotAddingReward) {
+        console.log([id, amount, isNotPayingOut, numOfStudent, isNotAddingReward]);
         let res = null;
         let res2 = null;
         let hash = null;
         let hash2 = null;
         let is_not_paying_out = null;
+        let is_not_adding_reward = null;
         amount = Number(amount) * 10 ** 18;
 
         if (isNotPayingOut === "false") {
@@ -201,6 +202,12 @@ class Contracts_MetaMask {
         } else {
             is_not_paying_out = true;
         }
+        if (isNotAddingReward === "false") {
+            is_not_adding_reward = false;
+        } else {
+            is_not_adding_reward = true;
+        }
+
         try {
             if (ethereum) {
                 let account = await this.get_address();
@@ -229,6 +236,27 @@ class Contracts_MetaMask {
                     hash2 = await this._payment_of_reward(account, id, answer);
                     if (hash) {
                         res2 = await publicClient.waitForTransactionReceipt({ hash });
+                    }
+                    if (is_not_adding_reward == false) {
+                        let reward = (await this.get_quiz_simple(id))[7];
+                        console.log(reward);
+                        approval = await token.read.allowance({ account, args: [account, quiz_address] });
+                        console.log(approval);
+                        if (Number(approval) >= Number(reward)) {
+                            hash = await this._addingReward(account, id, reward);
+                            if (hash) {
+                                res = await publicClient.waitForTransactionReceipt({ hash });
+                            }
+                        } else {
+                            hash = await this.approve(account, reward);
+                            if (hash) {
+                                res = res = await publicClient.waitForTransactionReceipt({ hash });
+                                hash = await this._adding_reward(account, id, reward);
+                                if (hash) {
+                                    res = await publicClient.waitForTransactionReceipt({ hash });
+                                }
+                            }
+                        }
                     }
                 }
             } else {
@@ -277,6 +305,31 @@ class Contracts_MetaMask {
                         abi: quiz_abi,
                         functionName: "payment_of_reward",
                         args: [id, answer],
+                    });
+
+                    return await walletClient.writeContract(request);
+                } catch (e) {
+                    console.log(e);
+                }
+            } else {
+                console.log("Ethereum object does not exist");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async _adding_reward(account, id, reward) {
+        console.log([account, id, reward]);
+        try {
+            if (ethereum) {
+                try {
+                    const { request } = await publicClient.simulateContract({
+                        account,
+                        address: quiz_address,
+                        abi: quiz_abi,
+                        functionName: "adding_reward",
+                        args: [id],
                     });
 
                     return await walletClient.writeContract(request);
@@ -506,12 +559,12 @@ class Contracts_MetaMask {
         return await quiz.read.get_quiz_simple({ args: [id] });
     }
 
-    async get_is_payment(id){
+    async get_is_payment(id) {
         return await quiz.read.get_is_payment({ args: [id] });
     }
 
-    async get_confirm_answer(id){
-        return await quiz.read.get_confirm_answer({ args: [id]});
+    async get_confirm_answer(id) {
+        return await quiz.read.get_confirm_answer({ args: [id] });
     }
 
     async get_quiz_all_data_list(start, end) {
