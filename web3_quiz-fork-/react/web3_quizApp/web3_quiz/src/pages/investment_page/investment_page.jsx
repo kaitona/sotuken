@@ -12,6 +12,7 @@ function Investment_to_quiz() {
     const [numOfStudent, setNumOfStudent] = useState(0);
     const [answer, setAnswer] = useState("");
     const [isteacher, setisteacher] = useState(null);
+    const [isNotAddingReward, setIsNotAddingReward] = useState("true");
 
     let Contract = new Contracts_MetaMask();
 
@@ -21,32 +22,38 @@ function Investment_to_quiz() {
 
     };
 
+    const adding_reward = (event) => {
+        setIsNotAddingReward(event.target.value);
+        console.log(isNotAddingReward);
+
+    };
+
     async function get_contract() {
         setNumOfStudent(await Contract.get_num_of_students());
     }
 
-    async function is_teacher(){
+    async function is_teacher() {
         setisteacher(await Contract.isTeacher());
     }
 
     get_contract();
     is_teacher();
 
-    const convertFullWidthNumbersToHalf = (()=>{
+    const convertFullWidthNumbersToHalf = (() => {
         // 全角数字と半角数字の差分を計算
         const diff = "０".charCodeAt(0) - "0".charCodeAt(0);
 
-            // 置換関数を返す
+        // 置換関数を返す
         return text => text.replace(
-                    /[０-９]/g
-                    ,m=>String.fromCharCode( m.charCodeAt(0) - diff )
-        ); 
+            /[０-９]/g
+            , m => String.fromCharCode(m.charCodeAt(0) - diff)
+        );
     })();
 
     const investment_to_quiz = async () => {
-        if ((answer == "" && isNotPayingOut == "false") == false){
-            Contract.investment_to_quiz(id, amount, convertFullWidthNumbersToHalf(answer), isNotPayingOut, numOfStudent);
-        }else{
+        if ((answer == "" && isNotPayingOut == "false") == false) {
+            Contract.investment_to_quiz(id, amount, convertFullWidthNumbersToHalf(answer), isNotPayingOut, numOfStudent, isNotAddingReward);
+        } else {
             alert("答えを入力してください");
         }
     };
@@ -54,9 +61,9 @@ function Investment_to_quiz() {
     console.log(isNotPayingOut);
 
 
-    if(isteacher){
+    if (isteacher) {
         return (
-            <>
+            <div className="col">
                 <div className="row justify-content-center">
                     <div className="col-10">
                         このテストのIDは{id}です
@@ -111,15 +118,38 @@ function Investment_to_quiz() {
                             解答を確定して報酬を払い出す
                         </label>
                     </div>
-                    <Button variant="primary" onClick={() => investment_to_quiz()} style={{ marginTop: "20px" }}>
+                    <br />
+                    この問題は発表されましたか？発表されていれば発表者に二倍のトークンを支払います
+                    <div className="col-10">
+                        <label>
+                            <input
+                                type="radio"
+                                value="true"
+                                onChange={adding_reward}
+                                checked={isNotAddingReward === "true"}
+                            />
+                            発表されていない
+                        </label>
+                        <br />
+                        <label>
+                            <input
+                                type="radio"
+                                value="false"
+                                onChange={adding_reward}
+                                checked={isNotAddingReward === "false"}
+                            />発表されている
+                        </label>
+                    </div>
+
+                    <Button className="col-10" variant="primary" onClick={() => investment_to_quiz()} style={{ marginTop: "20px" }}>
                         報酬の追加、報酬の払い出しを実行
                     </Button>
 
                 </div>
-            </>
+            </div>
         );
-    }else{
-        return(<></>);
+    } else {
+        return (<></>);
     }
 }
 

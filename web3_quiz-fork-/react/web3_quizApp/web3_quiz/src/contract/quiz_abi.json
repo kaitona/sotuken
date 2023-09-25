@@ -10,6 +10,19 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "Adding_reward",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
           "internalType": "address",
           "name": "_sender",
           "type": "address"
@@ -151,6 +164,25 @@
       "type": "event"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "_isTeacher",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "_isTeacher",
       "outputs": [
@@ -196,6 +228,25 @@
           "internalType": "bool",
           "name": "res",
           "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "adding_reward",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
         }
       ],
       "stateMutability": "nonpayable",
@@ -344,8 +395,57 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "get_confirm_answer",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "confirm_answer",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "is_payment",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
-      "name": "get_data_for_survey",
+      "name": "get_data_for_survey_quizs",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "reward",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "respondent_count",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Quiz_Dapp.Survey_data_quiz[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_data_for_survey_users",
       "outputs": [
         {
           "components": [
@@ -365,9 +465,28 @@
               "type": "uint256"
             }
           ],
-          "internalType": "struct Quiz_Dapp.Survey_data[]",
+          "internalType": "struct Quiz_Dapp.Survey_data_user[]",
           "name": "",
           "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_quiz_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "get_is_payment",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "is_payment",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",

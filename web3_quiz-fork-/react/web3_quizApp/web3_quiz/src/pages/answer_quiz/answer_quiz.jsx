@@ -6,6 +6,15 @@ import { useParams } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Wait_Modal from "../../contract/wait_Modal";
 import { ConstructorFragment } from "ethers/lib/utils";
+function Show_correct(props){
+    if(props.cont == true){
+        return (
+            <a>答えは{props.answer}</a>
+        );
+    }else{
+        return <></>;
+    }
+}
 function Answer_type1(props) {
     return (
         <>
@@ -115,6 +124,7 @@ function Answer_quiz(props) {
     const [now, setnow] = useState(null);
     const [show, setShow] = useState(false);
     const [content, setContent] = useState("");
+    const [is_correct_show, setIs_correct_show] = useState(false);
     let clean_up;
 
     let Contract = new Contracts_MetaMask();
@@ -147,6 +157,10 @@ function Answer_quiz(props) {
     })();
 
     const create_answer = async () => {
+        if (quiz[15] == true){
+            setIs_correct_show(true);
+            return;
+        }
         if (parseInt(quiz[8]).toString() <= now) {
             const res = Contract.create_answer(id, convertFullWidthNumbersToHalf(answer), setShow, setContent);
         } else {
@@ -200,7 +214,8 @@ function Answer_quiz(props) {
                             回答
                         </Button>
                     </div>
-                    {Number(quiz[13])}
+                    {Number(quiz[13])}<br />
+                    <Show_correct cont={is_correct_show} answer={quiz[14]}/>
                 </div>
                 <Wait_Modal showFlag={show} content={content} />
             </>

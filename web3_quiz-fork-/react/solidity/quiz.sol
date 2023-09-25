@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+/// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
 import "./class_room.sol";
@@ -35,6 +35,8 @@ contract Quiz_Dapp is class_room {
         uint reward;
         uint respondent_count;
         uint respondent_limit;
+        bool is_payment;
+        string confirm_answer;
         mapping(address => uint) respondents_map; //0が未回答,1が不正解,2が正解,3が回答済み
         mapping(address => uint) respondents_state;
         Answer[] answers;
@@ -207,6 +209,10 @@ contract Quiz_Dapp is class_room {
         state = quizs[_quiz_id].respondents_map[msg.sender];
     }
 
+    function get_is_payment(uint _quiz_id) public view returns(bool is_payment){
+        is_payment = quizs[_quiz_id].is_payment;
+    }
+
     function get_quiz(uint _quiz_id)
         public
         view
@@ -239,6 +245,11 @@ contract Quiz_Dapp is class_room {
         reward = quizs[_quiz_id].reward;
         respondent_count = quizs[_quiz_id].respondent_count;
         respondent_limit = quizs[_quiz_id].respondent_limit;
+    }
+
+    function get_confirm_answer(uint _quiz_id) public view returns(string memory confirm_answer, bool is_payment){
+        confirm_answer = quizs[_quiz_id].confirm_answer;
+        is_payment = quizs[_quiz_id].is_payment;
     }
 
     function get_student_answer_hash(address _sender, uint _quiz_id) public view returns (bytes32){
@@ -319,7 +330,7 @@ contract Quiz_Dapp is class_room {
             uint answer_id = quizs[_quiz_id].respondents_state[student];
         
             bytes32 student_answer_hash = get_student_answer_hash(student, _quiz_id);
-            if(answer_hash == student_answer_hash && quizs[_quiz_id].respondents_map[student] != 0 && quizs[_quiz_id].answers[answer_id].answer_time <= quizs[_quiz_id].time_limit_epoch){
+            if(answer_hash == student_answer_hash && quizs[_quiz_id].respondents_map[student] != 0){
                 reward = quizs[_quiz_id].reward;
                 users[student].result += reward;
                 token.transfer_explanation(student, reward, "correct answer");
@@ -335,6 +346,8 @@ contract Quiz_Dapp is class_room {
 
             quizs[_quiz_id].answers[answer_id].reward = reward;
             quizs[_quiz_id].answers[answer_id].result = result;
+            quizs[_quiz_id].is_payment = true;
+            quizs[_quiz_id].confirm_answer = _answer;
 
             if(i < users_result.length){
                 users_result[i] = users[students[i]].result;
@@ -344,6 +357,20 @@ contract Quiz_Dapp is class_room {
         }
 
         emit Payment_of_reward(_quiz_id);
+    }
+
+    event Adding_reward(uint indexed _quiz_id);
+
+    function adding_reward(uint _quiz_id) public isTeacher returns(address owner){
+        owner = quizs[_quiz_id].owner;
+        bool isTeacher = _isTeacher(owner);
+        if(!isTeacher){
+            require(token.allowance(msg.sender, address(this)) >= quizs[_quiz_id].reward, "Not enough token approve fees for addding reward");
+            token.transferFrom_explanation(msg.sender, address(this), quizs[_quiz_id].reward, "investment_to_quiz");
+            users[owner].result += quizs[_quiz_id].reward;
+            token.transfer_explanation(owner, quizs[_quiz_id].reward, "Thank you for creating quiz!!");
+            emit Adding_reward(_quiz_id);
+        }
     }
 
     /*
@@ -517,23 +544,38 @@ contract Quiz_Dapp is class_room {
         respondentLimit = quizs[_quiz_id].respondent_limit;
     }
 
-    struct Survey_data{
-            address user;
-            uint create_quiz_count;
-            uint result;
-        }    
+    struct Survey_data_user{
+        address user;
+        uint create_quiz_count;
+        uint result;
+    }    
 
-    function get_data_for_survey() public isTeacher view returns(Survey_data[] memory){
+    function get_data_for_survey_users() public isTeacher view returns(Survey_data_user[] memory){
         
         address[] memory user_addresses = get_student_all();
-        Survey_data[] memory users_data = new Survey_data[](user_addresses.length);
+        Survey_data_user[] memory users_data = new Survey_data_user[](user_addresses.length);
 
         for(uint i=0; i<user_addresses.length; i++){
             address user = user_addresses[i];
-            Survey_data memory user_data = Survey_data(user, users[user].create_quiz_count, users[user].result);
+            Survey_data_user memory user_data = Survey_data_user(user, users[user].create_quiz_count, users[user].result);
             users_data[i] = user_data;
         }
         return users_data;
+    }
+
+    struct Survey_data_quiz{
+        uint reward;
+        uint respondent_count;
+    }
+
+    function get_data_for_survey_quizs() public isTeacher view returns(Survey_data_quiz[] memory){
+
+        Survey_data_quiz[] memory quizs_data = new Survey_data_quiz[](get_quiz_length());
+
+        for(uint i=0; i<get_quiz_length(); i++){
+            quizs_data[i] = Survey_data_quiz(quizs[i].reward, quizs[i].respondent_count);
+        }
+        return quizs_data;
     }
 }
 
