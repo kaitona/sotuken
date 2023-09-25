@@ -25,28 +25,28 @@ function Investment_to_quiz() {
         setNumOfStudent(await Contract.get_num_of_students());
     }
 
-    async function is_teacher(){
+    async function is_teacher() {
         setisteacher(await Contract.isTeacher());
     }
 
     get_contract();
     is_teacher();
 
-    const convertFullWidthNumbersToHalf = (()=>{
+    const convertFullWidthNumbersToHalf = (() => {
         // 全角数字と半角数字の差分を計算
         const diff = "０".charCodeAt(0) - "0".charCodeAt(0);
 
-            // 置換関数を返す
+        // 置換関数を返す
         return text => text.replace(
-                    /[０-９]/g
-                    ,m=>String.fromCharCode( m.charCodeAt(0) - diff )
-        ); 
+            /[０-９]/g
+            , m => String.fromCharCode(m.charCodeAt(0) - diff)
+        );
     })();
 
     const investment_to_quiz = async () => {
-        if ((answer == "" && isNotPayingOut == "false") == false){
+        if ((answer == "" && isNotPayingOut == "false") == false) {
             Contract.investment_to_quiz(id, amount, convertFullWidthNumbersToHalf(answer), isNotPayingOut, numOfStudent);
-        }else{
+        } else {
             alert("答えを入力してください");
         }
     };
@@ -54,9 +54,9 @@ function Investment_to_quiz() {
     console.log(isNotPayingOut);
 
 
-    if(isteacher){
+    if (isteacher) {
         return (
-            <>
+            <div className="col">
                 <div className="row justify-content-center">
                     <div className="col-10">
                         このテストのIDは{id}です
@@ -111,15 +111,15 @@ function Investment_to_quiz() {
                             解答を確定して報酬を払い出す
                         </label>
                     </div>
-                    <Button variant="primary" onClick={() => investment_to_quiz()} style={{ marginTop: "20px" }}>
+                    <Button className="col-10" variant="primary" onClick={() => investment_to_quiz()} style={{ marginTop: "20px" }}>
                         報酬の追加、報酬の払い出しを実行
                     </Button>
 
                 </div>
-            </>
+            </div>
         );
-    }else{
-        return(<></>);
+    } else {
+        return (<></>);
     }
 }
 
