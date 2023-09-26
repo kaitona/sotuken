@@ -15,14 +15,13 @@ import { AiFillHome, AiFillSetting, AiFillStar } from "react-icons/ai";
 import { Contracts_MetaMask } from "../../contract/contracts";
 import Modal_change_network from "./Modal_change_network";
 
-
-function create_edit_button() {
+function create_edit_button(prop) {
     return (
         <div>
             <div className="col-1"></div>
             <div className="col-3">
                 <Nav.Item>
-                    <Nav.Link eventKey="edit" href={"/edit_list"}>
+                    <Nav.Link eventKey="edit" href={prop + "/edit_list"}>
                         <div className="col-12">
                             <RiFileSettingsLine size={30} />
                         </div>
@@ -68,7 +67,7 @@ function Nav_menu(props) {
                     <div className="row justify-content-center">
                         <div className="col-3">
                             <Nav.Item>
-                                <Nav.Link eventKey="/list_quiz" href="/list_quiz">
+                                <Nav.Link eventKey="list_quiz" href={props.home + "/list_quiz"}>
                                     <div className="col-12 ">
                                         <AiOutlineUnorderedList size={30} />
                                     </div>
@@ -81,7 +80,7 @@ function Nav_menu(props) {
                         <div className="col-1"></div>
                         <div className="col-3">
                             <Nav.Item>
-                                <Nav.Link eventKey="/create_quiz" href="/create_quiz">
+                                <Nav.Link eventKey="create_quiz" href={props.home + "/create_quiz"}>
                                     <div className="col-12 ">
                                         <MdOutlineQuiz size={30} />
                                     </div>
@@ -94,7 +93,7 @@ function Nav_menu(props) {
                         <div className="col-1"></div>
                         <div className="col-3">
                             <Nav.Item>
-                                <Nav.Link eventKey="user_page" href={"/user_page/" + useing_address}>
+                                <Nav.Link eventKey="user_page" href={props.home + "/user_page/" + useing_address}>
                                     <div className="col-12">
                                         <AiOutlineUser size={30} />
                                     </div>
@@ -104,7 +103,7 @@ function Nav_menu(props) {
                                 </Nav.Link>
                             </Nav.Item>
                         </div>
-                        {isTeacher ? create_edit_button() : ""}
+                        {isTeacher ? create_edit_button(props.home) : ""}
                     </div>
                 </Navbar>
             </div>

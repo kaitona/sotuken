@@ -38,6 +38,7 @@
     "web-vitals": "^2.1.4",
     "web3modal": "^1.9.12"
   },
+  "homepage": "https://kaitona.github.io/sotuken-deploy",
   "scripts": {
     "start": "react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
