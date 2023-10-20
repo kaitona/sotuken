@@ -463,6 +463,11 @@
               "internalType": "uint256",
               "name": "result",
               "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "answer_count",
+              "type": "uint256"
             }
           ],
           "internalType": "struct Quiz_Dapp.Survey_data_user[]",
@@ -816,6 +821,11 @@
           "internalType": "uint256",
           "name": "state",
           "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "is_payment",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
