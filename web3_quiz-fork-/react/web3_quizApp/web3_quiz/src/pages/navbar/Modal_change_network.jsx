@@ -1,10 +1,10 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 const Modal_change_network = (props) => {
     if (props.chain_id) {
         return (
             <>
-                {props.chain_id != 78950 ? ( // showFlagがtrueだったらModalを表示する
+                {props.chain_id != 8995 ? ( // showFlagがtrueだったらModalを表示する
                     <div id="overlay" class="stars" style={{}}>
                         <div
                             id="modalContent"
@@ -17,7 +17,7 @@ const Modal_change_network = (props) => {
                             }}
                         >
                             {/* 文字を白くする */}
-                            <h2>私たちの利用するfujihalab chainに接続してください</h2>
+                            <h2>私たちの利用するBergに接続してください</h2>
                             <br />
                             <button
                                 type="button"

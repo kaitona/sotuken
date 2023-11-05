@@ -1,17 +1,17 @@
-export const fujihalab = {
-    id: 78950,
-    name: "Fujihalab Chain",
-    network: "fujihalab",
+export const berg = {
+    id: 8995,
+    name: "Berg",
+    network: "bloxberg",
     iconUrl: "",
     iconBackground: "#000000",
     nativeCurrency: {
         decimals: 18,
-        name: "FUJIHALAB",
-        symbol: "FUJI",
+        name: "BERG",
+        symbol: "BERG",
     },
     rpcUrls: {
         default: {
-            http: ["https://ik1-206-76848.vs.sakura.ne.jp"],
+            http: ["https://core.bloxberg.org"],
             // public rpc url
         },
     },

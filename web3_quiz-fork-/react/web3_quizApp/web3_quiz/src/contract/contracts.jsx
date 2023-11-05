@@ -2,18 +2,18 @@ import { createPublicClient, createWalletClient, http, getContract, parseAbiItem
 import token_contract from "./token_abi.json";
 import quiz_contract from "./quiz_abi.json";
 import { chainId, rpc, quiz_address, token_address } from "./config";
-import { fujihalab } from "./network";
+import { berg } from "./network";
 
 const { ethereum } = window;
 const homeUrl = process.env.PUBLIC_URL;
 
 const walletClient = createWalletClient({
-    chain: fujihalab,
+    chain: berg,
     transport: custom(window.ethereum),
 });
 
 const publicClient = createPublicClient({
-    chain: fujihalab,
+    chain: berg,
     transport: http(),
 });
 
@@ -63,7 +63,7 @@ class Contracts_MetaMask {
 
     async change_network() {
         try {
-            await walletClient.switchChain({ id: fujihalab.id });
+            await walletClient.switchChain({ id: berg.id });
         } catch (e) {
             //userがrejectした場合
             if (e.code === 4001) {
@@ -75,7 +75,7 @@ class Contracts_MetaMask {
     }
     async add_network() {
         try {
-            await walletClient.addChain({ chain: fujihalab });
+            await walletClient.addChain({ chain: berg });
         } catch (e) {
             console.log(e);
         }
