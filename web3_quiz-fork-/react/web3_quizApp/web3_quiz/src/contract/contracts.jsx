@@ -2,17 +2,18 @@ import { createPublicClient, createWalletClient, http, getContract, parseAbiItem
 import token_contract from "./token_abi.json";
 import quiz_contract from "./quiz_abi.json";
 import { chainId, rpc, quiz_address, token_address } from "./config";
-import { fujihalab } from "./network";
+import { berg } from "./network";
 
 const { ethereum } = window;
+const homeUrl = process.env.PUBLIC_URL;
 
 const walletClient = createWalletClient({
-    chain: fujihalab,
+    chain: berg,
     transport: custom(window.ethereum),
 });
 
 const publicClient = createPublicClient({
-    chain: fujihalab,
+    chain: berg,
     transport: http(),
 });
 
@@ -62,7 +63,7 @@ class Contracts_MetaMask {
 
     async change_network() {
         try {
-            await walletClient.switchChain({ id: fujihalab.id });
+            await walletClient.switchChain({ id: berg.id });
         } catch (e) {
             //userがrejectした場合
             if (e.code === 4001) {
@@ -74,7 +75,7 @@ class Contracts_MetaMask {
     }
     async add_network() {
         try {
-            await walletClient.addChain({ chain: fujihalab });
+            await walletClient.addChain({ chain: berg });
         } catch (e) {
             console.log(e);
         }
@@ -265,7 +266,7 @@ class Contracts_MetaMask {
         } catch (err) {
             console.log(err);
         }
-        document.location.href = "/edit_list";
+        document.location.href = homeUrl + "/edit_list";
     }
 
     async _investment_to_quiz(account, id, amount, numOfStudent) {
@@ -346,7 +347,7 @@ class Contracts_MetaMask {
 
     async create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit, setShow) {
         setShow(true);
-        console.log([title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit]);
+        //console.log([title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit]);
         let res = null;
         let hash = null;
         reward = reward * 10 ** 18;
@@ -380,7 +381,7 @@ class Contracts_MetaMask {
             setShow(false);
             console.log(err);
         }
-        document.location.href = "/answer_quiz/" + res.logs[2].topics[2];
+        document.location.href = homeUrl + "/answer_quiz/" + res.logs[2].topics[2];
     }
 
     async _create_quiz(account, title, explanation, thumbnail_url, content, answer_type, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit) {
@@ -418,7 +419,7 @@ class Contracts_MetaMask {
 
     async edit_quiz(id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline, setShow) {
         setShow(true);
-        console.log([id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline]);
+        //console.log([id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline]);
         let res = null;
         let hash = null;
         try {
@@ -442,7 +443,7 @@ class Contracts_MetaMask {
             setShow(false);
             console.log(err);
         }
-        document.location.href = "/edit_list";
+        document.location.href = homeUrl + "/edit_list";
     }
 
     async _edit_quiz(account, id, owner, title, explanation, thumbnail_url, content, reply_startline, reply_deadline) {
@@ -500,7 +501,7 @@ class Contracts_MetaMask {
                     let res = await publicClient.waitForTransactionReceipt({ hash });
                     console.log(res);
                     //document.location.href = "/user_page/" + account;
-                    document.location.href = "/list_quiz";
+                    document.location.href = homeUrl + "/list_quiz";
                 }
                 console.log("create_answer_cont");
             } else {

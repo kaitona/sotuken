@@ -19,11 +19,14 @@ function App() {
     const cont = new Contracts_MetaMask();
     const is_teacher = cont.isTeacher();
 
+    const homeUrl = process.env.PUBLIC_URL;
+    console.log(homeUrl);
+
     return (
         <div className="App">
             <body>
                 <div>
-                    <BrowserRouter>
+                    <BrowserRouter basename={homeUrl}>
                         <Routes>
                             <Route path={"/login"} element={<Login url={"login"} cont={cont} />} />
                         </Routes>
@@ -60,7 +63,7 @@ function App() {
                     </BrowserRouter>
                 </div>
                 <div>
-                    <Nav_menu cont={cont} />
+                    <Nav_menu cont={cont} home={homeUrl} />
                 </div>
             </body>
         </div>

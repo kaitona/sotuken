@@ -4,7 +4,7 @@ pragma solidity ^0.8.2;
 import "./class_room.sol";
 
 contract Quiz_Dapp is class_room {
-    address Token_address = 0x60e4999c31f497c02b784E9B138dC000d30d2068;
+    address Token_address = 0x9A108973978Fe5A8ae16f58cbCc92CA2305BdE0E;
     TokenInterface token = TokenInterface(Token_address);
     uint[] users_result;
 
@@ -13,6 +13,7 @@ contract Quiz_Dapp is class_room {
         string img_url;
         uint create_quiz_count;
         uint result;
+        uint answer_count;
     }
 
     mapping(address => User) private users;
@@ -37,6 +38,7 @@ contract Quiz_Dapp is class_room {
         uint respondent_limit;
         bool is_payment;
         string confirm_answer;
+        uint answer_count;
         mapping(address => uint) respondents_map; //0が未回答,1が不正解,2が正解,3が回答済み
         mapping(address => uint) respondents_state;
         Answer[] answers;
@@ -275,7 +277,8 @@ contract Quiz_Dapp is class_room {
             uint reward,
             uint respondent_count,
             uint respondent_limit,
-            uint state
+            uint state,
+            bool is_payment
         )
     {
         id = _quiz_id;
@@ -289,6 +292,7 @@ contract Quiz_Dapp is class_room {
         respondent_count = quizs[_quiz_id].respondent_count;
         respondent_limit = quizs[_quiz_id].respondent_limit;
         state = quizs[_quiz_id].respondents_map[msg.sender];
+        is_payment = quizs[_quiz_id].is_payment;
     }
 
     event Save_answer(address indexed _sender, uint indexed _quiz_id, string indexed _quiz_state);
@@ -299,6 +303,7 @@ contract Quiz_Dapp is class_room {
         if(quizs[_quiz_id].respondents_map[msg.sender] == 0){
             quizs[_quiz_id].respondent_count += 1;
             quizs[_quiz_id].students_answer_hashs[msg.sender] = answer_hash;
+            users[msg.sender].answer_count += 1;
         }
 
         answer_id = quizs[_quiz_id].answers.length;
@@ -548,6 +553,7 @@ contract Quiz_Dapp is class_room {
         address user;
         uint create_quiz_count;
         uint result;
+        uint answer_count;
     }    
 
     function get_data_for_survey_users() public isTeacher view returns(Survey_data_user[] memory){
@@ -557,7 +563,7 @@ contract Quiz_Dapp is class_room {
 
         for(uint i=0; i<user_addresses.length; i++){
             address user = user_addresses[i];
-            Survey_data_user memory user_data = Survey_data_user(user, users[user].create_quiz_count, users[user].result);
+            Survey_data_user memory user_data = Survey_data_user(user, users[user].create_quiz_count, users[user].result, users[user].answer_count);
             users_data[i] = user_data;
         }
         return users_data;
