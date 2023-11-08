@@ -35,33 +35,29 @@ function Create_quiz() {
     const [now, setnow] = useState(null);
     const [show, setShow] = useState(false);
 
-    const convertFullWidthNumbersToHalf = (()=>{
+    const convertFullWidthNumbersToHalf = (() => {
         // 全角数字と半角数字の差分を計算
         const diff = "０".charCodeAt(0) - "0".charCodeAt(0);
 
-            // 置換関数を返す
+        // 置換関数を返す
         return text => text.replace(
-                    /[０-９]/g
-                    ,m=>String.fromCharCode( m.charCodeAt(0) - diff )
-        ); 
+            /[０-９]/g
+            , m => String.fromCharCode(m.charCodeAt(0) - diff)
+        );
     })();
 
     const create_quiz = async () => {
-        console.log(title, explanation, thumbnail_url, content, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
+        //console.log(title, explanation, thumbnail_url, content, answer_data, correct, reply_startline, reply_deadline, reward, correct_limit);
 
         if (correct !== "") {
             console.log(new Date(reply_startline).getTime(), new Date(reply_deadline).getTime());
-            if (new Date(reply_startline).getTime() < new Date(reply_deadline).getTime()) {
-                Contract.create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, convertFullWidthNumbersToHalf(correct), reply_startline, reply_deadline, reward, correct_limit, setShow);
-            } else {
-                alert("回答開始日時を回答締切日時より前に設定してください");
-            }
+            Contract.create_quiz(title, explanation, thumbnail_url, content, answer_type, answer_data, convertFullWidthNumbersToHalf(correct), reply_startline, reply_deadline, reward, correct_limit, setShow);
         } else {
             alert("正解を入力してください");
         }
     };
 
-    
+
 
     function getLocalizedDateTimeString(now = new Date()) {
         const year = now.getFullYear();
@@ -99,7 +95,7 @@ function Create_quiz() {
         // const diff_time = new Date(now + 100);
         // setReply_deadline(addDays(now, 5));
         async function get_contract() {
-            setCorrect_limit(await Contract.get_num_of_students());
+            setCorrect_limit((await Contract.get_num_of_students()) + 30);
         }
         get_contract();
         setnow(getLocalizedDateTimeString());

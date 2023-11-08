@@ -43,7 +43,7 @@ function View_result(props) {
             Object.keys(data_for_survey_users[0])
         ]
         for (let i = 0; i < data_for_survey_users.length; i++) {
-            users_data.push([data_for_survey_users[i].user, Number(data_for_survey_users[i].create_quiz_count).toString(), (Number(data_for_survey_users[i].result) / (10 ** 18)).toString()]);
+            users_data.push([data_for_survey_users[i].user, Number(data_for_survey_users[i].create_quiz_count).toString(), (Number(data_for_survey_users[i].result) / (10 ** 18)).toString(), (Number(data_for_survey_users[i].answer_count).toString())]);
         }
 
         const quizs_data = [
