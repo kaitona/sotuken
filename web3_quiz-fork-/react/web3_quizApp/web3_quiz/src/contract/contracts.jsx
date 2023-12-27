@@ -249,7 +249,8 @@ class Contracts_MetaMask {
                 }
 
                 if (is_not_paying_out == false) {
-                    let addreses = sliceByNumber(students, 5);
+                    let addreses = sliceByNumber(students, 4);
+                    console.log(addreses)
                     for (let i = 0; i < addreses.length; i++) {
                         hash2 = await this._payment_of_reward(account, id, answer, addreses[i]);
                         if (hash) {
