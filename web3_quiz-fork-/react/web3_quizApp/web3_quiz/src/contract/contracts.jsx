@@ -43,6 +43,21 @@ if (window.ethereum) {
     });
 }
 
+const sliceByNumber = (array, number) => {
+    // 元の配列(今回で言うと変数arrayを指します)を基に、分割して生成する配列の個数を取得する処理です。
+    // 今回は元の配列の要素数が10個、分割して生成する配列は2つの要素を持つことを期待しています。
+    // 上記のことから今回は、元の配列から5つの配列に分割されることになります。
+    const length = Math.ceil(array.length / number);
+
+    // new Arrayの引数に上記で取得した配列の個数を渡します。これで配列の中に5つの配列が生成されます。
+    // 5つの配列分だけループ処理(mapメソッド)をします。map処理の中でsliceメソッドを使用して、元の配列から新しい配列を作成して返却します。
+    // sliceメソッドの中では、要素数2つの配列を生成します。
+    // fillメソッドはインデックスのキーを生成するために使用しています。もし使用しない場合はmapメソッドはindexがないため、mapメソッドが機能しません。
+    return new Array(length)
+        .fill()
+        .map((_, i) => array.slice(i * number, (i + 1) * number));
+};
+
 class Contracts_MetaMask {
     async get_chain_id() {
         return await walletClient.getChainId();
@@ -188,7 +203,7 @@ class Contracts_MetaMask {
         }
     }
 
-    async investment_to_quiz(id, amount, answer, isNotPayingOut, numOfStudent, isNotAddingReward) {
+    async investment_to_quiz(id, amount, answer, isNotPayingOut, numOfStudent, isNotAddingReward, students) {
         console.log([id, amount, isNotPayingOut, numOfStudent, isNotAddingReward]);
         let res = null;
         let res2 = null;
@@ -234,9 +249,13 @@ class Contracts_MetaMask {
                 }
 
                 if (is_not_paying_out == false) {
-                    hash2 = await this._payment_of_reward(account, id, answer);
-                    if (hash) {
-                        res2 = await publicClient.waitForTransactionReceipt({ hash });
+                    let addreses = sliceByNumber(students, 4);
+                    console.log(addreses)
+                    for (let i = 0; i < addreses.length; i++) {
+                        hash2 = await this._payment_of_reward(account, id, answer, addreses[i]);
+                        if (hash) {
+                            res2 = await publicClient.waitForTransactionReceipt({ hash });
+                        }
                     }
                     if (is_not_adding_reward == false) {
                         let reward = (await this.get_quiz_simple(id))[7];
@@ -295,8 +314,8 @@ class Contracts_MetaMask {
         }
     }
 
-    async _payment_of_reward(account, id, answer) {
-        console.log([account, id, answer]);
+    async _payment_of_reward(account, id, answer, students) {
+        console.log([account, id, answer, students]);
         try {
             if (ethereum) {
                 try {
@@ -305,7 +324,7 @@ class Contracts_MetaMask {
                         address: quiz_address,
                         abi: quiz_abi,
                         functionName: "payment_of_reward",
-                        args: [id, answer],
+                        args: [id, answer, students],
                     });
 
                     return await walletClient.writeContract(request);
@@ -752,6 +771,53 @@ class Contracts_MetaMask {
     async get_respondentCount_and_respondentLimit(id) {
         return await quiz.read.get_respondentCount_and_respondentLimit({ args: [id] });
     }
+    //ここから変更
+    async get_student_answer_hash(student, id) {
+        try {
+            if (ethereum) {
+                let account = await this.get_address();
+                let res = await quiz.read.get_student_answer_hash({ account, args: [student, id] });
+                return res;
+            } else {
+                console.log("Ethereum object does not exists");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+
+    async get_student_list() {
+        try {
+            if (ethereum) {
+                let account = await this.get_address();
+                let res = await quiz.read.get_student_all({ account, args: [] });
+                return res;
+            } else {
+                console.log("Ethereum object does not exists");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async get_students_answer_hash_list(students, id) {
+        try {
+            if (ethereum) {
+                let res = {};
+                console.log(students[1]);
+                for (let i = 0; i < students.length; i++) {
+                    res[students[i]] = await this.get_student_answer_hash(students[i], id);
+                }
+                return res;
+            } else {
+                console.log("Ethereum object does not exists");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    //ここまで変更
 
     async get_data_for_survey_users() {
         try {

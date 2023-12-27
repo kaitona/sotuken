@@ -323,8 +323,7 @@ contract Quiz_Dapp is class_room {
 
     event Payment_of_reward(uint indexed _quiz_id);
 
-    function payment_of_reward(uint _quiz_id, string memory _answer) public returns(uint correct_count){
-        address[] memory students = get_student_all();
+    function payment_of_reward(uint _quiz_id, string memory _answer, address[] memory students) public returns(uint correct_count){
         bytes32 answer_hash = keccak256(abi.encodePacked(_answer));
         correct_count = 0; 
 
