@@ -1,10 +1,1 @@
-django rest framework superuserdata:
 
-email: kaitoitsuki@chibakoudai.jp
-username: osechi
-
-logindata:
-user: osechi
-password: kainagi3112
-
-Django REST frameworkでログインする場合はlogindataを入力すること
